@@ -1,0 +1,192 @@
+/* Global Styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+body {
+    font-family: Arial, sans-serif;
+    background-color: #2e2e2e;
+    color: #fff;
+}
+header {
+    background-color: #333;
+    padding: 20px;
+}
+header nav ul {
+    list-style-type: none;
+    display: flex;
+    justify-content: center;
+}
+header nav ul li {
+    margin: 0 15px;
+}
+header nav ul li a {
+    text-decoration: none;
+    color: #fff;
+    font-weight: bold;
+}
+
+/* Hero Section */
+.hero {
+    background-color: #444;
+    text-align: center;
+    padding: 100px 20px;
+}
+.hero h1 {
+    font-size: 3em;
+    margin-bottom: 10px;
+}
+.hero p {
+    font-size: 1.2em;
+    margin-bottom: 20px;
+}
+.hero button {
+    background-color: #00b3b3;
+    border: none;
+    padding: 15px 30px;
+    font-size: 1.2em;
+    cursor: pointer;
+    color: white;
+    border-radius: 5px;
+}
+
+/* Room Section */
+#salles {
+    padding: 50px 20px;
+    text-align: center;
+    background-color: #333;
+}
+.room {
+    margin: 20px;
+}
+.room h3 {
+    font-size: 2em;
+    color: #00b3b3;
+}
+.room p {
+    font-size: 1.2em;
+}
+
+/* Reservation Section */
+#reservation {
+    padding: 50px 20px;
+    background-color: #444;
+    text-align: center;
+}
+form {
+    max-width: 600px;
+    margin: 0 auto;
+    background-color: #333;
+    padding: 20px;
+    border-radius: 10px;
+}
+form label {
+    font-size: 1.1em;
+    margin-bottom: 10px;
+    display: block;
+}
+form input, form select {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 20px;
+    background-color: #555;
+    border: none;
+    border-radius: 5px;
+    color: white;
+}
+form button {
+    background-color: #00b3b3;
+    padding: 15px 30px;
+    font-size: 1.2em;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+/* Contact Section */
+#contact {
+    background-color: #007e7e;
+    padding: 15px 45px;
+    font-size: 1.2em;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+
+/* Footer */
+footer {
+    background-color: #333;
+    text-align: center;
+    padding: 20px;
+}
+
+/* CSS du radar-spinner */
+.radar-spinner, .radar-spinner * {
+    box-sizing: border-box;
+}
+
+.radar-spinner {
+    height: 60px;
+    width: 60px;
+    position: relative;
+}
+
+.radar-spinner .circle {
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    top: 0;
+    left: 0;
+    animation: radar-spinner-animation 2s infinite;
+}
+
+.radar-spinner .circle:nth-child(1) {
+    padding: calc(60px * 5 * 2 * 0 / 110);
+    animation-delay: 300ms;
+}
+
+.radar-spinner .circle:nth-child(2) {
+    padding: calc(60px * 5 * 2 * 1 / 110);
+    animation-delay: 300ms;
+}
+
+.radar-spinner .circle:nth-child(3) {
+    padding: calc(60px * 5 * 2 * 2 / 110);
+    animation-delay: 300ms;
+}
+
+.radar-spinner .circle:nth-child(4) {
+    padding: calc(60px * 5 * 2 * 3 / 110);
+    animation-delay: 0ms;
+}
+
+.radar-spinner .circle-inner, .radar-spinner .circle-inner-container {
+    height: 100%;
+    width: 100%;
+    border-radius: 50%;
+    border: calc(60px * 5 / 110) solid transparent;
+}
+
+.radar-spinner .circle-inner {
+    border-left-color: #ff1d5e;
+    border-right-color: #ff1d5e;
+}
+
+/* Animation du radar-spinner */
+@keyframes radar-spinner-animation {
+50% {
+    transform: rotate(180deg);
+}
+100% {
+    transform: rotate(0deg);
+}
+}
+
+/* Masque le contenu une fois la page complètement chargée */
+.hide {
+    display: none;
+}
