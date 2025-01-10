@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css?family=Source+Code+Pro:200,900');
+
 /* Global Styles */
 * {
     margin: 0;
@@ -40,15 +42,6 @@ header nav ul li a {
 .hero p {
     font-size: 1.2em;
     margin-bottom: 20px;
-}
-.hero button {
-    background-color: #00b3b3;
-    border: none;
-    padding: 15px 30px;
-    font-size: 1.2em;
-    cursor: pointer;
-    color: white;
-    border-radius: 5px;
 }
 
 /* Room Section */
@@ -95,15 +88,6 @@ form input, form select {
     border-radius: 5px;
     color: white;
 }
-form button {
-    background-color: #00b3b3;
-    padding: 15px 30px;
-    font-size: 1.2em;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-}
 
 /* Contact Section */
 #contact {
@@ -124,69 +108,115 @@ footer {
     padding: 20px;
 }
 
-/* CSS du radar-spinner */
-.radar-spinner, .radar-spinner * {
-    box-sizing: border-box;
+/* Boutton Animation */
+
+/* Style du bouton de réservation */
+
+:root {
+    --text-color: hsla(210, 50%, 85%, 1);
+    --shadow-color: hsla(210, 40%, 52%, .4);
+    --btn-color: #007e7e;
+    --bg-color: #141218;
 }
 
-.radar-spinner {
-    height: 60px;
-    width: 60px;
-    position: relative;
+
+button {
+    position:relative;
+    padding: 10px 20px;  
+    border: none;
+    background: none;
+    cursor: pointer;
+
+    font-family: "Source Code Pro";
+    font-weight: 900;
+    text-transform: uppercase;
+    font-size: 20px;  
+    color: var(--text-color);
+
+    background-color: var(--btn-color);
+    box-shadow: var(--shadow-color) 2px 2px 22px;
+    border-radius: 4px; 
+    z-index: 0;  
+    overflow: hidden;   
 }
 
-.radar-spinner .circle {
+button:focus {
+    outline-color: transparent;
+    box-shadow: var(--btn-color) 2px 2px 22px;
+}
+
+.right::after, button::after {
+    content: var(--content);
+    display: block;
     position: absolute;
-    height: 100%;
+    white-space: nowrap;
+    padding: 40px 40px;
+    pointer-events:none;
+}
+
+button::after{
+    font-weight: 200;
+    top: -30px;
+    left: -20px;
+} 
+
+.right, .left {
+    position: absolute;
     width: 100%;
+    height: 100%;
+    top: 0;
+}
+.right {
+    left: 66%;
+}
+.left {
+    right: 66%;
+}
+.right::after {
+    top: -30px;
+    left: calc(-66% - 20px);
+
+    background-color: var(--bg-color);
+    color:transparent;
+    transition: transform .4s ease-out;
+    transform: translate(0, -90%) rotate(0deg)
+}
+
+button:hover .right::after {
+    transform: translate(0, -47%) rotate(0deg)
+}
+
+button .right:hover::after {
+    transform: translate(0, -50%) rotate(-7deg)
+}
+
+button .left:hover ~ .right::after {
+    transform: translate(0, -50%) rotate(7deg)
+}
+
+/* bubbles */
+button::before {
+    content: '';
+    pointer-events: none;
+    opacity: .6;
+    background:
+        radial-gradient(circle at 20% 35%,  transparent 0,  transparent 2px, var(--text-color) 3px, var(--text-color) 4px, transparent 4px),
+        radial-gradient(circle at 75% 44%, transparent 0,  transparent 2px, var(--text-color) 3px, var(--text-color) 4px, transparent 4px),
+        radial-gradient(circle at 46% 52%, transparent 0, transparent 4px, var(--text-color) 5px, var(--text-color) 6px, transparent 6px);
+
+    width: 100%;
+    height: 300%;
     top: 0;
     left: 0;
-    animation: radar-spinner-animation 2s infinite;
+    position: absolute;
+    animation: bubbles 5s linear infinite both;
 }
 
-.radar-spinner .circle:nth-child(1) {
-    padding: calc(60px * 5 * 2 * 0 / 110);
-    animation-delay: 300ms;
+@keyframes bubbles {
+from {
+    transform: translate();
 }
-
-.radar-spinner .circle:nth-child(2) {
-    padding: calc(60px * 5 * 2 * 1 / 110);
-    animation-delay: 300ms;
+to {
+    transform: translate(0, -66.666%);
 }
-
-.radar-spinner .circle:nth-child(3) {
-    padding: calc(60px * 5 * 2 * 2 / 110);
-    animation-delay: 300ms;
-}
-
-.radar-spinner .circle:nth-child(4) {
-    padding: calc(60px * 5 * 2 * 3 / 110);
-    animation-delay: 0ms;
-}
-
-.radar-spinner .circle-inner, .radar-spinner .circle-inner-container {
-    height: 100%;
-    width: 100%;
-    border-radius: 50%;
-    border: calc(60px * 5 / 110) solid transparent;
-}
-
-.radar-spinner .circle-inner {
-    border-left-color: #ff1d5e;
-    border-right-color: #ff1d5e;
-}
-
-/* Animation du radar-spinner */
-@keyframes radar-spinner-animation {
-50% {
-    transform: rotate(180deg);
-}
-100% {
-    transform: rotate(0deg);
-}
-}
-
-/* Masque le contenu une fois la page complètement chargée */
-.hide {
-    display: none;
 }

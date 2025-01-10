@@ -5,101 +5,87 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Escape Game</title>
-    <link rel="stylesheet" href="css/index.css">
+    <link rel="stylesheet" href="css/index.css"> <!-- Lien vers le fichier CSS -->
 </head>
-<body>
-  <!-- Loader radar-spinner -->
-  <div class="radar-spinner" id="loader">
-    <div class="circle">
-      <div class="circle-inner-container">
-        <div class="circle-inner"></div>
-      </div>
+<body> 
+
+  <!-- Navigation -->
+  <header>
+    <nav>
+      <ul>
+        <li><a href="#accueil">Accueil</a></li>
+        <li><a href="#salles">Nos Salles</a></li>
+        <li><a href="#reservation">Réserver</a></li>
+        <li><a href="#contact">Contact</a></li>
+        <li><a href="#contact">Connexion</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <!-- Accueil Section -->
+  <section id="accueil" class="hero hide">
+    <h1>Bienvenue dans notre Escape Game</h1>
+    <p>Venez tester votre esprit d'équipe et résoudre des énigmes palpitantes !</p>
+
+    <button style="--content: 'Réservez votre aventure';" onclick="window.location.href='#reservation'">
+        <div class="left"></div>
+        Réservez votre aventure
+        <div class="right"></div>
+      </button>
+  </section>
+
+  <!-- Nos Salles Section -->
+  <section id="salles" class="hide">
+    <h2>Nos Salles</h2>
+    <div class="room">
+      <h3>Antares</h3>
+      <p>WIP</p>
     </div>
-
-    <div class="circle">
-      <div class="circle-inner-container">
-        <div class="circle-inner"></div>
-      </div>
+    <div class="room">
+      <h2>D'autres à venir ...</h2>
     </div>
+  </section>
 
-    <div class="circle">
-      <div class="circle-inner-container">
-        <div class="circle-inner"></div>
-      </div>
-    </div>
+  <!-- Réservation Section -->
+  <section id="reservation" class="hide">
+    <h2>Réservez votre aventure</h2>
+    <form action="#" method="post">
+      <label for="nom">Nom</label>
+      <input type="text" id="nom" name="nom" required>
 
-    <div class="circle">
-      <div class="circle-inner-container">
-        <div class="circle-inner"></div>
-      </div>
-    </div>
-  </div>
+      <label for="salle">Choisir une salle</label>
+      <select id="salle" name="salle">
+        <option value="manoir">Antares (WIP)</option>
+      </select>
 
-    <!-- Navigation -->
-    <header>
-        <nav>
-            <ul>
-                <li><a href="#accueil">Accueil</a></li>
-                <li><a href="#salles">Nos Salles</a></li>
-                <li><a href="#reservation">Réserver</a></li>
-                <li><a href="#contact">Contact</a></li>
-            </ul>
-        </nav>
-    </header>
+      <label for="date">Date de réservation</label>
+      <input type="date" id="date" name="date" required>
 
-    <!-- Accueil Section -->
-    <section id="accueil" class="hero">
-        <h1>Bienvenue dans notre Escape Game</h1>
-        <p>Venez tester votre esprit d'équipe et résoudre des énigmes palpitantes !</p>
-        <button onclick="window.location.href='#reservation'">Réservez votre aventure</button>
-    </section>
+      <button style="--content: 'Réserver';" type="submit">
+        <div class="left"></div>
+        Réserver
+        <div class="right"></div>
+      </button>
+      
 
-    <!-- Nos Salles Section -->
-    <section id="salles">
-        <h2>Nos Salles</h2>
-        <div class="room">
-            <h3>Antares</h3>
-            <p>WIP</p>
-        </div>
-        <div class="room">
-            <h2>D'autre a venir ...</h2>
-        </div>
-    </section>
+    </form>
+  </section>
 
-    <!-- Réservation Section -->
-    <section id="reservation">
-        <h2>Réservez votre aventure</h2>
-        <form action="#" method="post">
-            <label for="nom">Nom</label>
-            <input type="text" id="nom" name="nom" required>
+  <!-- Contact Section -->
+  <section id="contact" class="hide">
+    <h2>Contact</h2>
+    <p>Vous avez des questions ? Contactez-nous dès maintenant !</p>
+    <address>
+      Email: contact@AntaresEscapeGame.com<br>
+      Téléphone: 01 45 14 28 28
+    </address>
+  </section>
 
-            <label for="salle">Choisir une salle</label>
-            <select id="salle" name="salle">
-                <option value="manoir">Antares (WIP)</option>
-            </select>
+  <!-- Footer -->
+  <footer>
+    <p>&copy; 2025 Escape Game Antares. Tous droits réservés.</p>
+  </footer>
 
-            <label for="date">Date de réservation</label>
-            <input type="date" id="date" name="date" required>
-
-            <button type="submit">Réserver</button>
-        </form>
-    </section>
-
-    <!-- Contact Section -->
-    <section id="contact">
-        <h2>Contact</h2>
-        <p>Vous avez des questions ? Contactez-nous dès maintenant !</p>
-        <address>
-            Email: contact@AntaresEscapeGame.com<br>
-            Téléphone: 01 45 14 28 28
-        </address>
-    </section>
-
-    <!-- Footer -->
-    <footer>
-        <p>&copy; 2025 Escape Game Antares. Tous droits réservés.</p>
-    </footer>
-
-    <script src="script.js"></script>
+  <script src="js/code.js"></script> <!-- Lien vers le fichier JS -->
 </body>
 </html>

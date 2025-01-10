@@ -18,6 +18,6 @@ app.use((req, res) => {
     res.status(502).render('error/502');
 });
 
-app.listen(port, "0.0.0.0", () => {
+app.listen(port, "127.0.0.1", () => {
     console.log(`Serveur en écoute sur http://localhost:${port}`);
 });
