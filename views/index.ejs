@@ -5,22 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Escape Game</title>
-    <link rel="stylesheet" href="css/index.css"> <!-- Lien vers le fichier CSS -->
+    <link rel="stylesheet" href="css/index.css">
 </head>
 <body> 
 
-  <!-- Navigation -->
-  <header>
-    <nav>
-      <ul>
-        <li><a href="#accueil">Accueil </a></li>
-        <li><a href="#salles">Nos Salles</a></li>
-        <li><a href="#reservation">Réserver</a></li>
-        <li><a href="#contact">Contact</a></li>
-        <li><a href="#contact">Connexion</a></li>
-      </ul>
-    </nav>
-  </header>
+  <%- include('partials/header'); %>
 
   <!-- Accueil Section -->
   <section id="accueil" class="hero hide">
@@ -81,10 +70,10 @@
     </address>
   </section>
 
-  <!-- Footer -->
-  <footer>
-    <p>&copy; 2025 Escape Game Antares. Tous droits réservés.</p>
-  </footer>
+
+  <%- include('partials/footer'); %>
+
+  
 
   <script src="js/code.js"></script> <!-- Lien vers le fichier JS -->
 </body>

@@ -3,9 +3,11 @@ const app = express();
 const port = 3000;
 const path = require('path')
 const routes = require('./routes/web/');
+const APIroutes = require('./routes/api/');
 
 app.use(express.static("public"));
 app.use('/', routes);
+app.use('/api', APIroutes);
 app.set('view engine', 'ejs');
 app.set('views', './views');
 
