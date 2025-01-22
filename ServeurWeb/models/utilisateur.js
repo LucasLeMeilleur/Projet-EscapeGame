@@ -26,7 +26,7 @@ const TableUtilisateur = sequelize.define('utilisateur', {
   permission: {
     type: DataTypes.INTEGER,
     allowNull: false,
-    field: "permission";
+    field: "permission"
   }
 }, {
   tableName: 'utilisateur',      

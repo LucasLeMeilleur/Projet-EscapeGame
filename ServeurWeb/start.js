@@ -9,6 +9,9 @@ const path = require('path')
 const routes = require('./routes/web/');
 const APIroutes = require('./routes/api/');
 
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
 app.use(express.static("public"));
 app.use('/', routes);
 app.use('/api', APIroutes);

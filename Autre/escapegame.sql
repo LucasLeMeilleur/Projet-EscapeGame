@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Hôte : localhost:3306
--- Généré le : mer. 22 jan. 2025 à 10:18
+-- Généré le : mer. 22 jan. 2025 à 15:39
 -- Version du serveur : 8.0.40-0ubuntu0.24.04.1
 -- Version de PHP : 8.3.6
 
@@ -30,8 +30,15 @@ SET time_zone = "+00:00";
 CREATE TABLE `equipe` (
   `idequipe` int NOT NULL,
   `nom` varchar(70) NOT NULL,
-  `date` timestamp NOT NULL
+  `date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- Déchargement des données de la table `equipe`
+--
+
+INSERT INTO `equipe` (`idequipe`, `nom`, `date`) VALUES
+(1, 'Test', '2025-01-22 15:08:55');
 
 -- --------------------------------------------------------
 
@@ -41,11 +48,18 @@ CREATE TABLE `equipe` (
 
 CREATE TABLE `game` (
   `idgame` int NOT NULL,
-  `idmissionEtat` int NOT NULL,
+  `idmissionEtat` int DEFAULT NULL,
   `idscenario` int NOT NULL,
-  `date` timestamp NOT NULL,
+  `date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `idequipe` int NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- Déchargement des données de la table `game`
+--
+
+INSERT INTO `game` (`idgame`, `idmissionEtat`, `idscenario`, `date`, `idequipe`) VALUES
+(7, NULL, 1, '2025-01-22 15:12:12', 1);
 
 -- --------------------------------------------------------
 
@@ -57,6 +71,13 @@ CREATE TABLE `mission` (
   `idmission` int NOT NULL,
   `nom` varchar(100) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- Déchargement des données de la table `mission`
+--
+
+INSERT INTO `mission` (`idmission`, `nom`) VALUES
+(1, 'Mission 1');
 
 -- --------------------------------------------------------
 
@@ -72,6 +93,13 @@ CREATE TABLE `missionEtat` (
   `idmission` int NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
+--
+-- Déchargement des données de la table `missionEtat`
+--
+
+INSERT INTO `missionEtat` (`idetat`, `heuredebut`, `heurefin`, `idgame`, `idmission`) VALUES
+(17, '16:28:41', NULL, 1, 1);
+
 -- --------------------------------------------------------
 
 --
@@ -82,7 +110,8 @@ CREATE TABLE `reservation` (
   `idreservation` int NOT NULL,
   `date` timestamp NOT NULL,
   `utilisateur` int NOT NULL,
-  `salle` int NOT NULL
+  `salle` int NOT NULL,
+  `equipe` int NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- --------------------------------------------------------
@@ -108,6 +137,13 @@ CREATE TABLE `scenario` (
   `nom` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
   `ordre` varchar(50) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- Déchargement des données de la table `scenario`
+--
+
+INSERT INTO `scenario` (`idscenario`, `nom`, `ordre`) VALUES
+(1, 'pirate', '1,2,5,4,6');
 
 -- --------------------------------------------------------
 
@@ -161,7 +197,8 @@ ALTER TABLE `missionEtat`
 ALTER TABLE `reservation`
   ADD PRIMARY KEY (`idreservation`),
   ADD KEY `fk_reservation_utilisateur1_idx` (`utilisateur`),
-  ADD KEY `fk_reservation_salle1_idx` (`salle`);
+  ADD KEY `fk_reservation_salle1_idx` (`salle`),
+  ADD KEY `fk_reservation_equipe1_idx` (`equipe`);
 
 --
 -- Index pour la table `salle`
@@ -189,25 +226,25 @@ ALTER TABLE `utilisateur`
 -- AUTO_INCREMENT pour la table `equipe`
 --
 ALTER TABLE `equipe`
-  MODIFY `idequipe` int NOT NULL AUTO_INCREMENT;
+  MODIFY `idequipe` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT pour la table `game`
 --
 ALTER TABLE `game`
-  MODIFY `idgame` int NOT NULL AUTO_INCREMENT;
+  MODIFY `idgame` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- AUTO_INCREMENT pour la table `mission`
 --
 ALTER TABLE `mission`
-  MODIFY `idmission` int NOT NULL AUTO_INCREMENT;
+  MODIFY `idmission` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT pour la table `missionEtat`
 --
 ALTER TABLE `missionEtat`
-  MODIFY `idetat` int NOT NULL AUTO_INCREMENT;
+  MODIFY `idetat` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
 
 --
 -- AUTO_INCREMENT pour la table `reservation`
@@ -225,7 +262,7 @@ ALTER TABLE `salle`
 -- AUTO_INCREMENT pour la table `scenario`
 --
 ALTER TABLE `scenario`
-  MODIFY `idscenario` int NOT NULL AUTO_INCREMENT;
+  MODIFY `idscenario` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT pour la table `utilisateur`
@@ -242,6 +279,7 @@ ALTER TABLE `utilisateur`
 --
 ALTER TABLE `game`
   ADD CONSTRAINT `fk_game_equipe1` FOREIGN KEY (`idequipe`) REFERENCES `equipe` (`idequipe`),
+  ADD CONSTRAINT `fk_game_missionEtat1` FOREIGN KEY (`idmissionEtat`) REFERENCES `missionEtat` (`idetat`),
   ADD CONSTRAINT `fk_game_scenario1` FOREIGN KEY (`idscenario`) REFERENCES `scenario` (`idscenario`);
 
 --
@@ -254,6 +292,7 @@ ALTER TABLE `missionEtat`
 -- Contraintes pour la table `reservation`
 --
 ALTER TABLE `reservation`
+  ADD CONSTRAINT `fk_reservation_equipe1` FOREIGN KEY (`equipe`) REFERENCES `equipe` (`idequipe`),
   ADD CONSTRAINT `fk_reservation_salle1` FOREIGN KEY (`salle`) REFERENCES `salle` (`idsalle`),
   ADD CONSTRAINT `fk_reservation_utilisateur1` FOREIGN KEY (`utilisateur`) REFERENCES `utilisateur` (`idUser`);
 COMMIT;
