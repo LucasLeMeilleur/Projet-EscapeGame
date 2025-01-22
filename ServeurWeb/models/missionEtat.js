@@ -1,7 +1,7 @@
 const { DataTypes } = require('sequelize');
 const sequelize = require('../config/database'); 
 
-const TableEquipe = sequelize.define('equipe', {
+const TableMissionEtat = sequelize.define('missionEtat', {
   idetat: {
     type: DataTypes.INTEGER,
     primaryKey: true,
@@ -15,7 +15,7 @@ const TableEquipe = sequelize.define('equipe', {
   }, 
   heurefin: {
     type: DataTypes.TIME,
-    allowNull: false,
+    allowNull: true,
     field:"heurefin"
   },
   idgame: {
@@ -29,9 +29,9 @@ const TableEquipe = sequelize.define('equipe', {
     field:"idmission"
   }
 }, {
-  tableName: 'equipe',      
+  tableName: 'missionEtat',      
   timestamps: false,       
 });
 
 
-module.exports = TableEquipe;
+module.exports = TableMissionEtat;

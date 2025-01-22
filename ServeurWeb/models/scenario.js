@@ -1,7 +1,7 @@
 const { DataTypes } = require('sequelize');
 const sequelize = require('../config/database'); 
 
-const TableSalle = sequelize.define('salle', {
+const TableScenario = sequelize.define('scenario', {
   idscenario: {
     type: DataTypes.INTEGER,
     primaryKey: true,
@@ -19,9 +19,9 @@ const TableSalle = sequelize.define('salle', {
     field:"ordre"
   }
 }, {
-  tableName: 'salle',      
+  tableName: 'scenario',      
   timestamps: false,       
 });
 
 
-module.exports = TableSalle;
+module.exports = TableScenario;

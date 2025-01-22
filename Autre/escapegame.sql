@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Hôte : localhost:3306
--- Généré le : mar. 21 jan. 2025 à 10:18
+-- Généré le : mer. 22 jan. 2025 à 10:18
 -- Version du serveur : 8.0.40-0ubuntu0.24.04.1
 -- Version de PHP : 8.3.6
 
@@ -182,6 +182,58 @@ ALTER TABLE `utilisateur`
   ADD PRIMARY KEY (`idUser`);
 
 --
+-- AUTO_INCREMENT pour les tables déchargées
+--
+
+--
+-- AUTO_INCREMENT pour la table `equipe`
+--
+ALTER TABLE `equipe`
+  MODIFY `idequipe` int NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT pour la table `game`
+--
+ALTER TABLE `game`
+  MODIFY `idgame` int NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT pour la table `mission`
+--
+ALTER TABLE `mission`
+  MODIFY `idmission` int NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT pour la table `missionEtat`
+--
+ALTER TABLE `missionEtat`
+  MODIFY `idetat` int NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT pour la table `reservation`
+--
+ALTER TABLE `reservation`
+  MODIFY `idreservation` int NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT pour la table `salle`
+--
+ALTER TABLE `salle`
+  MODIFY `idsalle` int NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT pour la table `scenario`
+--
+ALTER TABLE `scenario`
+  MODIFY `idscenario` int NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT pour la table `utilisateur`
+--
+ALTER TABLE `utilisateur`
+  MODIFY `idUser` int NOT NULL AUTO_INCREMENT;
+
+--
 -- Contraintes pour les tables déchargées
 --
 
@@ -190,7 +242,6 @@ ALTER TABLE `utilisateur`
 --
 ALTER TABLE `game`
   ADD CONSTRAINT `fk_game_equipe1` FOREIGN KEY (`idequipe`) REFERENCES `equipe` (`idequipe`),
-  ADD CONSTRAINT `fk_game_missionEtat1` FOREIGN KEY (`idmissionEtat`) REFERENCES `missionEtat` (`idetat`),
   ADD CONSTRAINT `fk_game_scenario1` FOREIGN KEY (`idscenario`) REFERENCES `scenario` (`idscenario`);
 
 --
