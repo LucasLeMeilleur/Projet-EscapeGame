@@ -13,6 +13,11 @@ router.get('/lien', (req,res)=>{
     res.status(200).render('lien');
 })
 
+router.get('/inscription', (req,res)=>{
+    res.status(200).render('inscription');
+})
+
+
 
 
 
