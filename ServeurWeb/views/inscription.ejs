@@ -1,80 +1,32 @@
 <!DOCTYPE html>
 
 <html>
-    <head>
-        <meta charset="utf-8">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <title>Escape Game</title>
-        <meta name="description" content="">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <link rel="stylesheet" href="">
-        <script src="https://cdn.jsdelivr.net/npm/jsencrypt/bin/jsencrypt.min.js"></script>
-  
-        <script type="module" src="js/inscription.js" defer></script>
-    </head>
-    <body>
 
-        <script>
-            
-        </script>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Escape Game</title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="">
+    <script src="https://cdn.jsdelivr.net/npm/jsencrypt/bin/jsencrypt.min.js"></script>
 
-        <form id="registerForm" onsubmit="registerUser(event)">
-            <input type="text" id="username">
-            <input type="password" id="password">
-            <button id="butt" type="submit">Test</button>
-        </form>
+    <script type="module" src="js/inscription.js" defer></script>
+</head>
 
-        <script>
-            
+<body>
 
-            async function fetchPublicKey() {
-                const response = await fetch('/api/key/publickey');
-                const publicKey = await response.json();
-                return publicKey.key;
-            }
+    <script>
 
-            async function registerUser(event) {
-                event.preventDefault();
+    </script>
 
-                const username = document.getElementById('username').value;
-                const password = document.getElementById('password').value;
+    <form id="registerForm" onsubmit="registerUser(event)">
+        <input type="text" id="username">
+        <input type="password" id="password">
+        <button id="butt">Test</button>
+    </form>
 
-                // Récupérer la clé publique du serveur
-                const publicKey = await fetchPublicKey();
+    
+</body>
 
-                console.log(publicKey)
-
-                // Chiffrer le mot de passe avec la clé publique
-                const encrypt = new JSEncrypt();
-                encrypt.setPublicKey(publicKey);
-
-
-                const encryptedPassword = encrypt.encrypt(password);
-
-                console.log(username, encryptedPassword)
-
-                if (!encryptedPassword) {
-                alert('Erreur lors du chiffrement du mot de passe.');
-                return;
-                }
-
-
-                // Envoyer les données chiffrées au serveur
-                const response = await fetch('/api/user/register', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ username, password:encryptedPassword }),
-                });
-
-                const result = await response.json();
-                if (response.ok) {
-                alert('Inscription réussie !');
-                } else {
-                alert(`Erreur : ${result.error}`);
-                }
-            }
-            document.getElementById('registerForm').addEventListener('submit', registerUser);
-
-        </script>
-    </body>
 </html>

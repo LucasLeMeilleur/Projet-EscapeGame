@@ -13,7 +13,7 @@ router.get('/lien', (req,res)=>{
     res.status(200).render('lien');
 })
 
-router.get('/inscription', (req,res)=>{
+router.get('/register', (req,res)=>{
     res.status(200).render('inscription');
 })
 

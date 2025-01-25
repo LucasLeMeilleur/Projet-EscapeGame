@@ -18,7 +18,7 @@ const TableUtilisateur = sequelize.define('utilisateur', {
     allowNull: false,
     field:"password"
   },
-  password: {
+  email: {
     type: DataTypes.STRING(150),
     allowNull: false,
     field:"email"
