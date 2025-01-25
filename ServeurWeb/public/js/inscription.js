@@ -50,54 +50,41 @@ async function encryptWithPublicKey(publicKey, data) {
     return encodeBase64(encrypted);
 }
 
-
 document.getElementById('registerForm').addEventListener('submit', async function (event) {
     event.preventDefault(); 
-    
-    const form = event.target;
-    const submitButton = form.querySelector('button[type="submit"]');
 
-    if (submitButton) {
-        submitButton.disabled = true;
-    }
+    // Récupération et envoie des donnée du formulaire chiffré a l'API
+    const formDataConfig = new FormData(this);
 
     try {
-        const username = document.getElementById('username').value;
-        const password = document.getElementById('password').value;
 
+        // Chiffrement du formulaire
+        const jsonData = JSON.stringify(Object.fromEntries(formDataConfig.entries()));
         const publicKeyPem = await fetchPublicKey();
-
         const publicKey = await importPublicKey(publicKeyPem);
-
-        const encryptedPassword = await encryptWithPublicKey(publicKey, password);
-
-        console.log(username, encryptedPassword);
-
-        if (!encryptedPassword) {
+        const encryptedForm = await encryptWithPublicKey(publicKey, jsonData);
+        if (!encryptedForm) {
             alert('Erreur lors du chiffrement du mot de passe.');
             return;
         }
 
-        
+        // Envoie du formulaire
         const response = await fetch('/api/user/register', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ username, password: encryptedPassword }),
+            body: JSON.stringify({ encryptedForm }),
         });
 
-        const result = await response.json();
         if (response.ok) {
+            console.log('Inscription réussie !');
             alert('Inscription réussie !');
-        } else {
-            alert(`Erreur : ${result.error}`);
+        } else {            
+            const errorDetails = await response.text();
+            throw new Error(`Erreur serveur (${response.status}): ${errorDetails}`);
         }
     } catch (error) {
+        
         console.error('Erreur lors de l\'inscription :', error);
         alert('Une erreur est survenue. Veuillez réessayer.');
-    } finally {
-        
-        if (submitButton) {
-            submitButton.disabled = false;
-        }
     }
 });
