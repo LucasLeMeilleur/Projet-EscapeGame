@@ -20,6 +20,9 @@ app.set('view engine', 'ejs');
 app.set('views', './views');
 
 
+global.JWTToken = process.env.TokenJWT;
+
+
 app.use((req, res) => {
     res.status(404).render('error/404');
 });

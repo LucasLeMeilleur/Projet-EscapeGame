@@ -1,6 +1,7 @@
 const sequelize = require('../../../config/database');
 const bcrypt = require('bcrypt');
-const NodeRSA = require('node-rsa');
+const cookieParser = require('cookie-parser');
+const jwt = require('jsonwebtoken');
 const crypto = require('crypto');
 const TableUtilisateur = require('../../../models/utilisateur');
 const { format } = require('path');
@@ -36,6 +37,9 @@ function isValidEmail(email) {
   return emailRegex.test(email);
 }
 
+
+
+
 // GET
 
 exports.listeUser = async (req, res) => {
@@ -55,11 +59,10 @@ exports.listeUser = async (req, res) => {
 
 // POST
 
-exports.addUser = async (req, res) => {
+exports.regiserUser = async (req, res) => {
   try {
     const ReqData = req.body;
     const DecryptedForm = decryptWithPrivateKey((ReqData.encryptedForm));
-
     if(!DecryptedForm){
       res.status(407).send("Formulaire non chiffré");
       return;
@@ -71,12 +74,12 @@ exports.addUser = async (req, res) => {
     const Email = JSONDecryptedForm.email;
 
     if(!Password || !Username || !Email){
-      res.status(407).send("Formulaire incomplet");      
+      res.status(400).send("Formulaire incomplet");      
       return;
     }
 
     if(!isValidEmail(Email)){
-      res.status(407).send("Mail invalide");
+      res.status(400).send("Mail invalide");
       return;
     }
 
@@ -94,4 +97,49 @@ exports.addUser = async (req, res) => {
     res.status(500).json({ message: error.message })
     return;
   }
+}
+
+exports.loginUser = async (req, res) => {
+  
+  try{
+    const ReqData = req.body
+    const DecryptedForm = decryptWithPrivateKey((ReqData.encryptedForm));
+    if(!DecryptedForm){
+      res.status(400).send("Formulaire non chiffré");
+      return;
+    }
+
+    const JSONDecryptedForm = JSON.parse(DecryptedForm);
+    const Email = JSONDecryptedForm.email;
+    const Password = JSONDecryptedForm.password;
+
+    if(!Email || !Password){
+      res.status(400).send("Formulaire invalide");
+    }
+    
+    const user = await TableUtilisateur.findOne({ where: { email:Email } });
+    if(!user){
+      res.status(400).send("Identifiants introuvable");
+      return;
+    }
+
+    console.log(user);
+    
+
+    const isValidPassword = await bcrypt.compare(Password, user.password);
+    if (!isValidPassword) return res.status(400).json({ error: 'Mot de passe incorrect.' });
+
+    const token = jwt.sign(
+        { id: user.id, permissions: user.permissions },
+        global.JWTToken,
+        { expiresIn: '8h' }
+    );
+
+    res.cookie('token', token, { httpOnly: true, secure: false });
+    res.json({ message: 'Connexion réussie !' });
+  }catch (error){
+    res.status(500).json({ message: error.message })
+    return;
+  }
+
 }

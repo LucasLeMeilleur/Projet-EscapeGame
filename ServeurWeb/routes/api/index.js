@@ -3,30 +3,51 @@ const router = express.Router();
 const user = require('./controller/user');
 const object = require('./controller/object');
 
+// Fonctions utile
+
+// Middleware d'authentification
+const authMiddleware = (req, res, next) => {
+    const token = req.cookies.token;
+    if (!token) return res.status(401).json({ error: 'Accès non autorisé.' });
+
+    try {
+        const decoded = jwt.verify(token, SECRET_KEY);
+        req.user = decoded;
+        next();
+    } catch (error) {
+        res.status(401).json({ error: 'Token invalide ou expiré.' });
+    }
+};
+
+// Middleware de vérification des permissions
+const checkPermission = (requiredPermission) => (req, res, next) => {
+    if (!req.user || !req.user.permissions.includes(requiredPermission)) {
+        return res.status(403).json({ error: 'Permission refusée.' });
+    }
+    next();
+};
+
+
 // Gestion api game
 
 
-    // GET 
+// GET 
 
 router.get('/game/jeux/liste', object.listeAllGame);
 router.get('/game/salle/liste', object.listeSalle);
 router.get('/game/scenario/liste', object.listeScenario);
 router.get('/game/mission/liste', object.listeMission);
 router.get('/game/missionEtat/liste', object.listeMissionEtat);
-
 router.get('/key/publickey', (req, res) => {
-    res.send({key:global.keyRSA.getPublicKey()});
+    res.send({ key: global.keyRSA.getPublicKey() });
 });
 
-
-
-    // GET avec body
+// GET avec body
 
 router.get('/game/missionEtat/id', object.listeMissionEtatid);
 router.get('/game/missionEtat/gameid', object.listeMissionEtatGameid);
 
-
-    // POST
+// POST
 
 router.post('/game/jeux/ajout', object.AjouterPartie);
 router.post('/game/salle/ajout', object.AjouterSalle);
@@ -34,16 +55,18 @@ router.post('/game/scenario/ajout', object.AjouterScenar);
 router.post('/game/mission/ajout', object.AjouterMission);
 router.post('/game/missionetat/ajout', object.AjouterMissionEtat);
 
+
 // Gestion api user
 
 
-    //GET 
+//GET 
 
 router.get('/user/liste', user.listeUser);
 
-    //POST
+//POST
 
-router.post('/user/register', user.addUser);
+router.post('/user/register', user.regiserUser);
+router.post('/user/login', user.loginUser);
 
 
 

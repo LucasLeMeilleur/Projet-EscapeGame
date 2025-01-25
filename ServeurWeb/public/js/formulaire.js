@@ -50,8 +50,47 @@ async function encryptWithPublicKey(publicKey, data) {
     return encodeBase64(encrypted);
 }
 
-document.getElementById('registerForm').addEventListener('submit', async function (event) {
-    event.preventDefault(); 
+if (document.getElementById('registerForm')) {
+    document.getElementById('registerForm').addEventListener('submit', async function (event) {
+        event.preventDefault();
+
+        // Récupération et envoie des donnée du formulaire chiffré a l'API
+        const formDataConfig = new FormData(this);
+
+        try {
+
+            // Chiffrement du formulaire
+            const jsonData = JSON.stringify(Object.fromEntries(formDataConfig.entries()));
+            const publicKeyPem = await fetchPublicKey();
+            const publicKey = await importPublicKey(publicKeyPem);
+            const encryptedForm = await encryptWithPublicKey(publicKey, jsonData);
+            if (!encryptedForm) {
+                alert('Erreur lors du chiffrement du mot de passe.');
+                return;
+            }
+
+            // Envoie du formulaire
+            const response = await fetch('/api/user/register', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ encryptedForm }),
+            });
+
+            if (response.ok) {
+                console.log('Inscription réussie !');
+            } else {
+                const errorDetails = await response.text();
+                throw new Error(`Erreur serveur (${response.status}): ${errorDetails}`);
+            }
+        } catch (error) {
+            console.error('Erreur lors de l\'inscription :', error);
+        }
+    });
+}
+
+
+document.getElementById('loginForm').addEventListener('submit', async function (event) {
+    event.preventDefault();
 
     // Récupération et envoie des donnée du formulaire chiffré a l'API
     const formDataConfig = new FormData(this);
@@ -69,22 +108,19 @@ document.getElementById('registerForm').addEventListener('submit', async functio
         }
 
         // Envoie du formulaire
-        const response = await fetch('/api/user/register', {
+        const response = await fetch('/api/user/login', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ encryptedForm }),
         });
 
         if (response.ok) {
-            console.log('Inscription réussie !');
-            alert('Inscription réussie !');
-        } else {            
+            console.log('Connexion réussie !');
+        } else {
             const errorDetails = await response.text();
             throw new Error(`Erreur serveur (${response.status}): ${errorDetails}`);
         }
     } catch (error) {
-        
-        console.error('Erreur lors de l\'inscription :', error);
-        alert('Une erreur est survenue. Veuillez réessayer.');
+        console.error('Erreur lors de la connexion :', error);
     }
 });
