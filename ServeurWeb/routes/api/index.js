@@ -11,7 +11,7 @@ const authMiddleware = (req, res, next) => {
     if (!token) return res.status(401).json({ error: 'Accès non autorisé.' });
 
     try {
-        const decoded = jwt.verify(token, SECRET_KEY);
+        const decoded = jwt.verify(token, process.env.TokenJWT);
         req.user = decoded;
         next();
     } catch (error) {

@@ -129,11 +129,16 @@ exports.loginUser = async (req, res) => {
     const isValidPassword = await bcrypt.compare(Password, user.password);
     if (!isValidPassword) return res.status(400).json({ error: 'Mot de passe incorrect.' });
 
+    console.log(global.JWTToken );
+    
+
     const token = jwt.sign(
-        { id: user.id, permissions: user.permissions },
-        global.JWTToken,
+        { id: user.id, permission: user.permission },
+        global.JWTToken ,
         { expiresIn: '8h' }
     );
+
+    
 
     res.cookie('token', token, { httpOnly: true, secure: false });
     res.json({ message: 'Connexion réussie !' });

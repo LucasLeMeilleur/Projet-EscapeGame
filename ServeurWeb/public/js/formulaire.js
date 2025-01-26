@@ -89,38 +89,40 @@ if (document.getElementById('registerForm')) {
 }
 
 
-document.getElementById('loginForm').addEventListener('submit', async function (event) {
-    event.preventDefault();
+if (document.getElementById('loginForm')) {
+    document.getElementById('loginForm').addEventListener('submit', async function (event) {
+        event.preventDefault();
 
-    // Récupération et envoie des donnée du formulaire chiffré a l'API
-    const formDataConfig = new FormData(this);
+        // Récupération et envoie des donnée du formulaire chiffré a l'API
+        const formDataConfig = new FormData(this);
 
-    try {
+        try {
 
-        // Chiffrement du formulaire
-        const jsonData = JSON.stringify(Object.fromEntries(formDataConfig.entries()));
-        const publicKeyPem = await fetchPublicKey();
-        const publicKey = await importPublicKey(publicKeyPem);
-        const encryptedForm = await encryptWithPublicKey(publicKey, jsonData);
-        if (!encryptedForm) {
-            alert('Erreur lors du chiffrement du mot de passe.');
-            return;
+            // Chiffrement du formulaire
+            const jsonData = JSON.stringify(Object.fromEntries(formDataConfig.entries()));
+            const publicKeyPem = await fetchPublicKey();
+            const publicKey = await importPublicKey(publicKeyPem);
+            const encryptedForm = await encryptWithPublicKey(publicKey, jsonData);
+            if (!encryptedForm) {
+                alert('Erreur lors du chiffrement du mot de passe.');
+                return;
+            }
+
+            // Envoie du formulaire
+            const response = await fetch('/api/user/login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ encryptedForm }),
+            });
+
+            if (response.ok) {
+                console.log('Connexion réussie !');
+            } else {
+                const errorDetails = await response.text();
+                throw new Error(`Erreur serveur (${response.status}): ${errorDetails}`);
+            }
+        } catch (error) {
+            console.error('Erreur lors de la connexion :', error);
         }
-
-        // Envoie du formulaire
-        const response = await fetch('/api/user/login', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ encryptedForm }),
-        });
-
-        if (response.ok) {
-            console.log('Connexion réussie !');
-        } else {
-            const errorDetails = await response.text();
-            throw new Error(`Erreur serveur (${response.status}): ${errorDetails}`);
-        }
-    } catch (error) {
-        console.error('Erreur lors de la connexion :', error);
-    }
-});
+    });
+}

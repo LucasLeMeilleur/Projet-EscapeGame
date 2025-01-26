@@ -7,9 +7,12 @@ const path = require('path')
 const routes = require('./routes/web/');
 const APIroutes = require('./routes/api/');
 const keyRSA = require('./keyRSA');
+const cookieParser = require('cookie-parser');
 
 
 
+
+app.use(cookieParser());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
