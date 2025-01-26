@@ -24,7 +24,8 @@ function getCurrentTime() {
 
 // GET
 
-exports.listeAllGame = async (req, res)=> {
+        //Partie
+exports.listePartie = async (req, res)=> {
     try {
         const rep = await TableGame.findAll();
 
@@ -36,6 +37,19 @@ exports.listeAllGame = async (req, res)=> {
     }
 }
 
+exports.nombrePartie = async (req,res)=>{
+    try {
+        const rep = await TableGame.count();
+
+        res.status(200).json(rep);
+        return;
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+        return;
+    }
+}
+
+        //Salle
 exports.listeSalle = async (req, res)=> {
     try {
         const rep = await TableSalle.findAll();
@@ -48,6 +62,19 @@ exports.listeSalle = async (req, res)=> {
     }
 }
 
+exports.nombreSalle = async (req,res)=>{
+    try {
+        const rep = await TableSalle.count();
+
+        res.status(200).json(rep);
+        return;
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+        return;
+    }
+}
+
+        //Scenario
 exports.listeScenario = async (req, res)=> {
     try {
         const rep = await TableScenario.findAll();
@@ -60,6 +87,19 @@ exports.listeScenario = async (req, res)=> {
     }
 }
 
+exports.nombreScenario = async (req,res)=>{
+    try {
+        const rep = await TableScenario.count();
+
+        res.status(200).json(rep);
+        return;
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+        return;
+    }
+}
+
+        //Mission
 exports.listeMission = async (req, res)=> {
     try {
         const rep = await TableMission.findAll();
@@ -72,6 +112,19 @@ exports.listeMission = async (req, res)=> {
     }
 }
 
+exports.nombreMission = async (req,res)=>{
+    try {
+        const rep = await TableMission.count();
+
+        res.status(200).json(rep);
+        return;
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+        return;
+    }
+}
+
+        // MissionEtat
 exports.listeMissionEtat = async (req, res)=> {
     try {
         const rep = await TableMissionEtat.findAll();
@@ -83,6 +136,19 @@ exports.listeMissionEtat = async (req, res)=> {
         return;
     }
 }
+
+exports.nombreMissionEtat = async (req,res)=>{
+    try {
+        const rep = await TableMissionEtat.count();
+
+        res.status(200).json(rep);
+        return;
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+        return;
+    }
+}
+
 
 // Get avec body
 

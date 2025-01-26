@@ -33,11 +33,18 @@ const checkPermission = (requiredPermission) => (req, res, next) => {
 
 // GET 
 
-router.get('/game/jeux/liste', object.listeAllGame);
+    //Liste
+router.get('/game/partie/liste', object.listePartie);
 router.get('/game/salle/liste', object.listeSalle);
 router.get('/game/scenario/liste', object.listeScenario);
 router.get('/game/mission/liste', object.listeMission);
 router.get('/game/missionEtat/liste', object.listeMissionEtat);
+
+    //Nombre element
+router.get('/game/jeux/nombre', object.nombrePartie);
+
+
+    // Clé RSA
 router.get('/key/publickey', (req, res) => {
     res.send({ key: global.keyRSA.getPublicKey() });
 });
