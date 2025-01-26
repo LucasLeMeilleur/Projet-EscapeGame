@@ -212,11 +212,6 @@ exports.AjouterPartie = async (req, res)=> {
             return;
         }
 
-        reqprime = await TableEquipe.findOne({where:{ idequipe: EquipeId }});
-        if (!reqprime){
-            res.status(407).send("Equipe non existante");
-            return;
-        }
 
         const rep = await TableGame.create({
             idscenario: ScenarioId,
@@ -347,3 +342,35 @@ exports.AjouterMissionEtat = async (req,res)=>{
     }
 }
 
+exports.DemarrerPartie = async (req, res)=>{
+    try {
+
+        const ReqData = req.body;
+        const PartieId = ReqData.partie;
+        const EquipeId = ReqData.equipe;
+
+        reqprime = await TableGame.findOne({where:{ idgame: PartieId }});
+        if (!reqprime){
+            res.status(400).send("Partie introuvable");
+            return;
+        }
+
+        reqprime = await TableEquipe.findOne({where:{ idequipe: EquipeId }});
+        if (!reqprime){
+            res.status(400).send("Equipe non existante");
+            return;
+        }
+        
+
+        const updatePrime = await TableGame.update(
+            { actif: '1', idequipe: EquipeId }, 
+            { where: { condition_colonne: PartieId } } 
+        );
+
+        res.status(200).json(updatePrime);
+        return;
+    } catch (error) {
+        res.status(500).send(error.message);
+        return;
+    }
+}

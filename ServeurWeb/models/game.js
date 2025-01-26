@@ -25,9 +25,15 @@ const TableGame = sequelize.define('game', {
   },
   idequipe: {
     type: DataTypes.INTEGER,
-    allowNull: false,
+    allowNull: true,
     field:"idequipe"
   },
+  actif: {
+    type: DataTypes.BOOLEAN,
+    allowNull: true,
+    defaultValue: 0,
+    field:"actif"
+  }
 }, {
   tableName: 'game',      
   timestamps: false,       
