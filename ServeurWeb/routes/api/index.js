@@ -69,6 +69,8 @@ router.post('/game/missionetat/ajout', object.AjouterMissionEtat);
 
 router.post('/game/partie/demarrer', object.DemarrerPartie);
 
+router.post('/game/partie/finir', object.FinirPartie);
+
 
 // Gestion api user
 

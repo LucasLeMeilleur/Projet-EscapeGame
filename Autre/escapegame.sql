@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Hôte : localhost:3306
--- Généré le : mer. 22 jan. 2025 à 15:39
+-- Généré le : lun. 27 jan. 2025 à 10:17
 -- Version du serveur : 8.0.40-0ubuntu0.24.04.1
 -- Version de PHP : 8.3.6
 
@@ -51,15 +51,17 @@ CREATE TABLE `game` (
   `idmissionEtat` int DEFAULT NULL,
   `idscenario` int NOT NULL,
   `date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `idequipe` int NOT NULL
+  `idequipe` int NOT NULL,
+  `actif` tinyint(1) NOT NULL DEFAULT '0',
+  `terminee` tinyint(1) NOT NULL DEFAULT '0'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
 -- Déchargement des données de la table `game`
 --
 
-INSERT INTO `game` (`idgame`, `idmissionEtat`, `idscenario`, `date`, `idequipe`) VALUES
-(7, NULL, 1, '2025-01-22 15:12:12', 1);
+INSERT INTO `game` (`idgame`, `idmissionEtat`, `idscenario`, `date`, `idequipe`, `actif`, `terminee`) VALUES
+(7, NULL, 1, '2025-01-22 15:12:12', 1, 0, 0);
 
 -- --------------------------------------------------------
 
@@ -98,7 +100,10 @@ CREATE TABLE `missionEtat` (
 --
 
 INSERT INTO `missionEtat` (`idetat`, `heuredebut`, `heurefin`, `idgame`, `idmission`) VALUES
-(17, '16:28:41', NULL, 1, 1);
+(17, '16:28:41', NULL, 1, 1),
+(18, '10:32:59', NULL, 1, 1),
+(19, '10:33:01', NULL, 1, 1),
+(20, '10:33:02', NULL, 1, 1);
 
 -- --------------------------------------------------------
 
@@ -158,6 +163,13 @@ CREATE TABLE `utilisateur` (
   `email` varchar(150) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
   `permission` int NOT NULL DEFAULT '0'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- Déchargement des données de la table `utilisateur`
+--
+
+INSERT INTO `utilisateur` (`idUser`, `username`, `password`, `email`, `permission`) VALUES
+(1, 'salut', 'truc', 'test@example.com', 0);
 
 --
 -- Index pour les tables déchargées
@@ -244,7 +256,7 @@ ALTER TABLE `mission`
 -- AUTO_INCREMENT pour la table `missionEtat`
 --
 ALTER TABLE `missionEtat`
-  MODIFY `idetat` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
+  MODIFY `idetat` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
 
 --
 -- AUTO_INCREMENT pour la table `reservation`
@@ -268,7 +280,7 @@ ALTER TABLE `scenario`
 -- AUTO_INCREMENT pour la table `utilisateur`
 --
 ALTER TABLE `utilisateur`
-  MODIFY `idUser` int NOT NULL AUTO_INCREMENT;
+  MODIFY `idUser` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- Contraintes pour les tables déchargées

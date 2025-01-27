@@ -33,6 +33,12 @@ const TableGame = sequelize.define('game', {
     allowNull: true,
     defaultValue: 0,
     field:"actif"
+  },
+  terminee: {
+    type: DataTypes.BOOLEAN,
+    allowNull: true,
+    defaultValue: 0,
+    field:"terminee"
   }
 }, {
   tableName: 'game',      

@@ -344,7 +344,6 @@ exports.AjouterMissionEtat = async (req,res)=>{
 
 exports.DemarrerPartie = async (req, res)=>{
     try {
-
         const ReqData = req.body;
         const PartieId = ReqData.partie;
         const EquipeId = ReqData.equipe;
@@ -361,7 +360,6 @@ exports.DemarrerPartie = async (req, res)=>{
             return;
         }
         
-
         const updatePrime = await TableGame.update(
             { actif: '1', idequipe: EquipeId }, 
             { where: { condition_colonne: PartieId } } 
@@ -370,6 +368,38 @@ exports.DemarrerPartie = async (req, res)=>{
         res.status(200).json(updatePrime);
         return;
     } catch (error) {
+        res.status(500).send(error.message);
+        return;
+    }
+}
+
+exports.FinirPartie = async (req,res)=>{
+    try {
+        const ReqData = req.body;
+        const PartieId = ReqData.partie;
+        const EquipeId = ReqData.equipe;
+
+        reqprime = await TableGame.findOne({where:{ idgame: PartieId }});
+        if (!reqprime){
+            res.status(400).send("Partie introuvable");
+            return;
+        }
+
+        if( !(reqprime.actif == 1) && !(reqprime.terminee == 0) ){
+            res.status(400).send("Partie inactive ou terminé");
+            return;
+        }
+
+        console.log(reqprime);
+
+        
+        
+        const updatePrime = await TableGame.update(
+            { actif: '0', terminee: '1' }, 
+            { where: { condition_colonne: PartieId } } 
+        );
+        
+    } catch (error) {        
         res.status(500).send(error.message);
         return;
     }
