@@ -312,19 +312,19 @@ exports.AjouterMissionEtat = async (req,res)=>{
         const idmission = ReqData.mission;
 
         if(!idgame || !idmission){
-            res.status(407).send("Erreur requete");
+            res.status(400).send("Erreur requete");
             return;
         }
 
         reqprime = await TableMission.findOne({where:{ idmission: idmission }});
         if (!reqprime){
-            res.status(407).send("Mission introuvable");
+            res.status(400).send("Mission introuvable");
             return;
         }
 
         reqprime = await TableGame.findOne({where:{ idgame: idgame }});       
         if (!reqprime){
-            res.status(407).send("Partie introuvable");
+            res.status(400).send("Partie introuvable");
             return;
         }
         
@@ -362,7 +362,7 @@ exports.DemarrerPartie = async (req, res)=>{
         
         const updatePrime = await TableGame.update(
             { actif: '1', idequipe: EquipeId }, 
-            { where: { condition_colonne: PartieId } } 
+            { where: { idgame: PartieId } } 
         );
 
         res.status(200).json(updatePrime);
@@ -376,8 +376,12 @@ exports.DemarrerPartie = async (req, res)=>{
 exports.FinirPartie = async (req,res)=>{
     try {
         const ReqData = req.body;
-        const PartieId = ReqData.partie;
-        const EquipeId = ReqData.equipe;
+        const PartieId = ReqData.partie;        
+
+        if(!PartieId){
+            res.status(400).send("Id de partie introuvable");
+            return;
+        }
 
         reqprime = await TableGame.findOne({where:{ idgame: PartieId }});
         if (!reqprime){
@@ -385,20 +389,23 @@ exports.FinirPartie = async (req,res)=>{
             return;
         }
 
-        if( !(reqprime.actif == 1) && !(reqprime.terminee == 0) ){
-            res.status(400).send("Partie inactive ou terminé");
+        if(reqprime.actif == 0){
+            res.status(400).send("Partie non lancée");
             return;
         }
 
-        console.log(reqprime);
-
-        
-        
+        if(reqprime.terminee == 1){
+            res.status(400).send("Partie deja finit");
+            return;
+        }
+     
         const updatePrime = await TableGame.update(
             { actif: '0', terminee: '1' }, 
-            { where: { condition_colonne: PartieId } } 
+            { where: { idgame: PartieId } } 
         );
-        
+
+        res.status(200).send(updatePrime);
+        return;
     } catch (error) {        
         res.status(500).send(error.message);
         return;
