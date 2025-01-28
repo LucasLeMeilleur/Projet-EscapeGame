@@ -149,6 +149,34 @@ exports.nombreMissionEtat = async (req,res)=>{
     }
 }
 
+//Equipe
+
+exports.listeEquipe = async (req,res)=>{
+    try {
+        const rep = await TableEquipe.findAll();
+        res.status(200).json(rep);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+        return;
+    }
+}
+
+exports.listeNomEquipe = async (req,res)=>{
+    try {
+        
+        const rep = await TableEquipe.findAll({
+            attributes: ['nom']
+        });
+      
+
+        res.status(200).json(rep);
+        return;
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+        return;
+    }
+}
+
 
 // Get avec body
 
@@ -181,6 +209,21 @@ exports.listeMissionEtatGameid = async (req, res)=> {
     try {
         const rep = await TableMissionEtat.findOne({where:{ idgame: IdGame }});
 
+        res.status(200).json(rep);
+        return;
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+        return;
+    }
+}
+
+exports.listeEquipeId = async (req, res)=> {
+
+    const ReqData = req.body;
+    const IdEquipe = ReqData.id;
+
+    try {
+        const rep = await TableEquipe.findOne({where:{ idequipe: IdEquipe }});
         res.status(200).json(rep);
         return;
     } catch (error) {

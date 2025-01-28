@@ -39,6 +39,7 @@ router.get('/game/salle/liste', object.listeSalle);
 router.get('/game/scenario/liste', object.listeScenario);
 router.get('/game/mission/liste', object.listeMission);
 router.get('/game/missionEtat/liste', object.listeMissionEtat);
+router.get('/game/equipe/liste', object.listeEquipe)
 
     //Nombre element
 router.get('/game/partie/nombre', object.nombrePartie);
@@ -46,9 +47,10 @@ router.get('/game/salle/nombre', object.nombreSalle);
 router.get('/game/scenario/nombre', object.nombreScenario);
 router.get('/game/mission/nombre', object.nombreMission);
 router.get('/game/missionEtat/nombre', object.nombreMissionEtat);
+router.get('/game/equipe/listeNom', object.listeNomEquipe);
 
 
-    // Clé RSA
+    // Clé Publique RSA
 router.get('/key/publickey', (req, res) => {
     res.send({ key: global.keyRSA.getPublicKey() });
 });
@@ -57,6 +59,7 @@ router.get('/key/publickey', (req, res) => {
 
 router.get('/game/missionEtat/id', object.listeMissionEtatid);
 router.get('/game/missionEtat/gameid', object.listeMissionEtatGameid);
+router.get('/game/equipe/id', object.listeEquipeId)
 
 // POST
 
@@ -66,9 +69,9 @@ router.post('/game/salle/ajout', object.AjouterSalle);
 router.post('/game/scenario/ajout', object.AjouterScenar);
 router.post('/game/mission/ajout', object.AjouterMission);
 router.post('/game/missionetat/ajout', object.AjouterMissionEtat);
-
 router.post('/game/partie/demarrer', object.DemarrerPartie);
 router.post('/game/partie/finir', object.FinirPartie);
+
 
 
 // Gestion api user

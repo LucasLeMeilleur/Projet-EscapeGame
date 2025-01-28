@@ -22,6 +22,11 @@ const TableReservation = sequelize.define('reservation', {
     type: DataTypes.INTEGER,
     allowNull: false,
     field: "salle",
+  },
+  equipe: {
+    type: DataTypes.INTEGER,
+    allowNull: true,
+    field: "equipe",
   }
 }, {
   tableName: 'reservation',      
