@@ -1,7 +1,9 @@
 async function fetchPublicKey() {
     const response = await fetch('/api/key/publickey');
     const publicKey = await response.json();
+    console.log(publicKey.key);
     return publicKey.key;
+    
 }
 
 async function importPublicKey(pemKey) {

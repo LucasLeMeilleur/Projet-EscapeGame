@@ -15,7 +15,9 @@ function verifyAccess(levelRequired) {
         if (err) return res.status(403).render('error/404', { erreur: "Tokken invalide" });
   
         req.user = decoded;
-        if (req.user.autorisation < levelRequired) {
+        console.log(decoded);
+        
+        if (req.user.permission < levelRequired) {
           return res.status(403).render('error/404', { erreur: "Acces interdit" });
         }
         next();
@@ -48,7 +50,12 @@ router.get('/', optionalAuthenticateToken, (req,res)=>{
         .then(response=>{
             rep = response.data;
             console.log(rep);
-            res.status(200).render('index', {pseudo: rep.username, email: rep.email});
+
+            if(rep.permission){
+                res.status(200).render('index', {pseudo: rep.username, email: rep.email, permission: rep.permission});
+            }else{
+                res.status(200).render('index', {pseudo: rep.username, email: rep.email});
+            }
         })
         .catch(error=>{
             console.log(error);

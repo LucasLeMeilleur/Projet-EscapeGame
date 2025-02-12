@@ -11,10 +11,9 @@
 </head>
 <body> 
 
-  <% if (typeof pseudo !== 'undefined') { %>
-    <%- include('partials/header', {pseudo: pseudo}); %>
+  <% if (typeof permission !== 'undefined' && permission == 1) { %>
+    <%- include('partials/header', {navig: admin}); %>
   <% }else{ %>
-   
     <%- include('partials/header'); %>
   <% } %>
 

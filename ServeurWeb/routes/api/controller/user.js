@@ -108,10 +108,14 @@ exports.loginUser = async (req, res) => {
       res.status(400).send("Formulaire non chiffré");
       return;
     }
+    
+    
 
     const JSONDecryptedForm = JSON.parse(DecryptedForm);
     const Email = JSONDecryptedForm.email;
     const Password = JSONDecryptedForm.password;
+
+
 
     if (!Email || !Password) {
       res.status(400).send("Formulaire invalide");
@@ -122,15 +126,22 @@ exports.loginUser = async (req, res) => {
       res.status(400).send("Identifiants introuvable");
       return;
     }
+    console.log(user.permission);
+    
 
     const isValidPassword = await bcrypt.compare(Password, user.password);
     if (!isValidPassword) return res.status(400).json({ error: 'Mot de passe incorrect.' });
+
+
+
 
     const token = jwt.sign(
       { id: user.idUser, permission: user.permission },
       global.JWTToken,
       { expiresIn: '8h' }
     );
+
+
     res.cookie('token', token, { httpOnly: true, secure: false });
     res.status(200).json({ message: 'Connexion réussie !' });
     
@@ -152,7 +163,7 @@ exports.nomUser = async (req, res) => {
 
     var TabAttribute;
     if (type == "all") {
-      TabAttribute = ["username", "email"];
+      TabAttribute = ["username", "email", "permission"];
     } else {
       TabAttribute = [type];
     }
@@ -162,6 +173,7 @@ exports.nomUser = async (req, res) => {
       where: { idUser: userId }
     });
 
+    console.log(rep);
     res.status(200).json( rep )
     return;
   } catch (error) {
