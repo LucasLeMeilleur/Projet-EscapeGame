@@ -3,7 +3,9 @@ const router = express.Router();
 const user = require('./controller/user');
 const object = require('./controller/object');
 
-// Fonctions utile
+
+
+/////////////////////////   Fonctions utile   ///////////////////////// 
 
 // Middleware d'authentification
 const authMiddleware = (req, res, next) => {
@@ -28,7 +30,7 @@ const checkPermission = (requiredPermission) => (req, res, next) => {
 };
 
 
-// Gestion api game
+/////////////////////////   Gestion api game   ///////////////////////// 
 
 
 // GET 
@@ -48,6 +50,7 @@ router.get('/game/scenario/nombre', object.nombreScenario);
 router.get('/game/mission/nombre', object.nombreMission);
 router.get('/game/missionEtat/nombre', object.nombreMissionEtat);
 router.get('/game/equipe/listeNom', object.listeNomEquipe);
+router.get('/game/partie/listeReserv', object.listePartieReserve);
 
 
     // Clé Publique RSA
@@ -73,15 +76,15 @@ router.post('/game/partie/demarrer', object.DemarrerPartie);
 router.post('/game/partie/finir', object.FinirPartie);
 
 
+/////////////////////////   Gestion api user   ///////////////////////// 
 
-// Gestion api user
 
-
-//GET 
+// GET 
 
 router.get('/user/liste', user.listeUser);
+router.get('/user', user.nomUser);
 
-//POST
+// POST
 
 router.post('/user/register', user.regiserUser);
 router.post('/user/login', user.loginUser);

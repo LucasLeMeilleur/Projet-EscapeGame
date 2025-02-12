@@ -63,7 +63,7 @@ exports.regiserUser = async (req, res) => {
   try {
     const ReqData = req.body;
     const DecryptedForm = decryptWithPrivateKey((ReqData.encryptedForm));
-    if(!DecryptedForm){
+    if (!DecryptedForm) {
       res.status(407).send("Formulaire non chiffré");
       return;
     }
@@ -73,12 +73,12 @@ exports.regiserUser = async (req, res) => {
     const Password = JSONDecryptedForm.password;
     const Email = JSONDecryptedForm.email;
 
-    if(!Password || !Username || !Email){
-      res.status(400).send("Formulaire incomplet");      
+    if (!Password || !Username || !Email) {
+      res.status(400).send("Formulaire incomplet");
       return;
     }
 
-    if(!isValidEmail(Email)){
+    if (!isValidEmail(Email)) {
       res.status(400).send("Mail invalide");
       return;
     }
@@ -100,11 +100,11 @@ exports.regiserUser = async (req, res) => {
 }
 
 exports.loginUser = async (req, res) => {
-  
-  try{
+
+  try {
     const ReqData = req.body
     const DecryptedForm = decryptWithPrivateKey((ReqData.encryptedForm));
-    if(!DecryptedForm){
+    if (!DecryptedForm) {
       res.status(400).send("Formulaire non chiffré");
       return;
     }
@@ -113,38 +113,59 @@ exports.loginUser = async (req, res) => {
     const Email = JSONDecryptedForm.email;
     const Password = JSONDecryptedForm.password;
 
-    if(!Email || !Password){
+    if (!Email || !Password) {
       res.status(400).send("Formulaire invalide");
     }
-    
-    const user = await TableUtilisateur.findOne({ where: { email:Email } });
-    if(!user){
+
+    const user = await TableUtilisateur.findOne({ where: { email: Email } });
+    if (!user) {
       res.status(400).send("Identifiants introuvable");
       return;
     }
 
-    console.log(user);
-    
-
     const isValidPassword = await bcrypt.compare(Password, user.password);
     if (!isValidPassword) return res.status(400).json({ error: 'Mot de passe incorrect.' });
 
-    console.log(global.JWTToken );
-    
-
     const token = jwt.sign(
-        { id: user.id, permission: user.permission },
-        global.JWTToken ,
-        { expiresIn: '8h' }
+      { id: user.idUser, permission: user.permission },
+      global.JWTToken,
+      { expiresIn: '8h' }
     );
-
-    
-
     res.cookie('token', token, { httpOnly: true, secure: false });
-    res.json({ message: 'Connexion réussie !' });
-  }catch (error){
+    res.status(200).json({ message: 'Connexion réussie !' });
+    
+  } catch (error) {
     res.status(500).json({ message: error.message })
     return;
   }
+}
 
+exports.nomUser = async (req, res) => {
+  try {
+    const userId = req.query.idUser;
+    const type = req.query.type;
+
+    if (!userId || !type) {
+      res.status(400).send("No or type");
+      return;
+    }
+
+    var TabAttribute;
+    if (type == "all") {
+      TabAttribute = ["username", "email"];
+    } else {
+      TabAttribute = [type];
+    }
+
+    const rep = await TableUtilisateur.findOne({
+      attributes: TabAttribute,
+      where: { idUser: userId }
+    });
+
+    res.status(200).json( rep )
+    return;
+  } catch (error) {
+    res.status(500).json({ message: error.message })
+    return;
+  }
 }

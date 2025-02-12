@@ -11,23 +11,7 @@ body {
     background-color: #2e2e2e;
     color: #fff;
 }
-header {
-    background-color: #333;
-    padding: 20px;
-}
-header nav ul {
-    list-style-type: none;
-    display: flex;
-    justify-content: center;
-}
-header nav ul li {
-    margin: 0 15px;
-}
-header nav ul li a {
-    text-decoration: none;
-    color: #fff;
-    font-weight: bold;
-}
+
 
 /* Hero Section */
 .hero {
@@ -101,12 +85,7 @@ form input, form select {
 }
 
 
-/* Footer */
-footer {
-    background-color: #333;
-    text-align: center;
-    padding: 20px;
-}
+
 
 /* Boutton Animation */
 

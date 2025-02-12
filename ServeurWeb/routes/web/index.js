@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-
+const axios = require('axios');
 const jwt = require('jsonwebtoken');
 
 
@@ -23,13 +23,45 @@ function verifyAccess(levelRequired) {
     };
 }
 
+function optionalAuthenticateToken(req, res, next) {
+    const token = req.cookies?.token;
+    
+    if (!token) {
+        return next(); 
+    }
+    jwt.verify(token, global.JWTToken, (err, decoded) => {
+        if (!err) {
+            req.userId = decoded.id;
+        }       
+        next(); 
+    });
+}
 
-
-router.get('/', (req,res)=>{
-    res.status(200).render('index');
+router.get('/', optionalAuthenticateToken, (req,res)=>{
+    console.log(req.userId);
+    
+    if(req.userId){
+        console.log("connecté");
+        axios.get('http://localhost:3000/api/user', {
+            params: { idUser: req.userId , type: "all"} 
+        })
+        .then(response=>{
+            rep = response.data;
+            console.log(rep);
+            res.status(200).render('index', {pseudo: rep.username, email: rep.email});
+        })
+        .catch(error=>{
+            console.log(error);
+            res.status(200).render('index');
+        })
+    }
+    else {
+        console.log("déconnecté");
+        res.status(200).render('index');
+    }
 });
 
-router.get('/index', (req,res)=>{
+router.get('/index', optionalAuthenticateToken, (req,res)=>{
     res.status(200).render('index');
 });
 
@@ -39,6 +71,10 @@ router.get('/lien', (req,res)=>{
 
 router.get('/register', (req,res)=>{
     res.status(200).render('inscription');
+});
+
+router.get('/reservation', (req,res)=>{
+    res.status(200).render('reservation');
 });
 
 router.get('/login', (req,res)=>{
@@ -56,7 +92,6 @@ router.get('/admin/gestion-partie', verifyAccess(1), (req,res)=>{
 router.get('/admin/pannel', verifyAccess(1), (req,res)=>{
     res.status(200).render('admin/pannel');
 });
-
 
 
 module.exports = router;

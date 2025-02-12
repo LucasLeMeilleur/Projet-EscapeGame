@@ -9,7 +9,7 @@ const TableReservation = sequelize.define('reservation', {
     field:"idreservation",
   },
   date: {
-    type: DataTypes.TIME,
+    type: DataTypes.DATE,
     allowNull: false,
     field:"date"
   },

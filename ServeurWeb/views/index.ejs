@@ -6,21 +6,35 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Escape Game</title>
     <link rel="stylesheet" href="css/index.css">
+    <link rel="stylesheet" href="css/partials/header.css">
+    <link rel="stylesheet" href="css/partials/footer.css">
 </head>
 <body> 
 
-  <%- include('partials/header'); %>
+  <% if (typeof pseudo !== 'undefined') { %>
+    <%- include('partials/header', {pseudo: pseudo}); %>
+  <% }else{ %>
+   
+    <%- include('partials/header'); %>
+  <% } %>
 
+ 
   <!-- Accueil Section -->
   <section id="accueil" class="hero hide">
-    <h1>Bienvenue dans notre Escape Game</h1>
+
+    <% if (typeof pseudo !== 'undefined') { %>
+      <h1>Bienvenue <%= pseudo %> dans notre Escape Game</h1>
+    <% }else{ %>
+      <h1>Bienvenue dans notre Escape Game</h1>
+    <% } %>
+  
     <p>Venez tester votre esprit d'équipe et résoudre des énigmes palpitantes !</p>
 
     <button style="--content: 'Réservez votre aventure';" onclick="window.location.href='#reservation'">
         <div class="left"></div>
         Réservez votre aventure
         <div class="right"></div>
-      </button>
+    </button>
   </section>
 
   <!-- Nos Salles Section -->
@@ -39,16 +53,11 @@
   <section id="reservation" class="hide">
     <h2>Réservez votre aventure</h2>
     <form action="#" method="post">
-      <label for="nom">Nom</label>
-      <input type="text" id="nom" name="nom" required>
-
+      
       <label for="salle">Choisir une salle</label>
       <select id="salle" name="salle">
         <option value="manoir">Antares (WIP)</option>
       </select>
-
-      <label for="date">Date de réservation</label>
-      <input type="date" id="date" name="date" required>
 
       <button style="--content: 'Réserver';" type="submit">
         <div class="left"></div>
@@ -65,8 +74,8 @@
     <h2>Contact</h2>
     <p>Vous avez des questions ? Contactez-nous dès maintenant !</p>
     <address>
-      Email: contact@AntaresEscapeGame.com<br>
-      Téléphone: 01 45 14 28 28
+      Email: contact@escapegame.com<br>
+      Téléphone: 01 01 01 01 01
     </address>
   </section>
 
