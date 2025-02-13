@@ -154,7 +154,7 @@ exports.loginUser = async (req, res) => {
 exports.nomUser = async (req, res) => {
   try {
     const userId = req.query.idUser;
-    const type = req.query.type;
+    const type = req.query.type;    
 
     if (!userId || !type) {
       res.status(400).send("No or type");
@@ -173,7 +173,6 @@ exports.nomUser = async (req, res) => {
       where: { idUser: userId }
     });
 
-    console.log(rep);
     res.status(200).json( rep )
     return;
   } catch (error) {

@@ -40,11 +40,10 @@ function optionalAuthenticateToken(req, res, next) {
 }
 
 router.get('/', optionalAuthenticateToken, (req,res)=>{
-    console.log(req.userId);
     
     if(req.userId){
-        console.log("connecté");
-        axios.get('http://localhost:3000/api/user', {
+        console.log("Iduser de la req : "+req.userId);
+        axios.get('http://127.0.0.1:3000/api/user', {
             params: { idUser: req.userId , type: "all"} 
         })
         .then(response=>{
@@ -52,13 +51,15 @@ router.get('/', optionalAuthenticateToken, (req,res)=>{
             console.log(rep);
 
             if(rep.permission){
+                console.log("permission")
                 res.status(200).render('index', {pseudo: rep.username, email: rep.email, permission: rep.permission});
             }else{
+                console.log("pas de perm");
                 res.status(200).render('index', {pseudo: rep.username, email: rep.email});
             }
         })
         .catch(error=>{
-            console.log(error);
+            console.log("erreur");
             res.status(200).render('index');
         })
     }
