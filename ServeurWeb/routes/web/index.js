@@ -93,6 +93,11 @@ router.get('/admin', verifyAccess(1), (req,res)=>{
     res.status(200).render('admin');
 });
 
+
+router.get('/compte-gestion', verifyAccess(0), (req,res)=>{
+    res.status(200).render('gestionCompte');
+});
+
 router.get('/admin/gestion-partie', verifyAccess(1), (req,res)=>{
     res.status(200).render('admin/gestion');
 });

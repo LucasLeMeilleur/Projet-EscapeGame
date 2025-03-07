@@ -30,6 +30,12 @@ const checkPermission = (requiredPermission) => (req, res, next) => {
 };
 
 
+    // Clé Publique RSA
+router.get('/key/publickey', (req, res) => {
+    res.send({ key: global.keyRSA.getPublicKey() });
+});
+    
+
 /////////////////////////   Gestion api game   ///////////////////////// 
 
 
@@ -53,10 +59,6 @@ router.get('/game/equipe/listeNom', object.listeNomEquipe);
 router.get('/game/partie/listeReserv', object.listePartieReserve);
 
 
-    // Clé Publique RSA
-router.get('/key/publickey', (req, res) => {
-    res.send({ key: global.keyRSA.getPublicKey() });
-});
 
 // GET avec body
 
