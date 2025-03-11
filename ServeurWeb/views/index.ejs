@@ -11,10 +11,12 @@
 </head>
 <body> 
 
-  <% if (typeof permission !== 'undefined' && permission == 1) { %>
-    <%- include('partials/header', {navig: "admin"}); %>
+  <% if (typeof permission !=='undefined' && permission==1) { %>
+    <%- include('partials/header', {navig: "admin" }); %>
+  <% }else if(typeof permission !=='undefined' && permission==0){%>
+      <%- include('partials/header', {navig: "normal" }); %>
   <% }else{ %>
-    <%- include('partials/header'); %>
+      <%- include('partials/header'); %>
   <% } %>
 
  

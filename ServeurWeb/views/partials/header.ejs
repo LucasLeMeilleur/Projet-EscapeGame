@@ -1,14 +1,18 @@
 <header>
     <nav>
       <ul>
-        <li><a href="#accueil">Accueil </a></li>
-        <li><a href="#salles">Nos Salles</a></li>
-        <li><a href="#reservation">Réserver</a></li>
-        <li><a href="#contact">Contact</a></li>
-        <li><a href="/login">Connexion</a></li>
-        <% if (typeof navig == 'admin') { %>
+        <li><a href="/index">Accueil </a></li>
+        <li><a href="/salles">Nos Salles</a></li>
+        <li><a href="/reservation">Réserver</a></li>
+        <li><a href="/contact">Contact</a></li>
+
+        <% if (typeof navig !== 'undefined' && navig == 'admin') { %>
           <li><a href="/admin">Admin  </a></li>
-        <% }%>
+        <% }else if(typeof navig !== 'undefined' && navig == 'normal'){%>
+          <li><a href="/admin"> Profil  </a></li>
+        <% }else{ %>
+          <li><a href="/login">Connexion</a></li>
+        <%}%>
       </ul>
     </nav>
 </header>

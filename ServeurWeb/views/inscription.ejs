@@ -12,24 +12,38 @@
     <script src="https://cdn.jsdelivr.net/npm/jsencrypt/bin/jsencrypt.min.js"></script>
 
     <script type="module" src="js/formulaire.js" defer></script>
+
+    <link rel="stylesheet" href="css/inscription.css">
+
+    <link rel="stylesheet" href="css/partials/forme.css">
+    <link rel="stylesheet" href="css/partials/header.css">
+    <link rel="stylesheet" href="css/partials/footer.css">
 </head>
 
 <body>
 
-    <script>
+    <% if (typeof permission !=='undefined' && permission==1) { %>
+        <%- include('partials/header', {navig: "admin" }); %>
+    <% }else if(typeof permission !=='undefined' && permission==0){%>
+        <%- include('partials/header', {navig: "normal" }); %>
+    <% }else{ %>
+        <%- include('partials/header'); %>
+    <% } %>
 
-    </script>
-
+    <section>
     <!-- id formulaire a garder + name des inputs du form -->
-
-    <form id="registerForm">
-        <input name="username" type="text" id="username" placeholder="Nom d'utilisateur">
-        <input name="password" type="password" id="password" placeholder="Mot de passe">
-        <input name="email" type="email" id="email" placeholder="E-mail">
-        <button id="butt">Test</button>
-    </form>
-
+    <div id="div_Formu">
+        <form id="registerForm">
+            <input name="username" type="text" id="username" placeholder="Nom d'utilisateur">
+            <input name="password" type="password" id="password" placeholder="Mot de passe">
+            <input name="email" type="email" id="email" placeholder="E-mail">
+            <p>Deja un compte ? <a href="/login">Se connecter</a></p>
+            <button id="butt">S'inscrire</button>
+        </form>
+    </div>
+    </section>
     
+    <%- include('partials/footer'); %>
 </body>
 
 </html>

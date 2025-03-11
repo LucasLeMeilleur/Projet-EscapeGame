@@ -73,36 +73,36 @@ router.get('/index', optionalAuthenticateToken, (req,res)=>{
     res.status(200).render('index');
 });
 
-router.get('/lien', (req,res)=>{
+router.get('/lien', optionalAuthenticateToken, (req,res)=>{
     res.status(200).render('lien');
 });
 
-router.get('/register', (req,res)=>{
+router.get('/register', optionalAuthenticateToken, (req,res)=>{
     res.status(200).render('inscription');
 });
 
-router.get('/reservation', (req,res)=>{
+router.get('/reservation', optionalAuthenticateToken, (req,res)=>{
     res.status(200).render('reservation');
 });
 
-router.get('/login', (req,res)=>{
+router.get('/login', optionalAuthenticateToken, (req,res)=>{
     res.status(200).render('login');
 });
 
-router.get('/admin', verifyAccess(1), (req,res)=>{
+router.get('/admin', optionalAuthenticateToken, verifyAccess(1), (req,res)=>{
     res.status(200).render('admin');
 });
 
 
-router.get('/compte-gestion', verifyAccess(0), (req,res)=>{
+router.get('/compte-gestion', optionalAuthenticateToken, verifyAccess(0), (req,res)=>{
     res.status(200).render('gestionCompte');
 });
 
-router.get('/admin/gestion-partie', verifyAccess(1), (req,res)=>{
+router.get('/admin/gestion-partie', optionalAuthenticateToken, verifyAccess(1), (req,res)=>{
     res.status(200).render('admin/gestion');
 });
 
-router.get('/admin/pannel', verifyAccess(1), (req,res)=>{
+router.get('/admin/pannel', optionalAuthenticateToken, verifyAccess(1), (req,res)=>{
     res.status(200).render('admin/pannel');
 });
 

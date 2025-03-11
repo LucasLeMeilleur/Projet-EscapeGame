@@ -1,0 +1,7 @@
+section {
+    display: flex;
+    justify-content: center; /* Centre horizontalement */
+    align-items: center;     /* Centre verticalement */
+    height: 75%;
+    margin: 0;
+}
