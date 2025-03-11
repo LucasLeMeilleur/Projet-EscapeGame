@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Escape Game</title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="">
+    <script src="https://cdn.jsdelivr.net/npm/jsencrypt/bin/jsencrypt.min.js"></script>
+
+    <script type="module" src="js/formulaire.js" defer></script>
+
+
+    <link rel="stylesheet" href="css/partials/forme.css">
+    <link rel="stylesheet" href="css/partials/header.css">
+    <link rel="stylesheet" href="css/partials/footer.css">
+</head>
+
+<body>
+
+    <% if (typeof permission !=='undefined' && permission==1) { %>
+        <%- include('partials/header', {navig: "admin" }); %>
+    <% }else if(typeof permission !=='undefined' && permission==0){%>
+        <%- include('partials/header', {navig: "normal" }); %>
+    <% }else{ %>
+        <%- include('partials/header'); %>
+    <% } %>
+
+    <section>
+    <!-- id formulaire a garder + name des inputs du form -->
+    
+    
+    </section>
+    
+    <%- include('partials/footer'); %>
+</body>
+
+</html>

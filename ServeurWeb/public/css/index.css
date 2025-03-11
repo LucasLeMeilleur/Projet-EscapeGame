@@ -199,3 +199,21 @@ to {
     transform: translate(0, -66.666%);
 }
 }
+
+
+
+
+#salles a{
+    color: white;   
+    font-size: 35px !important;
+}
+
+#titreReserv{
+    margin-bottom: 20px;
+    font-size: 40px;
+}
+
+#reservation h2{
+    margin-bottom: 15px;
+}
+
