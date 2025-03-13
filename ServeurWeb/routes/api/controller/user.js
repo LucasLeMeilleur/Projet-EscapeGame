@@ -83,6 +83,16 @@ exports.regiserUser = async (req, res) => {
       return;
     }
 
+    const repDejaPresent = await TableUtilisateur.findOne({
+      where: {
+        email: Email,
+      }
+    }) 
+
+    if (repDejaPresent){
+      return res.status(400).send("Un compte est deja associé a cette adresse mail");
+    }
+
     const hashedPassword = await bcrypt.hash(Password, 15);
 
     const rep = await TableUtilisateur.create({
@@ -92,7 +102,24 @@ exports.regiserUser = async (req, res) => {
       permission: 0
     })
 
+    const user = await TableUtilisateur.findOne({ where: { email: Email } });
+    if (!user) {
+      return res.status(400).send("Identifiants introuvable");
+      
+    }
+
+
+
+    const token = jwt.sign(
+      { id: user.idUser, permission: user.permission },
+      global.JWTToken,
+      { expiresIn: '8h' }
+    );
+
+
+    res.cookie('token', token, { httpOnly: true, secure: false });
     res.status(200).json(rep);
+    
   } catch (error) {
     res.status(500).json({ message: error.message })
     return;
@@ -104,6 +131,7 @@ exports.loginUser = async (req, res) => {
   try {
     const ReqData = req.body
     const DecryptedForm = decryptWithPrivateKey((ReqData.encryptedForm));
+    
     if (!DecryptedForm) {
       res.status(400).send("Formulaire non chiffré");
       return;
@@ -119,6 +147,7 @@ exports.loginUser = async (req, res) => {
 
     if (!Email || !Password) {
       res.status(400).send("Formulaire invalide");
+      return;
     }
 
     const user = await TableUtilisateur.findOne({ where: { email: Email } });
@@ -126,6 +155,7 @@ exports.loginUser = async (req, res) => {
       res.status(400).send("Identifiants introuvable");
       return;
     }
+
     console.log(user.permission);
     
 

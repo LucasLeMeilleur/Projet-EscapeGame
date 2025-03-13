@@ -80,6 +80,7 @@ if (document.getElementById('registerForm')) {
 
             if (response.ok) {
                 console.log('Inscription réussie !');
+                window.location.href = '/';
             } else {
                 const errorDetails = await response.text();
                 throw new Error(`Erreur serveur (${response.status}): ${errorDetails}`);
@@ -90,7 +91,6 @@ if (document.getElementById('registerForm')) {
     });
 }
 
-
 if (document.getElementById('loginForm')) {
     document.getElementById('loginForm').addEventListener('submit', async function (event) {
         event.preventDefault();
@@ -99,7 +99,6 @@ if (document.getElementById('loginForm')) {
         const formDataConfig = new FormData(this);
 
         try {
-
             // Chiffrement du formulaire
             const jsonData = JSON.stringify(Object.fromEntries(formDataConfig.entries()));
             const publicKeyPem = await fetchPublicKey();
@@ -116,9 +115,9 @@ if (document.getElementById('loginForm')) {
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ encryptedForm }),
             });
-
             if (response.ok) {
                 console.log('Connexion réussie !');
+                window.location.href = '/';
             } else {
                 const errorDetails = await response.text();
                 throw new Error(`Erreur serveur (${response.status}): ${errorDetails}`);

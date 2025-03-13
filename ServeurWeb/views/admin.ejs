@@ -12,7 +12,13 @@
         <link rel="stylesheet" href="css/partials/footer.css">
     </head>
     <body>
-        <%- include('partials/header'); %>
+        <% if (typeof permission !=='undefined' && permission==1) { %>
+            <%- include('partials/header', {navig: "admin" }); %>
+        <% }else if(typeof permission !=='undefined' && permission==0){%>
+            <%- include('partials/header', {navig: "normal" }); %>
+        <% }else{ %>
+            <%- include('partials/header'); %>
+        <% } %>
 
         <section>
             <h1>Admin</h1>
