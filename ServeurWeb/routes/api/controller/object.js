@@ -199,9 +199,9 @@ exports.listeMissionEtatid = async (req, res) => {
 
 exports.listeMissionEtatGameid = async (req, res) => {
     const ReqData = req.body;
-    const IdGame = ReqData.gameid;
-    try {
-        const rep = await TableMissionEtat.findOne({ where: { idgame: IdGame } });
+        const IdGame = ReqData.gameid;
+        try {
+            const rep = await TableMissionEtat.findOne({ where: { idgame: IdGame } });
         return res.status(200).json(rep);
     } catch (error) {
         return res.status(500).json({ message: error.message });

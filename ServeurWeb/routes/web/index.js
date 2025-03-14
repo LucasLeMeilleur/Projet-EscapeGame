@@ -9,14 +9,12 @@ const jwt = require('jsonwebtoken');
 function verifyAccess(levelRequired) {
     return (req, res, next) => {
         const token = req.cookies.token;
-        if (!token) return res.status(401).render('error/401', { erreur: "Vous n'etes pas connecté" });
+        if (!token) return res.status(403).render('error/403', { erreur: "Vous n'etes pas connecté" });
         jwt.verify(token, global.JWTToken, (err, decoded) => {
             if (err) return res.status(403).render('error/404', { erreur: "Session invalide, veuillez vous reconnecter." });
             req.user = decoded;
-            console.log(decoded);
-            if (req.user.permission < levelRequired) {
-                return res.status(403).render('error/403', { erreur: "Acces interdit" });
-            }
+            if (req.user.permission < levelRequired) return res.status(403).render('error/403', { erreur: "Acces interdit" });
+            
             next();
         });
     };
@@ -24,22 +22,15 @@ function verifyAccess(levelRequired) {
 
 function optionalAuthenticateToken(req, res, next) {
     const token = req.cookies?.token;
-
-    if (!token) {
-        return next();
-    }
-
+    if (!token) return next();
     jwt.verify(token, global.JWTToken, (err, decoded) => {
-        if (!err) {
-            req.userId = decoded.id;
-        }
+        if (!err) req.userId = decoded.id;
         next();
     });
 }
 
 function noAuth(req, res, next) {
     const token = req.headers['token'];
-
     if (token) {
         // Si un token est présent, on empêche l'accès
         jwt.verify(token, global.JWTToken, (err) => {
@@ -62,20 +53,14 @@ router.get('/', optionalAuthenticateToken, (req, res) => {
         })
             .then(response => {
                 rep = response.data;
-
-                if (rep.permission >= 0) {
-                    res.status(200).render('index', { pseudo: rep.username, email: rep.email, permission: rep.permission });
-                } else {
-                    res.status(200).render('index');
-                }
+                if (rep.permission >= 0) res.status(200).render('index', { pseudo: rep.username, email: rep.email, permission: rep.permission });
+                else res.status(200).render('index');
             })
             .catch(error => {
                 res.status(200).render('index');
             })
-    }
-    else {
-        res.status(200).render('index');
-    }
+    } 
+    else res.status(200).render('index');
 });
 
 router.get('/index', optionalAuthenticateToken, (req, res) => {
@@ -86,27 +71,28 @@ router.get('/index', optionalAuthenticateToken, (req, res) => {
             .then(response => {
                 rep = response.data;
 
-                if (rep.permission >= 0) {
-                    return res.status(200).render('index', { pseudo: rep.username, email: rep.email, permission: rep.permission });
-                }else {
-                    return res.status(200).render('index');
-                }
+                if (rep.permission >= 0) return res.status(200).render('index', { pseudo: rep.username, email: rep.email, permission: rep.permission });
+                else return res.status(200).render('index');
             })
             .catch(error => {
                 return res.status(200).render('index');
             })
     }
-    else {
-        return res.status(200).render('index');
-    }
+    else return res.status(200).render('index');
 });
 
-// router.get('/lien', optionalAuthenticateToken, (req, res) => {
-//     res.status(200).render('lien');
-// });
 
 router.get('/register', noAuth, (req, res) => {
     res.status(200).render('inscription');
+});
+
+router.get('/login', noAuth, (req, res) => {
+    res.status(200).render('login');
+});
+
+router.get('/logout', verifyAccess(0), (req, res) => {
+    const host = req.headers.host;
+    res.clearCookie('token').redirect(`https://${host}/`);
 });
 
 router.get('/reservation', optionalAuthenticateToken, (req, res) => {
@@ -116,30 +102,15 @@ router.get('/reservation', optionalAuthenticateToken, (req, res) => {
         })
             .then(response => {
                 rep = response.data;
-                console.log(rep);
 
-                if (rep.permission >= 0) {
-                    res.status(200).render('reservation', { pseudo: rep.username, email: rep.email, permission: rep.permission });
-                } 
+                if (rep.permission >= 0) return res.status(200).render('reservation', { pseudo: rep.username, email: rep.email, permission: rep.permission });
+                else return res.status(200).render('reservation');
             })
             .catch(error => {
-                res.status(200).render('reservation');
+                return res.status(200).render('reservation');
             })
     }
-    else {
-        res.redirect('login');
-    }
-});
-
-router.get('/login', noAuth, (req, res) => {
-    res.status(200).render('login');
-});
-
-
-router.get('/logout', verifyAccess(0), (req, res) => {
-    const host = req.headers.host;
-    res.clearCookie('token').redirect(`https://${host}/`);
-
+    else return res.redirect('login');
 });
 
 
@@ -151,11 +122,8 @@ router.get('/admin', optionalAuthenticateToken, verifyAccess(1), (req, res) => {
             .then(response => {
                 rep = response.data;
 
-                if (rep.permission >= 1) {
-                    res.status(200).render('admin', { pseudo: rep.username, email: rep.email, permission: rep.permission });
-                } else {
-                    return res.status(403).render("error/403", { permission:rep.permission });
-                }
+                if (rep.permission >= 1) return res.status(200).render('admin', { pseudo: rep.username, email: rep.email, permission: rep.permission });
+                else return res.status(403).render("error/403", { permission:rep.permission });
             })
             .catch(error => {
                 res.status(200).render('error/500');
@@ -244,5 +212,45 @@ router.get('/p', (req, res) => {
     const host = req.headers.host;
     res.redirect(`https://${host}/phpmyadmin/`);
 });
+
+
+/// GEstion erreur
+
+
+router.use(optionalAuthenticateToken, (req, res) => {
+    if (req.userId) {
+        axios.get('http://127.0.0.1:3000/api/user', {
+            params: { idUser: req.userId, type: "all" }
+        })
+            .then(response => {
+                rep = response.data;
+
+                if (rep.permission >= 0) return res.status(200).render('error/404', { pseudo: rep.username, email: rep.email, permission: rep.permission });
+                else return res.status(200).render("error/404");
+            })
+            .catch(error => {
+                return res.redirect('error/404');
+            })
+    }else res.status(400).render('error/404');
+});
+
+router.use((req, res) => {
+    if (req.userId) {
+        axios.get('http://127.0.0.1:3000/api/user', {
+            params: { idUser: req.userId, type: "all" }
+        })
+            .then(response => {
+                rep = response.data;
+
+                if (rep.permission >= 0) return res.status(200).render('error/502', { pseudo: rep.username, email: rep.email, permission: rep.permission });
+                else return res.status(502).render('error/502');
+            })
+            .catch(error => {
+                return res.status(502).render('error/502');
+            })
+    }else return res.status(502).render('error/502');
+});
+
+
 
 module.exports = router;
