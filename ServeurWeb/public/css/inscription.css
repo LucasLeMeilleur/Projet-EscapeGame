@@ -118,3 +118,8 @@ button .left:hover ~ .right::after {
     padding-left: 5px;
     font-size: 14px;
 }
+
+#montrer_erreur{
+    text-align: center;
+    color: #008686
+}

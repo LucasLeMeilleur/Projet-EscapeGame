@@ -13,9 +13,6 @@ function decryptWithPrivateKey(encryptedMessage) {
 
     const encryptedBuffer = Buffer.from(encryptedMessage, 'base64');
 
-    console.log("test");
-
-
     const decryptedBuffer = crypto.privateDecrypt(
       {
         key: global.keyRSA.getPrivateKey(),
@@ -49,11 +46,9 @@ exports.listeUser = async (req, res) => {
       attributes: ['idUser', 'username', 'email', 'permission']
     });
 
-    res.status(200).json(rep);
-    return;
+    return res.status(200).json(rep);
   } catch (error) {
-    res.status(500).json({ message: error.message });
-    return;
+    return res.status(500).json({ message: error.message });
   }
 }
 
@@ -63,36 +58,26 @@ exports.regiserUser = async (req, res) => {
   try {
     const ReqData = req.body;
     const DecryptedForm = decryptWithPrivateKey((ReqData.encryptedForm));
-    if (!DecryptedForm) {
-      res.status(407).send("Formulaire non chiffré");
-      return;
-    }
+    if (!DecryptedForm) return res.status(407).send("Formulaire non chiffré");
 
     const JSONDecryptedForm = JSON.parse(DecryptedForm)
     const Username = JSONDecryptedForm.username;
     const Password = JSONDecryptedForm.password;
     const Email = JSONDecryptedForm.email;
 
-    if (!Password || !Username || !Email) {
-      res.status(400).send("Formulaire incomplet");
-      return;
-    }
-
-    if (!isValidEmail(Email)) {
-      res.status(400).send("Mail invalide");
-      return;
-    }
-
+    if (!Password || !Username || !Email) return res.status(400).json({message: "Formulaire incomplet"});
+      
+    if (!isValidEmail(Email)) return res.status(400).json({message: "Mail invalide"});
+      
     const repDejaPresent = await TableUtilisateur.findOne({
       where: {
         email: Email,
       }
     }) 
 
-    if (repDejaPresent){
-      return res.status(400).send("Un compte est deja associé a cette adresse mail");
-    }
 
+    if (repDejaPresent) return res.status(400).json({message: "Un compte est deja associé a cette adresse mail"});
+    
     const hashedPassword = await bcrypt.hash(Password, 15);
 
     const rep = await TableUtilisateur.create({
@@ -103,12 +88,8 @@ exports.regiserUser = async (req, res) => {
     })
 
     const user = await TableUtilisateur.findOne({ where: { email: Email } });
-    if (!user) {
-      return res.status(400).send("Identifiants introuvable");
+    if (!user) return res.status(400).json({message: "Identifiants introuvable"});
       
-    }
-
-
 
     const token = jwt.sign(
       { id: user.idUser, permission: user.permission },
@@ -118,11 +99,10 @@ exports.regiserUser = async (req, res) => {
 
 
     res.cookie('token', token, { httpOnly: true, secure: false });
-    res.status(200).json(rep);
+    return res.status(200).json(rep);
     
   } catch (error) {
-    res.status(500).json({ message: error.message })
-    return;
+    return res.status(500).json({ message: error.message })
   }
 }
 
@@ -132,38 +112,19 @@ exports.loginUser = async (req, res) => {
     const ReqData = req.body
     const DecryptedForm = decryptWithPrivateKey((ReqData.encryptedForm));
     
-    if (!DecryptedForm) {
-      res.status(400).send("Formulaire non chiffré");
-      return;
-    }
-    
-    
-
+    if (!DecryptedForm) return res.status(400).json({message: "Formulaire non chiffré"});
+      
     const JSONDecryptedForm = JSON.parse(DecryptedForm);
     const Email = JSONDecryptedForm.email;
     const Password = JSONDecryptedForm.password;
 
-
-
-    if (!Email || !Password) {
-      res.status(400).send("Formulaire invalide");
-      return;
-    }
-
+    if (!Email || !Password) return res.status(400).send("Formulaire invalide");
+      
     const user = await TableUtilisateur.findOne({ where: { email: Email } });
-    if (!user) {
-      res.status(400).send("Identifiants introuvable");
-      return;
-    }
-
-    console.log(user.permission);
-    
+    if (!user) return res.status(400).json({message: "Identifiants introuvable"});    
 
     const isValidPassword = await bcrypt.compare(Password, user.password);
-    if (!isValidPassword) return res.status(400).json({ error: 'Mot de passe incorrect.' });
-
-
-
+    if (!isValidPassword) return res.status(400).json({ message: 'Mot de passe incorrect.' });
 
     const token = jwt.sign(
       { id: user.idUser, permission: user.permission },
@@ -171,13 +132,10 @@ exports.loginUser = async (req, res) => {
       { expiresIn: '8h' }
     );
 
-
     res.cookie('token', token, { httpOnly: true, secure: false });
-    res.status(200).json({ message: 'Connexion réussie !' });
-    
+    return res.status(200).json({ message: 'Connexion réussie !' });
   } catch (error) {
-    res.status(500).json({ message: error.message })
-    return;
+    return res.status(500).json({ message: error.message })
   }
 }
 
@@ -186,27 +144,19 @@ exports.nomUser = async (req, res) => {
     const userId = req.query.idUser;
     const type = req.query.type;    
 
-    if (!userId || !type) {
-      res.status(400).send("No or type");
-      return;
-    }
+    if (!userId || !type) return res.status(400).send("No or type");
 
     var TabAttribute;
-    if (type == "all") {
-      TabAttribute = ["username", "email", "permission"];
-    } else {
-      TabAttribute = [type];
-    }
+    if (type == "all") TabAttribute = ["username", "email", "permission"];
+    else TabAttribute = [type];
 
     const rep = await TableUtilisateur.findOne({
       attributes: TabAttribute,
       where: { idUser: userId }
     });
 
-    res.status(200).json( rep )
-    return;
+    return res.status(200).json( rep )
   } catch (error) {
-    res.status(500).json({ message: error.message })
-    return;
+    return res.status(500).json({ message: error.message })
   }
 }

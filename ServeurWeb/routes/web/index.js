@@ -52,64 +52,52 @@ function noAuth(req, res, next) {
     next();
 }
 
-
+////////////////////////  Les routes ///////////////////////////
 
 router.get('/', optionalAuthenticateToken, (req, res) => {
 
     if (req.userId) {
-        console.log("Iduser de la req : " + req.userId);
         axios.get('http://127.0.0.1:3000/api/user', {
             params: { idUser: req.userId, type: "all" }
         })
             .then(response => {
                 rep = response.data;
-                console.log(rep);
 
-                if (rep.permission) {
-                    console.log("permission")
+                if (rep.permission >= 0) {
                     res.status(200).render('index', { pseudo: rep.username, email: rep.email, permission: rep.permission });
                 } else {
-                    console.log("pas de perm");
-                    res.status(200).render('index', { pseudo: rep.username, email: rep.email });
+                    res.status(200).render('index');
                 }
             })
             .catch(error => {
-                console.log("erreur");
                 res.status(200).render('index');
             })
     }
     else {
-        console.log("déconnecté");
         res.status(200).render('index');
     }
 });
 
 router.get('/index', optionalAuthenticateToken, (req, res) => {
     if (req.userId) {
-        console.log("Iduser de la req : " + req.userId);
         axios.get('http://127.0.0.1:3000/api/user', {
             params: { idUser: req.userId, type: "all" }
         })
             .then(response => {
                 rep = response.data;
-                console.log(rep);
 
-                if (rep.permission) {
-                    console.log("permission")
-                    res.status(200).render('index', { pseudo: rep.username, email: rep.email, permission: rep.permission });
-                } else {
-                    console.log("pas de perm");
-                    res.status(200).render('index', { pseudo: rep.username, email: rep.email });
+                if (rep.permission >= 0) {
+                    return res.status(200).render('index', { pseudo: rep.username, email: rep.email, permission: rep.permission });
+                }else {
+                    return res.status(200).render('index');
                 }
             })
             .catch(error => {
-                console.log("erreur");
-                res.status(200).render('index');
+                return res.status(200).render('index');
             })
     }
     else {
-        console.log("déconnecté");
-        res.status(200).render('index');
+        return res.status(200).render('index');
     }
 });
 
@@ -123,7 +111,6 @@ router.get('/register', noAuth, (req, res) => {
 
 router.get('/reservation', optionalAuthenticateToken, (req, res) => {
     if (req.userId) {
-        console.log("Iduser de la req : " + req.userId);
         axios.get('http://127.0.0.1:3000/api/user', {
             params: { idUser: req.userId, type: "all" }
         })
@@ -131,22 +118,16 @@ router.get('/reservation', optionalAuthenticateToken, (req, res) => {
                 rep = response.data;
                 console.log(rep);
 
-                if (rep.permission) {
-                    console.log("permission")
+                if (rep.permission >= 0) {
                     res.status(200).render('reservation', { pseudo: rep.username, email: rep.email, permission: rep.permission });
-                } else {
-                    console.log("pas de perm");
-                    res.status(200).render('reservation', { pseudo: rep.username, email: rep.email });
-                }
+                } 
             })
             .catch(error => {
-                console.log("erreur");
                 res.status(200).render('reservation');
             })
     }
     else {
-        console.log("déconnecté");
-        res.status(200).render('index');
+        res.redirect('login');
     }
 });
 
@@ -164,33 +145,29 @@ router.get('/logout', verifyAccess(0), (req, res) => {
 
 router.get('/admin', optionalAuthenticateToken, verifyAccess(1), (req, res) => {
     if (req.userId) {
-        console.log("Iduser de la req : " + req.userId);
         axios.get('http://127.0.0.1:3000/api/user', {
             params: { idUser: req.userId, type: "all" }
         })
             .then(response => {
                 rep = response.data;
-                console.log(rep);
 
-                if (rep.permission) {
-                    console.log("permission")
+                if (rep.permission >= 1) {
                     res.status(200).render('admin', { pseudo: rep.username, email: rep.email, permission: rep.permission });
                 } else {
-                    console.log("pas de perm");
-                    res.status(200).render('admin', { pseudo: rep.username, email: rep.email });
+                    return res.status(403).render("error/403", { permission:rep.permission });
                 }
             })
             .catch(error => {
-                console.log("erreur");
-                res.status(200).render('admin');
+                res.status(200).render('error/500');
             })
-    }
+    } else {
+        res.redirect("error/403");
+    } 
 });
 
 
 router.get('/compte-gestion', optionalAuthenticateToken, verifyAccess(0), (req, res) => {
     if (req.userId) {
-        console.log("Iduser de la req : " + req.userId);
         axios.get('http://127.0.0.1:3000/api/user', {
             params: { idUser: req.userId, type: "all" }
         })
@@ -198,68 +175,62 @@ router.get('/compte-gestion', optionalAuthenticateToken, verifyAccess(0), (req, 
                 rep = response.data;
                 console.log(rep);
 
-                if (rep.permission) {
+                if (rep.permission >= 0) {
                     console.log("permission")
-                    res.status(200).render('gestionCompte', { pseudo: rep.username, email: rep.email, permission: rep.permission });
+                    return res.status(200).render('gestionCompte', { pseudo: rep.username, email: rep.email, permission: rep.permission });
                 } else {
-                    console.log("pas de perm");
-                    res.status(200).render('gestionCompte', { pseudo: rep.username, email: rep.email });
+                    return res.status(403).render("error/403");
                 }
+
             })
             .catch(error => {
-                console.log("erreur");
-                res.status(500).send("Erreur compte");
+                return res.redirect('error/500');
             })
+    }else{
+        return res.redirect('/');
     }
 });
 
 router.get('/admin/gestion-partie', optionalAuthenticateToken, verifyAccess(1), (req, res) => {
     if (req.userId) {
-        console.log("Iduser de la req : " + req.userId);
         axios.get('http://127.0.0.1:3000/api/user', {
             params: { idUser: req.userId, type: "all" }
         })
             .then(response => {
                 rep = response.data;
-                console.log(rep);
 
-                if (rep.permission) {
-                    console.log("permission")
+                if (rep.permission >= 1) {
                     res.status(200).render('admin/gestion', { pseudo: rep.username, email: rep.email, permission: rep.permission });
                 } else {
-                    console.log("pas de perm");
-                    res.status(200).render('admin/gestion', { pseudo: rep.username, email: rep.email });
+                    return res.status(403).render("error/403", { permission:rep.permission });
                 }
             })
             .catch(error => {
-                console.log("erreur");
-                res.status(200).render('admin/gestion');
+                return res.redirect('error/500');
             })
+    }else {
+        return res.redirect("error/403")
     }
 });
 
 router.get('/admin/pannel', optionalAuthenticateToken, verifyAccess(1), (req, res) => {
     if (req.userId) {
-        console.log("Iduser de la req : " + req.userId);
         axios.get('http://127.0.0.1:3000/api/user', {
             params: { idUser: req.userId, type: "all" }
         })
             .then(response => {
                 rep = response.data;
-                console.log(rep);
-
-                if (rep.permission) {
-                    console.log("permission")
-                    res.status(200).render('gestion/pannel', { pseudo: rep.username, email: rep.email, permission: rep.permission });
+                if (rep.permission >= 1) {
+                    return res.status(200).render('gestion/pannel', { pseudo: rep.username, email: rep.email, permission: rep.permission });
                 } else {
-                    console.log("pas de perm");
-                    res.status(200).render('gestion/pannel', { pseudo: rep.username, email: rep.email });
+                    return res.status(403).render("error/403", { permission:rep.permission });
                 }
             })
             .catch(error => {
-                console.log("erreur");
-                res.status(200).render('gestion/pannel');
+                res.status(403).render('error/403');
             })
+    }else {
+        res.render("error/403");
     }
 });
 

@@ -86,7 +86,7 @@ if (document.getElementById('registerForm')) {
                 throw new Error(`Erreur serveur (${response.status}): ${errorDetails}`);
             }
         } catch (error) {
-            console.error('Erreur lors de l\'inscription :', error);
+            document.getElementById("montrer_erreur").innerText = error.message.split(':')[1]?.trim();
         }
     });
 }
@@ -95,6 +95,8 @@ if (document.getElementById('loginForm')) {
     document.getElementById('loginForm').addEventListener('submit', async function (event) {
         event.preventDefault();
 
+        document.getElementById("spinner").style.display = "block";
+    
         // Récupération et envoie des donnée du formulaire chiffré a l'API
         const formDataConfig = new FormData(this);
 
