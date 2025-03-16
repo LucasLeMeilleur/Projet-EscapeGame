@@ -135,3 +135,11 @@ button .left:hover ~ .right::after {
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
 }
+
+
+#butt {
+    display: flex;
+    align-items: center; /* Aligne verticalement */
+    gap: 16px; /* Espacement entre les éléments */
+    padding: 10px 15px;
+}

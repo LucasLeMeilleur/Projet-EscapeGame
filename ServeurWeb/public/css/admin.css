@@ -16,4 +16,92 @@ html, body {
 
 section {
     flex: 1;
+    text-align: center;
+}
+
+#panneaux{
+    display: flex;
+    gap: 70px;
+    justify-content: center; 
+    margin-top: 80px;
+    margin-bottom: 80px;
+}
+
+#titre_admin{
+    margin-top: 30px;
+    font-size: 37px;
+}
+
+.pannel {
+    display: flex;
+    flex-direction: column;    
+    width: auto;
+    height: 550px;
+    padding: 15px;
+    border: solid white;
+    border-radius: 25px;
+}
+
+#inside_admin_panel, #inside_gestion_partie{
+    margin-top: 25px;
+    padding: 10px;
+
+    border: solid wheat;
+    border-radius: 15px;
+    height: 100%;
+    
+}
+
+#inside_admin_pannel{
+    display: flex;
+    flex-direction: column; /* Empile les éléments */
+    justify-content: center; /* Centre verticalement */
+    align-items: center;
+}
+
+#inside_admin_panel h3{
+    padding: 15px;
+}
+
+td, th{
+    padding-left: 7px;
+    padding-right: 7px;
+
+    border-left: 2px solid white; /* Bordure à gauche */
+    border-right: 2px solid white;
+}
+
+#liste_partie th {
+    padding-bottom: 8px;
+}
+
+#inside_admin_panel > div {
+    text-align: center; /* Centre le texte à l'intérieur */
+    width: 100%;
+}
+
+#inside_admin_panel table {
+    margin: auto;
+
+}
+
+#admin_pannel{
+    display: flex;
+    flex-direction: column; /* Empile les éléments */
+    align-items: center; /* Centre horizontalement */
+    justify-content: center;
+}
+
+
+.listes_table {
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Centre horizontalement */
+    justify-content: center; /* Centre verticalement */
+    text-align: center;
+    height: 50%;
+}
+
+#inside_gestion_partie h3{
+    padding: 15px;
 }

@@ -7,7 +7,12 @@
         <title></title>
         <meta name="description" content="">
         <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <script src="/js/admin.js" defer></script>
+
         <link rel="stylesheet" href="css/admin.css">
+
+        <link rel="stylesheet" href="css/partials/forme.css">
         <link rel="stylesheet" href="css/partials/header.css">
         <link rel="stylesheet" href="css/partials/footer.css">
     </head>
@@ -21,7 +26,39 @@
         <% } %>
 
         <section>
-            <h1>Admin</h1>
+            <h1 id="titre_admin">Administration de l'escape game</h1>
+            <div id="panneaux">
+                <div id="gestion_pannel" class="pannel">
+                    <h2>Gestion de la partie</h2>
+                    <div id="inside_gestion_partie">
+                        <h3>Etat de la derniere partie :</h3>
+                    </div>
+                </div>
+
+                <div id="admin_panel" class="pannel">
+                    <h2>Panneau d'Administration</h2>
+                    <div id="inside_admin_panel">
+
+                        <div class="listes_table">
+                            <h3>Derniere réservation </h3>
+                            <table id="liste_reservation">
+    
+                            </table>   
+
+                        </div>
+
+                        <div class="listes_table">
+                            <h3>Derniere partie</h3>
+                            <table id="liste_partie">
+    
+                            </table>
+
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
         </section>
 
         <%- include('partials/footer'); %>

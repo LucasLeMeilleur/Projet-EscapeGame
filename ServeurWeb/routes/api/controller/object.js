@@ -221,6 +221,42 @@ exports.listeEquipeId = async (req, res) => {
     }
 }
 
+exports.dernieresPartie = async (req, res) => {
+    try {
+        const derniersEnregistrements = await TableGame.findAll({
+            order: [['date', 'DESC']],
+            limit: 5
+        });
+
+        return res.status(200).json(derniersEnregistrements);
+    } catch (error){
+        return res.status(500).json(error.message)
+    }
+}
+
+exports.listeReservation = async (req, res) => {
+    try {
+        const reservations = await TableReservation.findAll();
+
+        return res.status(200).json(reservations);
+    } catch (error){
+        return res.status(500).json(error.message)
+    }
+}
+
+exports.dernieresReservation = async (req, res) => {
+    try {
+        const derniersEnregistrements = await TableReservation.findAll({
+            order: [['date', 'DESC']],
+            limit: 5
+        });
+
+        return res.status(200).json(derniersEnregistrements);
+    } catch (error){
+        return res.status(500).json(error.message)
+    }
+}
+
 
 // POST
 

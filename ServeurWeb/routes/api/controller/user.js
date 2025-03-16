@@ -107,8 +107,11 @@ exports.regiserUser = async (req, res) => {
 }
 
 exports.loginUser = async (req, res) => {
-
   try {
+
+
+    console.log("Test")
+
     const ReqData = req.body
     const DecryptedForm = decryptWithPrivateKey((ReqData.encryptedForm));
     
@@ -118,13 +121,13 @@ exports.loginUser = async (req, res) => {
     const Email = JSONDecryptedForm.email;
     const Password = JSONDecryptedForm.password;
 
-    if (!Email || !Password) return res.status(400).send("Formulaire invalide");
+    if (!Email || !Password) return res.status(400).json({message: "Formulaire invalide"});
       
     const user = await TableUtilisateur.findOne({ where: { email: Email } });
     if (!user) return res.status(400).json({message: "Identifiants introuvable"});    
 
     const isValidPassword = await bcrypt.compare(Password, user.password);
-    if (!isValidPassword) return res.status(400).json({ message: 'Mot de passe incorrect.' });
+    if (!isValidPassword) return res.status(400).json({ message: "Mot de passe incorrect." });
 
     const token = jwt.sign(
       { id: user.idUser, permission: user.permission },
@@ -132,10 +135,12 @@ exports.loginUser = async (req, res) => {
       { expiresIn: '8h' }
     );
 
+    console.log("Test")
+
     res.cookie('token', token, { httpOnly: true, secure: false });
-    return res.status(200).json({ message: 'Connexion réussie !' });
+    return res.status(200).json({ message: "Connexion réussie !" });
   } catch (error) {
-    return res.status(500).json({ message: error.message })
+    return res.status(500).json({ message: error })
   }
 }
 

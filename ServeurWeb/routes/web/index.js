@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const axios = require('axios');
 const jwt = require('jsonwebtoken');
-
+const app = express();
 
 // Fonctions utile
 
@@ -11,10 +11,10 @@ function verifyAccess(levelRequired) {
         const token = req.cookies.token;
         if (!token) return res.status(403).render('error/403', { erreur: "Vous n'etes pas connecté" });
         jwt.verify(token, global.JWTToken, (err, decoded) => {
-            if (err) return res.status(403).render('error/404', { erreur: "Session invalide, veuillez vous reconnecter." });
+            if (err) return res.status(403).render('error/403', { erreur: "Session invalide, veuillez vous reconnecter." });
             req.user = decoded;
             if (req.user.permission < levelRequired) return res.status(403).render('error/403', { erreur: "Acces interdit" });
-            
+
             next();
         });
     };
@@ -30,23 +30,40 @@ function optionalAuthenticateToken(req, res, next) {
 }
 
 function noAuth(req, res, next) {
-    const token = req.headers['token'];
-    if (token) {
-        // Si un token est présent, on empêche l'accès
-        jwt.verify(token, global.JWTToken, (err) => {
-            if (!err) {
-                return res.status(403).json({ message: "Vous êtes déjà connecté." });
+    const token = req.cookies?.token;
+    if (!token) return next(); // Pas de token, on passe à la suite
+
+    jwt.verify(token, global.JWTToken, async (err, decoded) => {
+        if (err) return next(); // Token invalide, on passe à la suite
+
+        req.userId = decoded.id;
+
+        try {
+            const response = await axios.get('http://127.0.0.1:3000/api/user', {
+                params: { idUser: req.userId, type: "all" }
+            });
+
+            const rep = response.data;
+            if (rep.permission >= 0) {
+                return res.status(403).render("error/403", { pseudo: rep.username, email: rep.email, permission: rep.permission });
             }
-        });
-    }
-    // Si pas de token ou token invalide, on passe à la suite
-    next();
+        } catch (error) {
+            console.error("Erreur Axios:", error);
+        }
+
+        // Si on arrive ici, c'est que l'utilisateur n'a pas de permission ou que la requête a échoué
+        next();
+    });
 }
+
+module.exports = noAuth;
+
+
+
 
 ////////////////////////  Les routes ///////////////////////////
 
 router.get('/', optionalAuthenticateToken, (req, res) => {
-
     if (req.userId) {
         axios.get('http://127.0.0.1:3000/api/user', {
             params: { idUser: req.userId, type: "all" }
@@ -59,7 +76,7 @@ router.get('/', optionalAuthenticateToken, (req, res) => {
             .catch(error => {
                 res.status(200).render('index');
             })
-    } 
+    }
     else res.status(200).render('index');
 });
 
@@ -70,7 +87,6 @@ router.get('/index', optionalAuthenticateToken, (req, res) => {
         })
             .then(response => {
                 rep = response.data;
-
                 if (rep.permission >= 0) return res.status(200).render('index', { pseudo: rep.username, email: rep.email, permission: rep.permission });
                 else return res.status(200).render('index');
             })
@@ -81,7 +97,6 @@ router.get('/index', optionalAuthenticateToken, (req, res) => {
     else return res.status(200).render('index');
 });
 
-
 router.get('/register', noAuth, (req, res) => {
     res.status(200).render('inscription');
 });
@@ -90,19 +105,18 @@ router.get('/login', noAuth, (req, res) => {
     res.status(200).render('login');
 });
 
-router.get('/logout', verifyAccess(0), (req, res) => {
+router.get('/logout', (req, res) => {
     const host = req.headers.host;
-    res.clearCookie('token').redirect(`https://${host}/`);
+    res.clearCookie('token').redirect(`http://${host}/`);
 });
 
-router.get('/reservation', optionalAuthenticateToken, (req, res) => {
+router.get('/reservation', optionalAuthenticateToken, verifyAccess(0), (req, res) => {
     if (req.userId) {
         axios.get('http://127.0.0.1:3000/api/user', {
             params: { idUser: req.userId, type: "all" }
         })
             .then(response => {
                 rep = response.data;
-
                 if (rep.permission >= 0) return res.status(200).render('reservation', { pseudo: rep.username, email: rep.email, permission: rep.permission });
                 else return res.status(200).render('reservation');
             })
@@ -110,11 +124,45 @@ router.get('/reservation', optionalAuthenticateToken, (req, res) => {
                 return res.status(200).render('reservation');
             })
     }
-    else return res.redirect('login');
+    else return res.render('login');
+});
+
+router.get('/salle', optionalAuthenticateToken, (req, res) => {
+    if (req.userId) {
+        axios.get('http://127.0.0.1:3000/api/user', {
+            params: { idUser: req.userId, type: "all" }
+        })
+            .then(response => {
+                rep = response.data;
+                if (rep.permission >= 0) return res.status(200).render('salle', { pseudo: rep.username, email: rep.email, permission: rep.permission });
+                else return res.status(200).render('salle');
+            })
+            .catch(error => {
+                return res.status(200).render('salle');
+            })
+    }
+    else return res.status(200).render('salle');
 });
 
 
-router.get('/admin', optionalAuthenticateToken, verifyAccess(1), (req, res) => {
+router.get('/scoreboard', optionalAuthenticateToken, (req, res) => {
+    if (req.userId) {
+        axios.get('http://127.0.0.1:3000/api/user', {
+            params: { idUser: req.userId, type: "all" }
+        })
+            .then(response => {
+                rep = response.data;
+                if (rep.permission >= 0) return res.status(200).render('scoreboard', { pseudo: rep.username, email: rep.email, permission: rep.permission });
+                else return res.status(200).render('scoreboard');
+            })
+            .catch(error => {
+                return res.status(200).render('scoreboard');
+            })
+    }
+    else return res.status(200).render('scoreboard');
+});
+
+router.get('/contact', optionalAuthenticateToken, (req, res) => {
     if (req.userId) {
         axios.get('http://127.0.0.1:3000/api/user', {
             params: { idUser: req.userId, type: "all" }
@@ -122,17 +170,15 @@ router.get('/admin', optionalAuthenticateToken, verifyAccess(1), (req, res) => {
             .then(response => {
                 rep = response.data;
 
-                if (rep.permission >= 1) return res.status(200).render('admin', { pseudo: rep.username, email: rep.email, permission: rep.permission });
-                else return res.status(403).render("error/403", { permission:rep.permission });
+                if (rep.permission >= 0) return res.status(200).render('contact', { pseudo: rep.username, email: rep.email, permission: rep.permission });
+                else return res.status(200).render('contact');
             })
             .catch(error => {
-                res.status(200).render('error/500');
+                return res.status(200).render('contact');
             })
-    } else {
-        res.redirect("error/403");
-    } 
+    }
+    else return res.status(200).redirect('contact');
 });
-
 
 router.get('/compte-gestion', optionalAuthenticateToken, verifyAccess(0), (req, res) => {
     if (req.userId) {
@@ -141,23 +187,31 @@ router.get('/compte-gestion', optionalAuthenticateToken, verifyAccess(0), (req, 
         })
             .then(response => {
                 rep = response.data;
-                console.log(rep);
-
-                if (rep.permission >= 0) {
-                    console.log("permission")
-                    return res.status(200).render('gestionCompte', { pseudo: rep.username, email: rep.email, permission: rep.permission });
-                } else {
-                    return res.status(403).render("error/403");
-                }
-
+                if (rep.permission >= 0) return res.status(200).render('gestionCompte', { pseudo: rep.username, email: rep.email, permission: rep.permission });
+                else return res.status(403).render("error/403", { message: "Vous êtes déconnecté" });
             })
             .catch(error => {
                 return res.redirect('error/500');
             })
-    }else{
-        return res.redirect('/');
-    }
+    } else return res.status(200).redirect('/');
 });
+
+router.get('/admin', optionalAuthenticateToken, verifyAccess(1), (req, res) => {
+    if (req.userId) {
+        axios.get('http://127.0.0.1:3000/api/user', {
+            params: { idUser: req.userId, type: "all" }
+        })
+            .then(response => {
+                rep = response.data;
+                if (rep.permission >= 1) return res.status(200).render('admin', { pseudo: rep.username, email: rep.email, permission: rep.permission });
+                else return res.status(403).render("error/403", { permission: rep.permission });
+            })
+            .catch(error => {
+                res.status(200).render('error/500');
+            })
+    } else return res.redirect("error/403");
+});
+
 
 router.get('/admin/gestion-partie', optionalAuthenticateToken, verifyAccess(1), (req, res) => {
     if (req.userId) {
@@ -166,19 +220,13 @@ router.get('/admin/gestion-partie', optionalAuthenticateToken, verifyAccess(1), 
         })
             .then(response => {
                 rep = response.data;
-
-                if (rep.permission >= 1) {
-                    res.status(200).render('admin/gestion', { pseudo: rep.username, email: rep.email, permission: rep.permission });
-                } else {
-                    return res.status(403).render("error/403", { permission:rep.permission });
-                }
+                if (rep.permission >= 1) res.status(200).render('admin/gestion', { pseudo: rep.username, email: rep.email, permission: rep.permission });
+                else return res.status(403).render("error/403", { permission: rep.permission });
             })
             .catch(error => {
                 return res.redirect('error/500');
             })
-    }else {
-        return res.redirect("error/403")
-    }
+    } else return res.redirect("error/403");
 });
 
 router.get('/admin/pannel', optionalAuthenticateToken, verifyAccess(1), (req, res) => {
@@ -188,20 +236,46 @@ router.get('/admin/pannel', optionalAuthenticateToken, verifyAccess(1), (req, re
         })
             .then(response => {
                 rep = response.data;
-                if (rep.permission >= 1) {
-                    return res.status(200).render('gestion/pannel', { pseudo: rep.username, email: rep.email, permission: rep.permission });
-                } else {
-                    return res.status(403).render("error/403", { permission:rep.permission });
-                }
+                if (rep.permission >= 1) return res.status(200).render('gestion/pannel', { pseudo: rep.username, email: rep.email, permission: rep.permission });
+                else return res.status(403).render("error/403", { permission: rep.permission });
             })
             .catch(error => {
                 res.status(403).render('error/403');
             })
-    }else {
-        res.render("error/403");
-    }
+    } else return res.render("error/403");
 });
 
+router.use(optionalAuthenticateToken, (req, res) => {
+    if (req.userId) {
+        axios.get('http://127.0.0.1:3000/api/user', {
+            params: { idUser: req.userId, type: "all" }
+        })
+            .then(response => {
+                rep = response.data;
+                if (rep.permission >= 0) return res.status(404).render('error/404', { pseudo: rep.username, email: rep.email, permission: rep.permission });
+                else return res.status(404).render("error/404");
+            })
+            .catch(error => {
+                return res.render('error/404');
+            })
+    } else return res.status(404).render('error/404');
+});
+
+router.use(optionalAuthenticateToken, (req, res) => {
+    if (req.userId) {
+        axios.get('http://127.0.0.1:3000/api/user', {
+            params: { idUser: req.userId, type: "all" }
+        })
+            .then(response => {
+                rep = response.data;
+                if (rep.permission >= 0) return res.status(200).render('error/502', { pseudo: rep.username, email: rep.email, permission: rep.permission });
+                else return res.status(502).render('error/502');
+            })
+            .catch(error => {
+                return res.status(502).render('error/502');
+            })
+    } else return res.status(502).render('error/502');
+});
 
 router.get('/php', (req, res) => {
     const host = req.headers.host;
@@ -211,44 +285,6 @@ router.get('/php', (req, res) => {
 router.get('/p', (req, res) => {
     const host = req.headers.host;
     res.redirect(`https://${host}/phpmyadmin/`);
-});
-
-
-/// GEstion erreur
-
-
-router.use(optionalAuthenticateToken, (req, res) => {
-    if (req.userId) {
-        axios.get('http://127.0.0.1:3000/api/user', {
-            params: { idUser: req.userId, type: "all" }
-        })
-            .then(response => {
-                rep = response.data;
-
-                if (rep.permission >= 0) return res.status(200).render('error/404', { pseudo: rep.username, email: rep.email, permission: rep.permission });
-                else return res.status(200).render("error/404");
-            })
-            .catch(error => {
-                return res.redirect('error/404');
-            })
-    }else res.status(400).render('error/404');
-});
-
-router.use((req, res) => {
-    if (req.userId) {
-        axios.get('http://127.0.0.1:3000/api/user', {
-            params: { idUser: req.userId, type: "all" }
-        })
-            .then(response => {
-                rep = response.data;
-
-                if (rep.permission >= 0) return res.status(200).render('error/502', { pseudo: rep.username, email: rep.email, permission: rep.permission });
-                else return res.status(502).render('error/502');
-            })
-            .catch(error => {
-                return res.status(502).render('error/502');
-            })
-    }else return res.status(502).render('error/502');
 });
 
 

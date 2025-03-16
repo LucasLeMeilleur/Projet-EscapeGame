@@ -11,11 +11,11 @@
     <link rel="stylesheet" href="">
     <script src="js/formulaire.js" defer></script>
 
-    <link rel="stylesheet" href="css/login.css">
+    <link rel="stylesheet" href="/css/login.css">
 
-    <link rel="stylesheet" href="css/partials/forme.css">
-    <link rel="stylesheet" href="css/partials/header.css">
-    <link rel="stylesheet" href="css/partials/footer.css">
+    <link rel="stylesheet" href="/css/partials/forme.css">
+    <link rel="stylesheet" href="/css/partials/header.css">
+    <link rel="stylesheet" href="/css/partials/footer.css">
 
 </head>
 
@@ -36,9 +36,12 @@
             <form id="loginForm">
                 <input type="text" name="email" id="email_input" placeholder="E-mail">
                 <input type="password" name="password" id="password_input" placeholder="Mot de passe">
+                <p id="montrer_erreur"></p>
                 <p>Tu n'as pas de compte ? <a href="/register">S'inscrire</a></p>
-                <button id="butt">Se connecter</button>
-                <div id="spinner" class="spinner" style="display:none;"></div>
+                <button id="butt">
+                    Se connecter 
+                    <div id="spinner" class="spinner" style="display:none;"></div>
+                </button>
             </form>
         </div>
     </section>

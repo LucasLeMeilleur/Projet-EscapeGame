@@ -6,7 +6,7 @@ const TableGame = sequelize.define('game', {
     type: DataTypes.INTEGER,
     primaryKey: true,
     autoIncrement: true,
-    field:"idequipe",
+    field:"idgame",
   },
   idmissionEtat: {
     type: DataTypes.INTEGER,

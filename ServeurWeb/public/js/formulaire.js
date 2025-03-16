@@ -3,7 +3,7 @@ async function fetchPublicKey() {
     const publicKey = await response.json();
     console.log(publicKey.key);
     return publicKey.key;
-    
+
 }
 
 async function importPublicKey(pemKey) {
@@ -52,80 +52,82 @@ async function encryptWithPublicKey(publicKey, data) {
     return encodeBase64(encrypted);
 }
 
+
+///// Inscription
 if (document.getElementById('registerForm')) {
     document.getElementById('registerForm').addEventListener('submit', async function (event) {
         event.preventDefault();
 
+
+        document.getElementById("spinner").style.display = "block";
+
         // Récupération et envoie des donnée du formulaire chiffré a l'API
         const formDataConfig = new FormData(this);
 
-        try {
+        // Chiffrement du formulaire
+        const jsonData = JSON.stringify(Object.fromEntries(formDataConfig.entries()));
+        const publicKeyPem = await fetchPublicKey();
+        const publicKey = await importPublicKey(publicKeyPem);
+        const encryptedForm = await encryptWithPublicKey(publicKey, jsonData);
+        if (!encryptedForm) {
+            alert('Erreur lors du chiffrement du mot de passe.');
+            return;
+        }
 
-            // Chiffrement du formulaire
-            const jsonData = JSON.stringify(Object.fromEntries(formDataConfig.entries()));
-            const publicKeyPem = await fetchPublicKey();
-            const publicKey = await importPublicKey(publicKeyPem);
-            const encryptedForm = await encryptWithPublicKey(publicKey, jsonData);
-            if (!encryptedForm) {
-                alert('Erreur lors du chiffrement du mot de passe.');
-                return;
-            }
+        // Envoie du formulaire
+        const response = await fetch('/api/user/register', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ encryptedForm }),
+        });
 
-            // Envoie du formulaire
-            const response = await fetch('/api/user/register', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ encryptedForm }),
-            });
-
-            if (response.ok) {
-                console.log('Inscription réussie !');
-                window.location.href = '/';
-            } else {
-                const errorDetails = await response.text();
-                throw new Error(`Erreur serveur (${response.status}): ${errorDetails}`);
-            }
-        } catch (error) {
-            document.getElementById("montrer_erreur").innerText = error.message.split(':')[1]?.trim();
+        if (response.ok) {
+            document.getElementById("spinner").style.display = "none";
+            window.location.href = '/';
+        } else {
+            const errorDetails = JSON.parse(await response.text()).message;
+            document.getElementById("montrer_erreur").innerText = errorDetails;
+            document.getElementById("spinner").style.display = "none";
         }
     });
 }
 
+
+
+///// Connexion
 if (document.getElementById('loginForm')) {
     document.getElementById('loginForm').addEventListener('submit', async function (event) {
         event.preventDefault();
 
         document.getElementById("spinner").style.display = "block";
-    
+
         // Récupération et envoie des donnée du formulaire chiffré a l'API
         const formDataConfig = new FormData(this);
 
-        try {
-            // Chiffrement du formulaire
-            const jsonData = JSON.stringify(Object.fromEntries(formDataConfig.entries()));
-            const publicKeyPem = await fetchPublicKey();
-            const publicKey = await importPublicKey(publicKeyPem);
-            const encryptedForm = await encryptWithPublicKey(publicKey, jsonData);
-            if (!encryptedForm) {
-                alert('Erreur lors du chiffrement du mot de passe.');
-                return;
-            }
-
-            // Envoie du formulaire
-            const response = await fetch('/api/user/login', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ encryptedForm }),
-            });
-            if (response.ok) {
-                console.log('Connexion réussie !');
-                window.location.href = '/';
-            } else {
-                const errorDetails = await response.text();
-                throw new Error(`Erreur serveur (${response.status}): ${errorDetails}`);
-            }
-        } catch (error) {
-            console.error('Erreur lors de la connexion :', error);
+        // Chiffrement du formulaire
+        const jsonData = JSON.stringify(Object.fromEntries(formDataConfig.entries()));
+        const publicKeyPem = await fetchPublicKey();
+        const publicKey = await importPublicKey(publicKeyPem);
+        const encryptedForm = await encryptWithPublicKey(publicKey, jsonData);
+        if (!encryptedForm) {
+            alert('Erreur lors du chiffrement du mot de passe.');
+            return;
         }
+
+        // Envoie du formulaire
+        const response = await fetch('/api/user/login', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ encryptedForm }),
+        });
+        if (response.ok) {
+            document.getElementById("spinner").style.display = "none";
+            window.location.href = '/';
+        } else {
+            document.getElementById("spinner").style.display = "none";
+            const errorDetails = JSON.parse(await response.text()).message;
+            document.getElementById("montrer_erreur").innerText = errorDetails;
+        }
+
     });
 }

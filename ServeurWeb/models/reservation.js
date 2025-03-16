@@ -2,7 +2,7 @@ const { DataTypes } = require('sequelize');
 const sequelize = require('../config/database'); 
 
 const TableReservation = sequelize.define('reservation', {
-  idmission: {
+  idreservation: {
     type: DataTypes.INTEGER,
     primaryKey: true,
     autoIncrement: true,

@@ -32,7 +32,9 @@ const checkPermission = (requiredPermission) => (req, res, next) => {
 
     // Clé Publique RSA
 router.get('/key/publickey', (req, res) => {
-    res.send({ key: global.keyRSA.getPublicKey() });
+
+    console.log("dqd");
+    return res.send({ key: global.keyRSA.getPublicKey() });
 });
     
 
@@ -43,11 +45,16 @@ router.get('/key/publickey', (req, res) => {
 
     //Liste
 router.get('/game/partie/liste', object.listePartie);
+router.get('/game/partie/desc', object.dernieresPartie)
+
 router.get('/game/salle/liste', object.listeSalle);
 router.get('/game/scenario/liste', object.listeScenario);
 router.get('/game/mission/liste', object.listeMission);
 router.get('/game/missionEtat/liste', object.listeMissionEtat);
 router.get('/game/equipe/liste', object.listeEquipe)
+router.get('/game/reservation/liste', object.listeReservation);
+router.get('/game/reservation/desc', object.dernieresReservation);
+
 
     //Nombre element
 router.get('/game/partie/nombre', object.nombrePartie);
@@ -90,6 +97,21 @@ router.get('/user', user.nomUser);
 
 router.post('/user/register', user.regiserUser);
 router.post('/user/login', user.loginUser);
+
+///////////////////////// Gestion api erreur ///////////////////////////
+
+router.use((req, res) => {
+    return res.status(404).json({erreur: "Requete introuvable"});
+});
+
+router.use((req, res) => {
+    return res.status(401).json({erreur: "Requete mauvaise"});
+});
+
+router.use((req, res) => {
+    return res.status(500).json({erreur: "Erreur serveur"});
+});
+
 
 
 
