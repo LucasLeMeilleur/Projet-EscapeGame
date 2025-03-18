@@ -177,7 +177,7 @@ router.get('/contact', optionalAuthenticateToken, (req, res) => {
                 return res.status(200).render('contact');
             })
     }
-    else return res.status(200).redirect('contact');
+    else return res.status(200).render('contact');
 });
 
 router.get('/compte-gestion', optionalAuthenticateToken, verifyAccess(0), (req, res) => {

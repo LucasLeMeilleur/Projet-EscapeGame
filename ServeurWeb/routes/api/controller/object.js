@@ -393,6 +393,9 @@ exports.FinirPartie = async (req, res) => {
         const ReqData = req.body;
         const PartieId = ReqData.partie;
 
+        const Date_maintenant = Date.now();
+
+
         if (!PartieId) return res.status(400).json({message: "Id de partie introuvable"});
         
         reqprime = await TableGame.findOne({ where: { idgame: PartieId } });
@@ -400,8 +403,21 @@ exports.FinirPartie = async (req, res) => {
         if (reqprime.actif == 0) return res.status(400).json({message: "Partie non lancée"});
         if (reqprime.terminee == 1) return res.status(400).json({message: "Partie deja finit"});
 
+
+        const duree =  (Date_maintenant - reqprime.date) / 1000;
+        const duree_partie = 3600 - duree;
+
+        if( 3600 >= duree <= 0){
+            const updatePrime = await TableGame.update(
+                { actif: '0', terminee: '1', duree: '-1' },
+                { where: { idgame: PartieId } }
+            );
+    
+            return res.status(400).json({message: "Partie a durée incorrect ou dépassé"});
+        }
+
         const updatePrime = await TableGame.update(
-            { actif: '0', terminee: '1' },
+            { actif: '0', terminee: '1', duree: duree_partie },
             { where: { idgame: PartieId } }
         );
 

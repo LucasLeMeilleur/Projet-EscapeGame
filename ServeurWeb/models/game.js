@@ -18,10 +18,15 @@ const TableGame = sequelize.define('game', {
     allowNull: false,
     field:"idscenario"
   },
-  date: {
+  dateCreation: {
     type: DataTypes.DATE,
     allowNull: false,
-    field:"date"
+    field:"dateCreation"
+  },
+  dateDepart: {
+    type: DataTypes.DATE,
+    allowNull: false,
+    field:"dateDepart"
   },
   idequipe: {
     type: DataTypes.INTEGER,
@@ -39,6 +44,11 @@ const TableGame = sequelize.define('game', {
     allowNull: true,
     defaultValue: 0,
     field:"terminee"
+  },
+  duree: {
+    type: DataTypes.TINYINT,
+    allowNull: true,
+    field:"duree"
   }
 }, {
   tableName: 'game',      
