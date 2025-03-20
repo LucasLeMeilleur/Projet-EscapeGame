@@ -45,8 +45,9 @@ router.get('/key/publickey', (req, res) => {
 
     //Liste
 router.get('/game/partie/liste', object.listePartie);
-router.get('/game/partie/finies', object.dernieresPartiesFinies);
-router.get('/game/partie/active', object.partieActive)
+router.get('/game/partie/finie', object.dernierePartieFinie);
+router.get('/game/partie/active', object.partieActive);
+router.get('/game/partie/desc', object.derniereParties);
 
 router.get('/game/salle/liste', object.listeSalle);
 router.get('/game/scenario/liste', object.listeScenario);

@@ -119,3 +119,7 @@ th{
 #para_Etat_derniere_partie ul{
     list-style: none;
 }
+
+#para_Etat_partie_active{
+    margin-bottom: 20px;
+}

@@ -3,6 +3,19 @@ function SecondeVersTemps(a) {
     return Math.trunc(a / 60) + " : " + a % 60; 
 }
 
+function DateToString(a){
+    const dateObj = new Date(a);
+    value = dateObj.toLocaleString("fr-FR", {
+        day: "2-digit",
+        month: "2-digit",
+        year: "numeric",
+        hour: "2-digit",
+        minute: "2-digit"
+    }).replace(",", "");
+
+    return value;
+}
+
 document.getElementById("boutton_Gestion_partie_active").addEventListener("click", () => {
     window.location.href = "/admin/gestion-partie";
 })
@@ -12,7 +25,7 @@ async function remplirListePartie() {
     const tableau = document.getElementById("liste_partie");
 
     try {
-        const response = await fetch('/api/game/partie/finies', {
+        const response = await fetch('/api/game/partie/desc', {
             method: 'GET',
             headers: { 'Content-Type': 'application/json' },
         });
@@ -23,6 +36,7 @@ async function remplirListePartie() {
             // Vérifier si data est un tableau
             if (!Array.isArray(data) || data.length === 0) {
                 console.warn("Aucune partie trouvée !");
+                tableau.innerText = "Aucune parties";
                 return;
             }
 
@@ -68,14 +82,7 @@ async function remplirListePartie() {
 
                     // Convertir la date au format JJ/MM/YYYY HH:MM
                     if (key === "dateCreation") {
-                        const dateObj = new Date(value);
-                        value = dateObj.toLocaleString("fr-FR", {
-                            day: "2-digit",
-                            month: "2-digit",
-                            year: "numeric",
-                            hour: "2-digit",
-                            minute: "2-digit"
-                        }).replace(",", ""); // Supprime la virgule
+                        const dateObj = DateToString(value)  // Supprime la virgule
                     }
 
                     if (key == "duree" && value == undefined) {
@@ -124,6 +131,7 @@ async function remplirListeReservation() {
             // Vérifier si data est un tableau
             if (!Array.isArray(data) || data.length === 0) {
                 console.warn("Aucune partie trouvée !");
+                tableau.innerText = "Aucune Réservations";
                 return;
             }
 
@@ -167,14 +175,7 @@ async function remplirListeReservation() {
 
                     // Convertir la date au format JJ/MM/YYYY HH:MM
                     if (key === "date") {
-                        const dateObj = new Date(value);
-                        value = dateObj.toLocaleString("fr-FR", {
-                            day: "2-digit",
-                            month: "2-digit",
-                            year: "numeric",
-                            hour: "2-digit",
-                            minute: "2-digit"
-                        }).replace(",", ""); // Supprime la virgule
+                        value = DateToString(value); // Supprime la virgule
                     }
 
                     // Convertir booléens en Oui / Non
@@ -201,31 +202,45 @@ async function remplirListeReservation() {
 
 async function afficherDernierePartie() {
     try {
-        const reponse = await fetch('/api/game/partie/finies', {
+        const reponse = await fetch('/api/game/partie/finie', {
             method: 'GET',
             headers: { 'Content-Type': 'application/json' },
         });
 
         if (reponse.ok) {
-            const data = (await reponse.json())[0];
+            const data = (await reponse.json());
 
-            dateDepart = new Date(data.dateDepart);
-            dateDepart = dateDepart.toLocaleString("fr-FR", {
-                day: "2-digit",
-                month: "2-digit",
-                year: "numeric",
-                hour: "2-digit",
-                minute: "2-digit"
-            }).replace(",", "");
+            console.log(data);
 
-            dateCreation = new Date(data.dateCreation);
-            dateCreation = dateCreation.toLocaleString("fr-FR", {
-                day: "2-digit",
-                month: "2-digit",
-                year: "numeric",
-                hour: "2-digit",
-                minute: "2-digit"
-            }).replace(",", "");
+
+            if(data == undefined){
+                document.getElementById("para_Etat_derniere_partie").innerHTML = "Aucunes parties";
+                return;
+            }
+
+            
+
+            dateDepart = DateToString(data.dateDepart);
+            dateCreation = DateToString(data.dateCreation);
+
+            valeurDuree = "";
+
+
+            console.log(data.duree);
+
+            if( data.duree == null){
+                valeurDuree = "Partie non terminée";
+            }
+            else if (data.duree == undefined) {
+                valeurDuree = "erreur";
+            }
+            else if (data.duree == -1) {
+                valeurDuree = "+60min"
+            } else {
+                valeurDuree = SecondeVersTemps(data.duree);
+            }
+
+            console.log(valeurDuree)
 
 
 
@@ -237,7 +252,7 @@ async function afficherDernierePartie() {
             <li><strong>Date Creation:</strong>  ${dateCreation}</li>
             <li><strong>Date Depart: </strong> ${dateDepart}</li>
             <li><strong>ID Equipe:</strong> ${data.idequipe} </li>
-            <li><strong>Duree:&nbsp;</strong>   `+ SecondeVersTemps(`${data.duree}`) + ` </li>
+            <li><strong>Duree:&nbsp;</strong> ${valeurDuree}</li>
             </ul>
             `;
 
@@ -248,7 +263,7 @@ async function afficherDernierePartie() {
         }
     }
     catch (error) {
-        console.log(error);
+        console.log("erreur");
     }
 }
 
@@ -265,8 +280,12 @@ async function afficherPartieActive(){
 
             const data = await reponse.json();
 
-            console.log()
+            console.log(data)
 
+
+
+
+            document.getElementById("para_Etat_partie_active").innerHTML = "Test";
         }else{
             console.log("erreur");
         }
@@ -275,6 +294,10 @@ async function afficherPartieActive(){
         console.log(error)
     }
 }
+
+
+
+
 // Appel de la fonction
 remplirListeReservation();
 remplirListePartie();

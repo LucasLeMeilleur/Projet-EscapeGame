@@ -61,6 +61,28 @@ exports.partieActive = async (req, res) => {
 
 }
 
+exports.derniereParties = async (req, res) => {
+    try {
+        const rep = await await TableGame.findAll({
+            order: [['dateCreation', 'DESC']],
+            limit: 5
+        });
+        return res.status(200).json(rep);
+    } catch (error) {
+        return res.status(500).json({message: error.message});
+    }
+}
+
+
+exports.dernierePartieFinie = async (req, res) => {
+    try {
+        const rep = await TableGame.findOne({ where: { terminee: 1 }, limit: 1 });
+
+        return res.status(200).json(rep);
+    } catch (error) {
+        return res.status(500).json({message: error.message});
+    }
+}
 
 //Salle
 exports.listeSalle = async (req, res) => {
