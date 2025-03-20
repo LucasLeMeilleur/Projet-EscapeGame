@@ -1,5 +1,5 @@
 const sequelize = require('../../../config/database');
-const { Op } = require('sequelize');
+const { Op, where } = require('sequelize');
 
 const TableGame = require('../../../models/game');
 const TableSalle = require('../../../models/salle');
@@ -23,7 +23,9 @@ function getCurrentTime() {
 }
 
 
-// GET
+/////////////////////////////////////////////////////
+/////////////////////// GET /////////////////////////
+/////////////////////////////////////////////////////
 
 //Partie
 exports.listePartie = async (req, res) => {
@@ -42,24 +44,32 @@ exports.nombrePartie = async (req, res) => {
     try {
         const rep = await TableGame.count();
 
-        res.status(200).json(rep);
-        return;
+        return res.status(200).json(rep);
     } catch (error) {
-        res.status(500).json({ message: error.message });
-        return;
+        return res.status(500).json({ message: error.message });
     }
 }
+
+exports.partieActive = async (req, res) => {
+    try {
+        const rep = await TableGame.findOne({ where: { actif: true }, limit: 1 });
+
+        return res.status(200).json(rep);
+    } catch (error) {
+        return res.status(500).json({message: error.message});
+    }
+
+}
+
 
 //Salle
 exports.listeSalle = async (req, res) => {
     try {
         const rep = await TableSalle.findAll();
 
-        res.status(200).json(rep);
-        return;
+        return res.status(200).json(rep);
     } catch (error) {
-        res.status(500).json({ message: error.message });
-        return;
+        return res.status(500).json({ message: error.message });
     }
 }
 
@@ -67,11 +77,9 @@ exports.nombreSalle = async (req, res) => {
     try {
         const rep = await TableSalle.count();
 
-        res.status(200).json(rep);
-        return;
+        return res.status(200).json(rep);
     } catch (error) {
-        res.status(500).json({ message: error.message });
-        return;
+        return res.status(500).json({ message: error.message });
     }
 }
 
@@ -80,11 +88,9 @@ exports.listeScenario = async (req, res) => {
     try {
         const rep = await TableScenario.findAll();
 
-        res.status(200).json(rep);
-        return;
+        return res.status(200).json(rep);
     } catch (error) {
-        res.status(500).json({ message: error.message });
-        return;
+        return res.status(500).json({ message: error.message });
     }
 }
 
@@ -92,11 +98,9 @@ exports.nombreScenario = async (req, res) => {
     try {
         const rep = await TableScenario.count();
 
-        res.status(200).json(rep);
-        return;
+        return res.status(200).json(rep);
     } catch (error) {
-        res.status(500).json({ message: error.message });
-        return;
+        return res.status(500).json({ message: error.message });
     }
 }
 
@@ -105,11 +109,9 @@ exports.listeMission = async (req, res) => {
     try {
         const rep = await TableMission.findAll();
 
-        res.status(200).json(rep);
-        return;
+        return res.status(200).json(rep);
     } catch (error) {
-        res.status(500).json({ message: error.message });
-        return;
+        return res.status(500).json({ message: error.message });
     }
 }
 
@@ -117,11 +119,9 @@ exports.nombreMission = async (req, res) => {
     try {
         const rep = await TableMission.count();
 
-        res.status(200).json(rep);
-        return;
+        return res.status(200).json(rep);
     } catch (error) {
-        res.status(500).json({ message: error.message });
-        return;
+        return res.status(500).json({ message: error.message });
     }
 }
 
@@ -130,11 +130,9 @@ exports.listeMissionEtat = async (req, res) => {
     try {
         const rep = await TableMissionEtat.findAll();
 
-        res.status(200).json(rep);
-        return;
+        return res.status(200).json(rep);
     } catch (error) {
-        res.status(500).json({ message: error.message });
-        return;
+        return res.status(500).json({ message: error.message });
     }
 }
 
@@ -142,11 +140,9 @@ exports.nombreMissionEtat = async (req, res) => {
     try {
         const rep = await TableMissionEtat.count();
 
-        res.status(200).json(rep);
-        return;
+        return res.status(200).json(rep);
     } catch (error) {
-        res.status(500).json({ message: error.message });
-        return;
+        return res.status(500).json({ message: error.message });
     }
 }
 
@@ -155,10 +151,9 @@ exports.nombreMissionEtat = async (req, res) => {
 exports.listeEquipe = async (req, res) => {
     try {
         const rep = await TableEquipe.findAll();
-        res.status(200).json(rep);
+        return res.status(200).json(rep);
     } catch (error) {
-        res.status(500).json({ message: error.message });
-        return;
+        return res.status(500).json({ message: error.message });
     }
 }
 
@@ -170,16 +165,14 @@ exports.listeNomEquipe = async (req, res) => {
         });
 
 
-        res.status(200).json(rep);
-        return;
+        return res.status(200).json(rep);
     } catch (error) {
-        res.status(500).json({ message: error.message });
-        return;
+        return res.status(500).json({ message: error.message });
     }
 }
 
 
-// Get avec body
+// Get avec body  ->>>> a modifier
 
 exports.listeMissionEtatid = async (req, res) => {
     const ReqData = req.body;
@@ -221,10 +214,11 @@ exports.listeEquipeId = async (req, res) => {
     }
 }
 
-exports.dernieresPartie = async (req, res) => {
+exports.dernieresPartiesFinies = async (req, res) => {
     try {
         const derniersEnregistrements = await TableGame.findAll({
-            order: [['date', 'DESC']],
+            where:  {terminee: true},
+            order: [['dateCreation', 'DESC']],
             limit: 5
         });
 
@@ -257,8 +251,10 @@ exports.dernieresReservation = async (req, res) => {
     }
 }
 
+/////////////////////////////////////////////////////
+/////////////////////// POST ////////////////////////
+/////////////////////////////////////////////////////
 
-// POST
 
 exports.AjouterPartie = async (req, res) => {
     try {

@@ -1,15 +1,24 @@
+
+function SecondeVersTemps(a) {
+    return Math.trunc(a / 60) + " : " + a % 60; 
+}
+
+document.getElementById("boutton_Gestion_partie_active").addEventListener("click", () => {
+    window.location.href = "/admin/gestion-partie";
+})
+
+
 async function remplirListePartie() {
     const tableau = document.getElementById("liste_partie");
 
     try {
-        const response = await fetch('/api/game/partie/desc', {
+        const response = await fetch('/api/game/partie/finies', {
             method: 'GET',
             headers: { 'Content-Type': 'application/json' },
         });
 
         if (response.ok) {
             const data = await response.json();
-            console.log(data);
 
             // Vérifier si data est un tableau
             if (!Array.isArray(data) || data.length === 0) {
@@ -18,7 +27,7 @@ async function remplirListePartie() {
             }
 
             // Définir les colonnes à afficher (sans idmissionEtat)
-            const colonnesAAfficher = ["idgame", "idscenario", "date", "idequipe", "actif", "terminee"];
+            const colonnesAAfficher = ["idgame", "idscenario", "dateCreation", "idequipe", "duree"];
 
             // Vider le tableau avant d'ajouter du contenu
             tableau.innerHTML = "";
@@ -30,10 +39,11 @@ async function remplirListePartie() {
             const headersTraduit = {
                 "idgame": "Partie",
                 "idscenario": "Scénario",
-                "date": "Date",
+                "dateCreation": "Date",
                 "idequipe": "Équipe",
                 "actif": "Actif",
-                "terminee": "Terminée"
+                "terminee": "Terminée",
+                "duree": "Durée"
             };
 
             colonnesAAfficher.forEach(key => {
@@ -57,7 +67,7 @@ async function remplirListePartie() {
                     let value = partie[key];
 
                     // Convertir la date au format JJ/MM/YYYY HH:MM
-                    if (key === "date") {
+                    if (key === "dateCreation") {
                         const dateObj = new Date(value);
                         value = dateObj.toLocaleString("fr-FR", {
                             day: "2-digit",
@@ -66,6 +76,15 @@ async function remplirListePartie() {
                             hour: "2-digit",
                             minute: "2-digit"
                         }).replace(",", ""); // Supprime la virgule
+                    }
+
+                    if (key == "duree" && value == undefined) {
+                        value = "erreur";
+                    }
+                    else if (key == "duree" && value == -1) {
+                        value = "+60min"
+                    } else if (key == "duree") {
+                        value = SecondeVersTemps(value);
                     }
 
                     // Convertir booléens en Oui / Non
@@ -101,7 +120,6 @@ async function remplirListeReservation() {
 
         if (response.ok) {
             const data = await response.json();
-            console.log(data);
 
             // Vérifier si data est un tableau
             if (!Array.isArray(data) || data.length === 0) {
@@ -181,6 +199,84 @@ async function remplirListeReservation() {
     }
 }
 
+async function afficherDernierePartie() {
+    try {
+        const reponse = await fetch('/api/game/partie/finies', {
+            method: 'GET',
+            headers: { 'Content-Type': 'application/json' },
+        });
+
+        if (reponse.ok) {
+            const data = (await reponse.json())[0];
+
+            dateDepart = new Date(data.dateDepart);
+            dateDepart = dateDepart.toLocaleString("fr-FR", {
+                day: "2-digit",
+                month: "2-digit",
+                year: "numeric",
+                hour: "2-digit",
+                minute: "2-digit"
+            }).replace(",", "");
+
+            dateCreation = new Date(data.dateCreation);
+            dateCreation = dateCreation.toLocaleString("fr-FR", {
+                day: "2-digit",
+                month: "2-digit",
+                year: "numeric",
+                hour: "2-digit",
+                minute: "2-digit"
+            }).replace(",", "");
+
+
+
+            text = `
+            <ul>
+            <li><strong>ID Game:</strong> ${data.idgame}</li>
+            <li><strong>ID Mission Etat:</strong> ${data.idmissionEtat}</li> 
+            <li><strong>ID Scenario:</strong> ${data.idscenario}</li>
+            <li><strong>Date Creation:</strong>  ${dateCreation}</li>
+            <li><strong>Date Depart: </strong> ${dateDepart}</li>
+            <li><strong>ID Equipe:</strong> ${data.idequipe} </li>
+            <li><strong>Duree:&nbsp;</strong>   `+ SecondeVersTemps(`${data.duree}`) + ` </li>
+            </ul>
+            `;
+
+            document.getElementById("para_Etat_derniere_partie").innerHTML = text;
+        } else {
+
+            console.log("erreur");
+        }
+    }
+    catch (error) {
+        console.log(error);
+    }
+}
+
+
+async function afficherPartieActive(){
+    try {
+        
+        const reponse = await fetch('/api/game/partie/active', {
+            method: 'GET',
+            headers: { 'Content-Type': 'application/json' },
+        });
+
+        if (reponse.ok){
+
+            const data = await reponse.json();
+
+            console.log()
+
+        }else{
+            console.log("erreur");
+        }
+
+    } catch (error) {
+        console.log(error)
+    }
+}
 // Appel de la fonction
 remplirListeReservation();
 remplirListePartie();
+afficherDernierePartie();
+afficherPartieActive();
