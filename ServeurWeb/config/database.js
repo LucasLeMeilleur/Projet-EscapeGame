@@ -6,7 +6,7 @@ const sequelize = new Sequelize("escapegame", process.env.DB_USER, process.env.D
   dialect: 'mysql',
   logging: true,  
   dialectOptions: {
-    connectTimeout: process.env.DB_TIMEOUT || 3500, 
+    connectTimeout: process.env.DB_TIMEOUT || 3000, 
 },
 });
 

@@ -215,16 +215,25 @@ router.get('/admin', optionalAuthenticateToken, verifyAccess(1), (req, res) => {
 
 router.get('/admin/gestion-partie', optionalAuthenticateToken, verifyAccess(1), (req, res) => {
     if (req.userId) {
-        axios.get('http://127.0.0.1:3000/api/user', {
-            params: { idUser: req.userId, type: "all" }
-        })
-            .then(response => {
-                rep = response.data;
-                if (rep.permission >= 1) res.status(200).render('admin/gestion', { pseudo: rep.username, email: rep.email, permission: rep.permission });
+        Promise.all([
+            axios.get('http://127.0.0.1:3000/api/user', { params: { idUser: req.userId, type: "all" } }),
+            axios.get('http://127.0.0.1:3000/api/game/partie/active') // Remplace par l'URL de ta 2ème requête
+        ])
+            .then(([reponse1,reponse2]) => {
+                rep = reponse1.data;
+                rep2 = reponse2.data;
+
+                console.log(rep2);
+                
+
+                if (rep.permission >= 1 && rep2 != undefined  && rep2.length > 0 )  res.status(200).render('admin/gestion', { pseudo: rep.username, email: rep.email, permission: rep.permission, partie: true });
+                else if (rep.permission >= 1) res.status(200).render('admin/gestion', { pseudo: rep.username, email: rep.email, permission: rep.permission, partie:false });
+                
+                
                 else return res.status(403).render("error/403", { permission: rep.permission });
             })
             .catch(error => {
-                return res.redirect('error/500');
+                return res.status(500).redirect('error/500');
             })
     } else return res.redirect("error/403");
 });

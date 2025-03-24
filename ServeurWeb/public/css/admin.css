@@ -57,6 +57,7 @@ section {
     flex-direction: column; /* Empile les éléments */
     justify-content: center; /* Centre verticalement */
     align-items: center;
+    height: fit-content;
 }
 
 #inside_admin_panel h3{
@@ -98,12 +99,13 @@ th{
 
 
 .listes_table {
+
+    height: auto;
     display: flex;
     flex-direction: column;
-    align-items: center; /* Centre horizontalement */
-    justify-content: center; /* Centre verticalement */
+    align-items: center; 
+    justify-content: center; 
     text-align: center;
-    height: 50%;
 }
 
 #inside_gestion_partie h3{
@@ -116,7 +118,7 @@ th{
     gap: 5px;  
 }
 
-#para_Etat_derniere_partie ul{
+ul{
     list-style: none;
 }
 

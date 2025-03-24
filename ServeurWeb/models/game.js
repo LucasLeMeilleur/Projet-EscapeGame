@@ -1,5 +1,9 @@
   const { DataTypes } = require('sequelize');
 const sequelize = require('../config/database'); 
+const TableSalle = require('./salle');
+const TableScenario = require('./scenario');
+const TableMissionEtat = require('./missionEtat');
+const TableEquipe = require('./equipe');
 
 const TableGame = sequelize.define('game', {
   idgame: {
@@ -10,7 +14,7 @@ const TableGame = sequelize.define('game', {
   },
   idmissionEtat: {
     type: DataTypes.INTEGER,
-    allowNull: false,
+    allowNull: true,
     field:"idmissionEtat"
   }, 
   idscenario: {
@@ -20,12 +24,13 @@ const TableGame = sequelize.define('game', {
   },
   dateCreation: {
     type: DataTypes.DATE,
+    defaultValue: Date.now(),
     allowNull: false,
     field:"dateCreation"
   },
   dateDepart: {
     type: DataTypes.DATE,
-    allowNull: false,
+    allowNull: true,
     field:"dateDepart"
   },
   idequipe: {
@@ -55,5 +60,9 @@ const TableGame = sequelize.define('game', {
   timestamps: false,       
 });
 
+TableGame.belongsTo(TableSalle, { foreignKey: 'idsalle' });
+TableGame.belongsTo(TableScenario, { foreignKey: 'idscenario' });
+TableGame.belongsTo(TableMissionEtat, { foreignKey: 'idmissionEtat'});
+TableGame.belongsTo(TableEquipe, {foreignKey: 'idequipe'});
 
 module.exports = TableGame;

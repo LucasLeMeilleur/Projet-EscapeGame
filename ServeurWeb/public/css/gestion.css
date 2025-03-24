@@ -1,0 +1,168 @@
+#grand_titre {
+    text-align: center;
+    font-size: 35px;
+    margin-top: 20px;
+}
+
+#div_panneau_partie_active {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: auto auto auto;
+    grid-template-areas: "partie partie" "scenario missionetat" "historique historique";
+
+    margin-top: 20px;
+}
+
+#div_info_partie {
+    grid-area: partie;
+}
+
+#div_info_scenario {
+    grid-area: scenario;
+}
+
+#div_info_missionetat {
+    grid-area: missionetat;
+}
+
+#div_info_historique {
+    grid-area: historique;
+    margin-bottom: 50px;
+}
+
+.div_info {
+    text-align: center;
+    min-height: 50px;
+    padding-top: 25px;
+}
+
+.interieur_div_info {
+    background-color: #333;
+    display: inline-block;
+    max-width: fit-content;
+    height: 100%;
+    border-radius: 15px;
+
+    padding: 20px;
+    border: 2px solid #303030;
+    box-shadow: 10px 7px 7px rgb(240, 213, 163);
+}
+
+.interieur_div_info h2 {
+    margin-bottom: 15px;
+}
+
+.interieur_div_info ul {
+    list-style: none;
+}
+
+.paragraphe_info {
+    text-decoration: none;
+}
+
+.titre_mission_historique {
+    text-align: left;
+    margin-bottom: 10px;
+}
+
+.liste_historique_mission {
+    padding-bottom: 20px;
+}
+
+#para_info_historique {
+    margin-top: 25px;
+    padding-left: 10px;
+}
+
+.liste_historique_mission_separation {
+    border-bottom: 4px dotted white;
+}
+
+.titre_div {
+    padding-left: 20px;
+    padding-right: 20px;
+}
+
+
+
+/* Partie non lancée */
+
+.boutton_skip {
+    
+    font-size: 20px;
+}
+
+#boutton_skip_gauche {
+    margin-right: 15px;
+}
+
+#boutton_skip_droit {
+    margin-left: 15px;
+}
+
+#div_entete_formulaire {
+    text-align: center;
+    margin-top: 65px;
+    margin-bottom: 30px;
+}
+
+#div_entete_formulaire h2 {
+    margin-bottom: 15px;
+}
+
+#div_entete_formulaire p {
+    margin-bottom: 20px;
+}
+
+.div_form_partie {
+    text-align: center;
+}
+
+.div_inside_form_partie {
+    text-align: center;
+
+    gap: 10px;
+    display: inline-block;
+    background-color: #333;
+    padding: 25px;
+    border-radius: 15px;
+}
+
+#div_select_partie {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    margin-top: 20px;
+}
+
+#select_partie_lancee{
+    padding: 8px;
+    font-size: 15px;
+    border-radius: 10px;
+}
+
+#form_creer_partie {
+    display: block;
+}
+
+ul {
+    list-style: none;
+}
+
+ul li{
+    margin-bottom: 17px;
+}
+
+.element_formulaire{
+    margin-bottom: 12px;
+}
+
+select, button{
+    padding: 10px;
+    border-radius: 10px;
+}
+
+#select_partie_cree{
+    margin-bottom: 0px !important;
+}

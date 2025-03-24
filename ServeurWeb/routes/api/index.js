@@ -53,7 +53,7 @@ router.get('/game/salle/liste', object.listeSalle);
 router.get('/game/scenario/liste', object.listeScenario);
 router.get('/game/mission/liste', object.listeMission);
 router.get('/game/missionEtat/liste', object.listeMissionEtat);
-router.get('/game/equipe/liste', object.listeEquipe)
+router.get('/game/equipe/liste', object.listeEquipe);
 router.get('/game/reservation/liste', object.listeReservation);
 router.get('/game/reservation/desc', object.dernieresReservation);
 
@@ -67,10 +67,17 @@ router.get('/game/missionEtat/nombre', object.nombreMissionEtat);
 router.get('/game/equipe/listeNom', object.listeNomEquipe);
 router.get('/game/partie/listeReserv', object.listePartieReserve);
 
+router.get('/game/partie/nonlancee', object.obtenirPartieNonlancee);
+router.get('/game/partie/all/:id', object.ObtenirTouteInfoPartie);
 
 
-// GET avec body
 
+// GET avec requeteUrl
+
+    // router.get('/game/scenario/numero/:id', object.obtenirScenario);
+router.get('/game/missionEtat/historique/:id', object.obtenirHistoriqueMission);
+    // router.get('/game/missionEtat/actuel', object.obtenirMissionActuelle);
+/// -> a corriger
 router.get('/game/missionEtat/id', object.listeMissionEtatid);
 router.get('/game/missionEtat/gameid', object.listeMissionEtatGameid);
 router.get('/game/equipe/id', object.listeEquipeId)

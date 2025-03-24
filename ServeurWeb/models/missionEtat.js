@@ -1,5 +1,6 @@
 const { DataTypes } = require('sequelize');
 const sequelize = require('../config/database'); 
+const TableMission = require('./mission');
 
 const TableMissionEtat = sequelize.define('missionEtat', {
   idetat: {
@@ -33,5 +34,7 @@ const TableMissionEtat = sequelize.define('missionEtat', {
   timestamps: false,       
 });
 
+
+TableMissionEtat.hasMany(TableMission, {foreignKey: 'idmission'});
 
 module.exports = TableMissionEtat;

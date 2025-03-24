@@ -1,15 +1,144 @@
 <!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Escape Game</title>
+    <link rel="stylesheet" href="/css/gestion.css">
 
-<html>
-    <head>
-        <meta charset="utf-8">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <title></title>
-        <meta name="description" content="">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <link rel="stylesheet" href="">
-    </head>
-    <body>
-        <h1>Gestion</h1>
-    </body>
+    <link rel="stylesheet" href="/css/partials/forme.css">
+    <link rel="stylesheet" href="/css/partials/header.css">
+    <link rel="stylesheet" href="/css/partials/footer.css">
+
+</head>
+<body> 
+
+  <% if (typeof permission !== 'undefined' && permission == 1) { %>
+    <%- include('../partials/header', {navig: "admin"}); %>
+  <% }else{ %>
+    <%- include('../partials/header'); %>
+  <% } %>
+
+  <section>
+
+    <h1 id="grand_titre">Gestion de la partie</h1>
+
+    <% /* Si il y a au moins une partie en cours */ %>
+
+
+    <% if(partie){ %>
+
+
+    <script src="/js/gestion-active.js" defer></script>
+
+    <div id="div_select_partie">
+        <select name="" id="select_partie_lancee" style="display: none;"></select>
+    </div>
+
+    <div id="div_panneau_partie_active">
+        
+        <div id="div_info_partie" class="div_info">
+            <div class="interieur_div_info">
+                <h2 class="titre_div">Info de la partie</h2>
+                <p class="paragraphe_info" id="para_info_partie"></p>
+            </div>
+        </div>
+
+        <div id="div_info_scenario" class="div_info">
+            <div class="interieur_div_info">
+                <h2>Info scénario</h2>
+                <p class="paragraphe_info" id="para_info_scenario"></p>
+            </div>
+        </div>
+
+        <div id="div_info_missionetat" class="div_info">
+            <div class="interieur_div_info">
+                <h2 class="titre_div">Info mission actuelle</h2>
+                <p class="paragraphe_info" id="para_info_missionactive"></p>
+            </div>
+        </div>
+
+        <div id="div_info_historique" class="div_info"> 
+            <div class="interieur_div_info"> 
+                <h2 class="titre_div">Historique missions précédentes</h2>
+                
+                <p class="paragraphe_info" id="para_info_historique"></p>
+            </div>
+        </div>
+
+    </div>
+
+    <% } else { %>
+
+    <% /* S'il y a aucune partie de lancée */ %>
+
+
+    <script src="/js/gestion-inactive.js" defer></script>
+
+    <div>
+        <div id="div_entete_formulaire">
+            <h2 id="titre_partie">Lancer une partie</h2>
+            <button id="boutton_skip" class="boutton_skip"> Changer de mode </button>
+        </div>
+
+
+        <div id="div_form_partie_selection" class="div_form_partie">
+            <div id="inside_div_form_partie_selection" class="div_inside_form_partie">
+                <p class="element_formulaire">Choississez une partie :</p>
+                <ul>
+                    <li>
+                        <select title="Test" id="select_partie_cree" class="element_formulaire"></select>
+                    </li>
+
+                    <li>
+                        <button id="boutton_lancer_partie" class="element_formulaire">Lancer</button>
+                    </li>
+                </ul>
+                <p class="element_formulaire">Info partie:</p>
+                <p id="info_partie_selectionnee" class="element_formulaire">Aucune partie selectionné</p>
+            </div>
+        </div>
+
+        
+
+        <div id="div_from_creer_partie" style="display: none;" class="div_form_partie">
+            <div id="inside_div_from_creer_partie" class="div_inside_form_partie">
+                <p class="element_formulaire">Creer une partie :</p>
+                
+                <form action="" id="form_creer_partie">
+                    <ul>
+                        <li>
+                            <label for="select_scenario">Choisir un scénario :</label>
+                            <select id="select_scenario">
+                                <option value="">Chargement...</option>
+                            </select> 
+                        </li>
+
+                        <li>
+                            <label for="select_equipe">Choisir une équipe :</label>
+                            <select id="select_equipe">
+                                <option value="">Chargement...</option>
+                            </select>
+                        </li>
+
+                        <li><button id="boutton_creer_partie">Creer</button></li>
+                    </ul>                  
+                </form>
+
+            </div>
+        </div>
+
+
+    </div>
+
+    
+    <% } %>
+  </section>
+
+
+
+  <%- include('../partials/footer'); %>
+
+</body>
 </html>

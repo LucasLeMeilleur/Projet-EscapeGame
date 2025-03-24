@@ -13,6 +13,11 @@ const TableEquipe = sequelize.define('equipe', {
     allowNull: false,
     field:"nom"
   }, 
+  nombre_joueur: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+    field:"nombre_joueur"
+  },
   date: {
     type: DataTypes.TIME,
     allowNull: false,

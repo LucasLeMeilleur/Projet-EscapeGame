@@ -82,11 +82,14 @@ async function remplirListePartie() {
 
                     // Convertir la date au format JJ/MM/YYYY HH:MM
                     if (key === "dateCreation") {
-                        const dateObj = DateToString(value)  // Supprime la virgule
+                        value = DateToString(value)  // Supprime la virgule
                     }
 
-                    if (key == "duree" && value == undefined) {
-                        value = "erreur";
+                    if (key == "duree" && value == null) {
+                        value = "Partie non terminée";
+                    }
+                    else if (key == "duree" && value == undefined) {
+                        value = "Erreur";
                     }
                     else if (key == "duree" && value == -1) {
                         value = "+60min"
@@ -278,14 +281,32 @@ async function afficherPartieActive(){
 
         if (reponse.ok){
 
-            const data = await reponse.json();
+            data = (await reponse.json())[0];
 
             console.log(data)
 
+            if(data == null || data.length == 0){
+                document.getElementById("para_Etat_partie_active").innerHTML = "Aucune partie active";
+                return;
+            }
 
 
+            if(data.dateDepart == null){
+                dateDepart = "Pas de départ";
+            }else dateDepart = DateToString(data.dateDepart);
 
-            document.getElementById("para_Etat_partie_active").innerHTML = "Test";
+            text = `
+            <ul>
+            <li><strong>ID Game:</strong> ${data.idgame}</li>
+            <li><strong>ID Mission Etat:</strong> ${data.idmissionEtat}</li> 
+            <li><strong>ID Scenario:</strong> ${data.idscenario}</li>
+            <li><strong>Date Depart: </strong> ${dateDepart}</li>
+            <li><strong>ID Equipe:</strong> ${data.idequipe} </li>
+            </ul>
+            `;
+
+
+            document.getElementById("para_Etat_partie_active").innerHTML = text;
         }else{
             console.log("erreur");
         }
