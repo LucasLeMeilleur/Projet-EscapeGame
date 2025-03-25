@@ -245,7 +245,7 @@ router.get('/admin/pannel', optionalAuthenticateToken, verifyAccess(1), (req, re
         })
             .then(response => {
                 rep = response.data;
-                if (rep.permission >= 1) return res.status(200).render('gestion/pannel', { pseudo: rep.username, email: rep.email, permission: rep.permission });
+                if (rep.permission >= 1) return res.status(200).render('admin/pannel', { pseudo: rep.username, email: rep.email, permission: rep.permission });
                 else return res.status(403).render("error/403", { permission: rep.permission });
             })
             .catch(error => {

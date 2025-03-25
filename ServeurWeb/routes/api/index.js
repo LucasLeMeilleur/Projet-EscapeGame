@@ -2,10 +2,11 @@ const express = require('express');
 const router = express.Router();
 const user = require('./controller/user');
 const object = require('./controller/object');
-
-
+const jwt = require('jsonwebtoken');
 
 /////////////////////////   Fonctions utile   ///////////////////////// 
+
+
 
 // Middleware d'authentification
 const authMiddleware = (req, res, next) => {
@@ -21,19 +22,33 @@ const authMiddleware = (req, res, next) => {
     }
 };
 
-// Middleware de vérification des permissions
-const checkPermission = (requiredPermission) => (req, res, next) => {
-    if (!req.user || !req.user.permissions.includes(requiredPermission)) {
-        return res.status(403).json({ error: 'Permission refusée.' });
-    }
-    next();
-};
+// 🏗️ Fonction pour générer un token JWT
+function generateToken(userId) {
+    return jwt.sign(
+        { id: userId }, // Payload (infos dans le token)
+        secretKey,      // Clé secrète
+        { expiresIn: "1h" } // Expiration (1h)
+    );
+}
 
 
-    // Clé Publique RSA
+function checkPermission(levelRequired) {
+    return (req, res, next) => {
+        const token = req.cookies.token;
+        if (!token) return res.status(403).render('error/403', { erreur: "Vous n'etes pas connecté" });
+        jwt.verify(token, global.JWTToken, (err, decoded) => {
+            if (err) return res.status(403).render('error/403', { erreur: "Session invalide, veuillez vous reconnecter." });
+            req.user = decoded;
+            if (req.user.permission < levelRequired) return res.status(403).render('error/403', { erreur: "Acces interdit" });
+
+            next();
+        });
+    };
+}
+
+
+// Clé Publique RSA
 router.get('/key/publickey', (req, res) => {
-
-    console.log("dqd");
     return res.send({ key: global.keyRSA.getPublicKey() });
 });
     
@@ -85,13 +100,17 @@ router.get('/game/equipe/id', object.listeEquipeId)
 // POST
 
     //Ajouter Element dans table
-router.post('/game/partie/ajout', object.AjouterPartie);
-router.post('/game/salle/ajout', object.AjouterSalle);
-router.post('/game/scenario/ajout', object.AjouterScenar);
-router.post('/game/mission/ajout', object.AjouterMission);
-router.post('/game/missionetat/ajout', object.AjouterMissionEtat);
-router.post('/game/partie/demarrer', object.DemarrerPartie);
-router.post('/game/partie/finir', object.FinirPartie);
+router.post('/game/partie/ajout', checkPermission(1), object.AjouterPartie);
+router.post('/game/salle/ajout', checkPermission(1), object.AjouterSalle);
+router.post('/game/scenario/ajout', checkPermission(1), object.AjouterScenar);
+router.post('/game/mission/ajout', checkPermission(1), object.AjouterMission);
+router.post('/game/missionetat/ajout', checkPermission(1), object.AjouterMissionEtat);
+router.post('/game/equipe/ajout', checkPermission(1), object.AjouterEquipe);
+
+router.post('/game/partie/demarrer', checkPermission(1), object.DemarrerPartie);
+router.post('/game/partie/finir', checkPermission(1), object.FinirPartie);
+
+router.post('/game/missionetat/suivante', checkPermission(1), object.MissionSuivante);
 
 
 /////////////////////////   Gestion api user   ///////////////////////// 

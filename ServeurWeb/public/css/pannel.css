@@ -1,0 +1,68 @@
+section h1{
+    text-align: center;
+    margin-top: 40px;
+    font-size: 37px;
+}
+
+#div_fomulaire_insertion {
+    display: flex;
+    justify-content: center;
+    height: auto; /* Centre verticalement aussi */
+    margin-top: 50px;
+    margin-bottom: 20px;
+}
+
+/* Style de la div intérieure */
+#div_interieur_fomulaire_insertion {
+    width: 400px;
+    padding: 20px;
+    border: 2px solid #333;
+    border-radius: 10px;
+    background-color: #343434;
+    box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+/* Style du formulaire */
+#dynamic_form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px; /* Espacement entre les éléments */
+}
+
+#select_type_formulaire {
+    margin-bottom: 10px;
+}
+
+label {
+    display: flex;
+    flex-direction: column;
+    font-weight: bold;
+}
+
+input, textarea, select {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 16px;
+}
+
+textarea {
+    resize: vertical;
+    min-height: 100px;
+}
+
+/* Bouton stylé */
+button {
+    background-color: #007BFF;
+    color: white;
+    cursor: pointer;
+    font-weight: bold;
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+}
+
+button:hover {
+    background-color: #0056b3;
+}

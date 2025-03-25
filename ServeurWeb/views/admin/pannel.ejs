@@ -1,15 +1,50 @@
 <!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Escape Game</title>
+    <link rel="stylesheet" href="/css/pannel.css">
 
-<html>
-    <head>
-        <meta charset="utf-8">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <title></title>
-        <meta name="description" content="">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <link rel="stylesheet" href="">
-    </head>
-    <body>
-        <h1>Pannel</h1>
-    </body>
+    <link rel="stylesheet" href="/css/partials/forme.css">
+    <link rel="stylesheet" href="/css/partials/header.css">
+    <link rel="stylesheet" href="/css/partials/footer.css">
+
+
+    <script src="/js/pannel.js" defer></script>
+</head>
+<body> 
+
+  <% if (typeof permission !== 'undefined' && permission == 1) { %>
+    <%- include('../partials/header', {navig: "admin"}); %>
+  <% }else{ %>
+    <%- include('../partials/header'); %>
+  <% } %>
+
+  <section>
+
+    <h1>Pannel d'administration</h1>
+
+    <div id="div_fomulaire_insertion">
+        <div id="div_interieur_fomulaire_insertion">
+            <select id="select_type_formulaire">
+                <option selected disabled>Selectionnez un element</option>
+                <option value="mission">Mission</option>
+                <option value="scenario">Scénario</option>
+                <option value="salle">Salle</option>
+                <option value="equipe">Equipe</option>
+            </select>
+    
+            <form id="dynamic_form">
+                <div id="form_fields"></div>
+                <p id="resultat_envoie"></p>
+                <button type="submit">Envoyer</button>
+            </form>
+        </div>
+    </div>
+    </section>
+
+    <%- include('../partials/footer'); %>
+</body>
 </html>

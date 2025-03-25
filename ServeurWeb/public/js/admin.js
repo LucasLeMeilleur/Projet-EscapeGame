@@ -20,6 +20,10 @@ document.getElementById("boutton_Gestion_partie_active").addEventListener("click
     window.location.href = "/admin/gestion-partie";
 })
 
+document.getElementById("boutton_pannel_admin").addEventListener("click", () => {
+    window.location.href = "/admin/pannel"
+})
+
 
 async function remplirListePartie() {
     const tableau = document.getElementById("liste_partie");

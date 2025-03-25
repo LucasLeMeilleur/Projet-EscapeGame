@@ -125,3 +125,18 @@ ul{
 #para_Etat_partie_active{
     margin-bottom: 20px;
 }
+
+button {
+    margin-top: 20px;
+    background-color: #007BFF;
+    color: white;
+    cursor: pointer;
+    font-weight: bold;
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+}
+
+button:hover {
+    background-color: #0056b3;
+}

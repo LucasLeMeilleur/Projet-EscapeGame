@@ -25,6 +25,8 @@ app.listen(port, ip, () => {
     console.log(`Serveur en écoute sur http://localhost:${port}`);
 });
 
+
+
 if(global.keyRSA.getPublicKey() && global.keyRSA.getPrivateKey()){
     console.log('\x1b[1m\x1b[32m%s\x1b[0m', 'Clé RSA activé');
 

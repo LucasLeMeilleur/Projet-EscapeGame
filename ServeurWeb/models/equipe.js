@@ -21,6 +21,7 @@ const TableEquipe = sequelize.define('equipe', {
   date: {
     type: DataTypes.TIME,
     allowNull: false,
+    defaultValue: Date.now(),
     field:"date"
   },
 }, {

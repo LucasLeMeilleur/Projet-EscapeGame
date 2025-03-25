@@ -8,6 +8,7 @@ const TableMission = require('../../../models/mission');
 const TableMissionEtat = require('../../../models/missionEtat');
 const TableEquipe = require('../../../models/equipe');
 const TableReservation = require('../../../models/reservation');
+const { logger } = require('sequelize/lib/utils/logger');
 
 
 
@@ -23,9 +24,23 @@ function getCurrentTime() {
 }
 
 
-function DecortiquerMission(a){
-    b = a.split(',')    
+function DecortiquerMission(a) {
+    b = a.split(',')
     return b
+}
+
+function verifierChaineNumerique(str) {
+    // Vérifier si la chaîne est vide
+    if (!str.trim()) return false;
+
+    // Vérifier que la chaîne ne contient que des chiffres et des virgules (sans espace)
+    if (!/^\d+(,\d+)*$/.test(str)) return false;
+
+    // Convertir la chaîne en tableau de nombres
+    const nombres = str.split(",").map(Number);
+
+    // Vérifier les doublons en comparant la taille du Set avec le tableau
+    return new Set(nombres).size === nombres.length;
 }
 
 /////////////////////////////////////////////////////
@@ -57,7 +72,7 @@ exports.nombrePartie = async (req, res) => {
 
 exports.partieActive = async (req, res) => {
     try {
-        const rep = await TableGame.findAll({ where: { actif: true }});
+        const rep = await TableGame.findAll({ where: { actif: true } });
 
         return res.status(200).json(rep);
     } catch (error) {
@@ -132,7 +147,7 @@ exports.obtenirPartieNonlancee = async (req, res) => {
             where: { actif: 0, terminee: 0, dateDepart: null },
             include: [{
                 model: TableEquipe,
-                attributes:['idequipe', 'nom', 'nombre_joueur']
+                attributes: ['idequipe', 'nom', 'nombre_joueur']
             }]
         });
 
@@ -371,21 +386,14 @@ exports.AjouterPartie = async (req, res) => {
         reqprime = await TableScenario.findOne({ where: { idscenario: ScenarioId } });
         if (!reqprime) return res.status(407).json({ message: "Scenario non existant" });
 
-
         reqprime = await TableEquipe.findOne({ where: { idequipe: EquipeId } });
         if (!reqprime) return res.status(407).json({ message: "Equipe non existante" });
 
-
         const repScenar = await TableScenario.findOne({
-            where: { idscenario: ScenarioId},
+            where: { idscenario: ScenarioId },
             attributes: ['ordre']
-        })
-
+        });
         const mission1 = DecortiquerMission(repScenar.ordre)[0];
-
-        
-
-        console.log(mission1)
 
         const rep = await TableGame.create({
             idscenario: ScenarioId,
@@ -400,31 +408,25 @@ exports.AjouterPartie = async (req, res) => {
             idmission: mission1
         })
 
-
-        console.log(rep2);
-
         const repfinale = await TableGame.update(
-            { idmissionEtat: rep2.idetat},
-            { where: { idgame: rep.idgame}},
-
+            { idmissionEtat: rep2.idetat },
+            { where: { idgame: rep.idgame } },
         );
-
-        console.log(repfinale);
-
-        
-
-        return res.status(200).json({message: "Partie crée avec succès"})
-        
-        } catch (error) {
+        return res.status(200).json({ message: "Partie crée avec succès" })
+    } catch (error) {
         return res.status(500).json({ message: error.message });
     }
 }
 
 exports.AjouterSalle = async (req, res) => {
     try {
+        const ReqData = req.body;
+        const nom = ReqData.nom;
+        const ville = ReqData.ville;
+
         const rep = await TableSalle.create({
-            nom: "Test",
-            ville: "Test"
+            nom: nom,
+            ville: ville
         });
 
         return res.status(200).json(rep);
@@ -438,8 +440,11 @@ exports.AjouterScenar = async (req, res) => {
         const ReqData = req.body;
         const scenarioName = ReqData.nomScenario;
         const ordre = ReqData.ordre;
+        const description = ReqData.description;
 
-        if (!scenarioName || !ordre) return res.status(407).json({ message: "Requete invalide" });
+        if (!scenarioName || !ordre || !description) return res.status(407).json({ message: "Requete invalide" });
+
+        if (!verifierChaineNumerique(ordre)) return res.status(407).json({ message: "Ordre invalide" });
 
         reqprime = await TableScenario.findOne({ where: { nom: scenarioName } });
         if (reqprime) return res.status(407).json({ message: "Nom de scenario deja existant" });
@@ -447,6 +452,7 @@ exports.AjouterScenar = async (req, res) => {
         const rep = await TableScenario.create({
             nom: scenarioName,
             ordre: ordre,
+            description: description
         });
 
         return res.status(200).json(rep);
@@ -458,15 +464,19 @@ exports.AjouterScenar = async (req, res) => {
 exports.AjouterMission = async (req, res) => {
     try {
         const ReqData = req.body;
-        const missionName = ReqData.nomMission;
+        const missionName = ReqData.nom;
+        const tempsRequis = ReqData.tempsRequis;
+        const description = ReqData.description;
 
-        if (!missionName) return res.status(407).send("Aucun nom de mission donnée");
+        if (!missionName || !description) return res.status(407).send("Aucun nom de mission donnée");
 
         reqprime = await TableMission.findOne({ where: { nom: missionName } });
         if (reqprime) return res.status(407).send("Nom de mission deja existante");
 
         const rep = await TableMission.create({
-            nom: "test",
+            nom: missionName,
+            description: description,
+            tempsRequis: tempsRequis
         });
 
         return res.status(200).json(rep);
@@ -501,6 +511,27 @@ exports.AjouterMissionEtat = async (req, res) => {
     }
 }
 
+exports.AjouterEquipe = async (req, res) => {
+    try {
+        const ReqData = req.body;
+        const nomEquipe = ReqData.nom;
+        const nombrejoueur = ReqData.nombre_joueur;
+
+        if (!nomEquipe || !nombrejoueur) return res.status(407).json({ message: "Requete invalide" });
+        const now = new Date();
+        const mysqlTimestamp = now.toISOString().slice(0, 19).replace('T', ' ');
+        reponse = await TableEquipe.create({
+            nom: nomEquipe,
+            nombre_joueur: nombrejoueur,
+            date: mysqlTimestamp
+        });
+
+        return res.status(200);
+    } catch (error) {
+        return res.status(500).json({ message: error.message })
+    }
+}
+
 exports.DemarrerPartie = async (req, res) => {
     try {
         const ReqData = req.body;
@@ -508,7 +539,6 @@ exports.DemarrerPartie = async (req, res) => {
 
         reqprime = await TableGame.findOne({ where: { idgame: PartieId } });
         if (!reqprime) return res.status(400).json({ message: "Partie introuvable" });
-
 
         const updatePrime = await TableGame.update(
             { actif: '1', dateDepart: Date.now() },
@@ -546,7 +576,7 @@ exports.FinirPartie = async (req, res) => {
                 { where: { idgame: PartieId } }
             );
 
-            return res.status(400).json({ message: "Partie a durée incorrect ou dépassé" });
+            return res.status(200).json({ message: "Partie a durée incorrect ou dépassé" });
         }
 
         const updatePrime = await TableGame.update(
@@ -579,5 +609,54 @@ exports.listePartieReserve = async (req, res) => {
         return res.status(200).json({ reservation: rep, nombre: rep2 });
     } catch (error) {
         return res.status(500).json(error.message);
+    }
+}
+
+
+exports.MissionSuivante = async (req, res) => {
+    try {
+        const ReqData = req.body;
+        const idpartie = ReqData.idpartie;
+
+
+        const now = new Date();
+        const mysqlTimestamp = now.toISOString().slice(0, 19).replace('T', ' ');
+
+        const reponse = await TableGame.findOne({
+            where: { idgame: idpartie },
+            include: [{
+                model: TableMissionEtat,
+            },
+            {
+                model: TableScenario
+            }]
+        })
+
+        const repprime = await TableMissionEtat.update(
+            { datefin: mysqlTimestamp },
+            { where: { idetat: reponse.idmissionEtat.idetat } },
+        );
+
+        const ordreMission = (reponse.scenario.ordre).split(',');
+        const missionActuel = reponse.missionEtat.idmission;
+
+        console.log(ordreMission);
+        
+
+        if (ordreMission.indexOf(missionActuel) >= ordreMission.length) return res.status(200).json({ message: "Derniere mission finit" });
+
+        const missionAMettre = ordreMission[ordreMission.indexOf(missionActuel) + 2];
+
+        console.log(missionAMettre);
+        
+        const reponse2 = await TableMissionEtat.create({
+            idgame: reponse.idgame,
+            heuredebut: mysqlTimestamp,
+            idmission: missionAMettre,
+        });
+
+        return res.status(200).json(reponse2);
+    } catch (error) {
+        return res.status(200).json(error.message);
     }
 }

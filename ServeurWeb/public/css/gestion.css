@@ -166,3 +166,66 @@ select, button{
 #select_partie_cree{
     margin-bottom: 0px !important;
 }
+
+/* Centre les divs horizontalement et verticalement */
+.div_form_partie {
+    display: flex;
+    justify-content: center;
+    height: auto;
+}
+
+/* Conteneur des formulaires */
+.div_inside_form_partie {
+    width: 400px;
+    padding: 20px;
+    border: 2px solid #333;
+    border-radius: 10px;
+    background-color: #343434;
+    box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+/* Style des éléments du formulaire */
+.element_formulaire {
+    font-size: 16px;
+    font-weight: bold;
+    display: block;
+    margin-bottom: 10px;
+}
+
+/* Listes pour organiser les éléments */
+ul {
+    list-style: none;
+    padding: 0;
+}
+
+li {
+    margin-bottom: 15px;
+}
+
+#boutton_skip{
+    width: auto;
+}
+
+/* Sélecteurs et boutons */
+select, button {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 16px;
+}
+
+/* Style spécifique pour les boutons */
+button {
+    background-color: #007BFF;
+    color: white;
+    cursor: pointer;
+    font-weight: bold;
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+}
+
+button:hover {
+    background-color: #0056b3;
+}

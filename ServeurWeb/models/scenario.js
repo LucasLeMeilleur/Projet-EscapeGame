@@ -17,6 +17,11 @@ const TableScenario = sequelize.define('scenario', {
     type: DataTypes.STRING(50),
     allowNull: false,
     field:"ordre"
+  },
+  description:{
+    type: DataTypes.TEXT,
+    allowNull: true,
+    field: "description"
   }
 }, {
   tableName: 'scenario',      

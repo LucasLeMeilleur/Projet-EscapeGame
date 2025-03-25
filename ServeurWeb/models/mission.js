@@ -13,10 +13,15 @@ const TableMission = sequelize.define('mission', {
     allowNull: false,
     field:"nom"
   },
-  tempRequis: {
+  tempsRequis: {
     type: DataTypes.TINYINT,
     allowNull: false,
     field: "tempsRequis"
+  },
+  description:{
+    type: DataTypes.TEXT,
+    allowNull: true,
+    field: "description"
   }
 }, {
   tableName: 'mission',      

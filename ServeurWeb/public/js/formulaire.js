@@ -1,29 +1,3 @@
-async function fetchPublicKey() {
-    const response = await fetch('/api/key/publickey');
-    const publicKey = await response.json();
-    console.log(publicKey.key);
-    return publicKey.key;
-
-}
-
-async function importPublicKey(pemKey) {
-
-    const binaryDer = decodeBase64(
-        pemKey.replace(/-----BEGIN PUBLIC KEY-----|-----END PUBLIC KEY-----|\n/g, '')
-    );
-
-    return await window.crypto.subtle.importKey(
-        'spki',
-        binaryDer,
-        {
-            name: 'RSA-OAEP',
-            hash: { name: 'SHA-256' },
-        },
-        true,
-        ['encrypt']
-    );
-}
-
 function decodeBase64(base64) {
     const binaryString = atob(base64);
     const binaryLen = binaryString.length;
@@ -58,27 +32,16 @@ if (document.getElementById('registerForm')) {
     document.getElementById('registerForm').addEventListener('submit', async function (event) {
         event.preventDefault();
 
-
         document.getElementById("spinner").style.display = "block";
-
         // Récupération et envoie des donnée du formulaire chiffré a l'API
         const formDataConfig = new FormData(this);
-
         // Chiffrement du formulaire
         const jsonData = JSON.stringify(Object.fromEntries(formDataConfig.entries()));
-        const publicKeyPem = await fetchPublicKey();
-        const publicKey = await importPublicKey(publicKeyPem);
-        const encryptedForm = await encryptWithPublicKey(publicKey, jsonData);
-        if (!encryptedForm) {
-            alert('Erreur lors du chiffrement du mot de passe.');
-            return;
-        }
-
         // Envoie du formulaire
         const response = await fetch('/api/user/register', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ encryptedForm }),
+            body: jsonData,
         });
 
         if (response.ok) {
@@ -106,19 +69,16 @@ if (document.getElementById('loginForm')) {
 
         // Chiffrement du formulaire
         const jsonData = JSON.stringify(Object.fromEntries(formDataConfig.entries()));
-        const publicKeyPem = await fetchPublicKey();
-        const publicKey = await importPublicKey(publicKeyPem);
-        const encryptedForm = await encryptWithPublicKey(publicKey, jsonData);
-        if (!encryptedForm) {
-            alert('Erreur lors du chiffrement du mot de passe.');
-            return;
-        }
+
+
+        console.log(jsonData)
+
 
         // Envoie du formulaire
         const response = await fetch('/api/user/login', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ encryptedForm }),
+            body: jsonData,
         });
         if (response.ok) {
             document.getElementById("spinner").style.display = "none";

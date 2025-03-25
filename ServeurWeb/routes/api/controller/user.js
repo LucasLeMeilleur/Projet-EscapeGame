@@ -1,33 +1,14 @@
 const sequelize = require('../../../config/database');
 const bcrypt = require('bcrypt');
 const cookieParser = require('cookie-parser');
-const jwt = require('jsonwebtoken');
-const crypto = require('crypto');
+const jwt = require('jsonwebtoken');  
 const TableUtilisateur = require('../../../models/utilisateur');
 const { format } = require('path');
+const { json } = require('sequelize');
 
 // Fonction utile
 
-function decryptWithPrivateKey(encryptedMessage) {
-  try {
 
-    const encryptedBuffer = Buffer.from(encryptedMessage, 'base64');
-
-    const decryptedBuffer = crypto.privateDecrypt(
-      {
-        key: global.keyRSA.getPrivateKey(),
-        padding: crypto.constants.RSA_PKCS1_OAEP_PADDING, // OAEP Padding pour plus de sécurité
-        oaepHash: 'sha256', // Algorithme de hachage utilisé
-      },
-      encryptedBuffer
-    );
-
-    return decryptedBuffer.toString('utf-8');
-  } catch (error) {
-    console.error('Erreur lors du déchiffrement :', error.message);
-    return false;
-  }
-}
 
 function isValidEmail(email) {
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -57,13 +38,10 @@ exports.listeUser = async (req, res) => {
 exports.regiserUser = async (req, res) => {
   try {
     const ReqData = req.body;
-    const DecryptedForm = decryptWithPrivateKey((ReqData.encryptedForm));
-    if (!DecryptedForm) return res.status(407).send("Formulaire non chiffré");
 
-    const JSONDecryptedForm = JSON.parse(DecryptedForm)
-    const Username = JSONDecryptedForm.username;
-    const Password = JSONDecryptedForm.password;
-    const Email = JSONDecryptedForm.email;
+    const Username = ReqData.username;
+    const Password = ReqData.password;
+    const Email = ReqData.email;
 
     if (!Password || !Username || !Email) return res.status(400).json({message: "Formulaire incomplet"});
       
@@ -89,7 +67,6 @@ exports.regiserUser = async (req, res) => {
 
     const user = await TableUtilisateur.findOne({ where: { email: Email } });
     if (!user) return res.status(400).json({message: "Identifiants introuvable"});
-      
 
     const token = jwt.sign(
       { id: user.idUser, permission: user.permission },
@@ -108,18 +85,11 @@ exports.regiserUser = async (req, res) => {
 
 exports.loginUser = async (req, res) => {
   try {
-
-
-    console.log("Test")
-
-    const ReqData = req.body
-    const DecryptedForm = decryptWithPrivateKey((ReqData.encryptedForm));
+    const ReqData = req.body;
     
-    if (!DecryptedForm) return res.status(400).json({message: "Formulaire non chiffré"});
       
-    const JSONDecryptedForm = JSON.parse(DecryptedForm);
-    const Email = JSONDecryptedForm.email;
-    const Password = JSONDecryptedForm.password;
+    const Email = ReqData.email;
+    const Password = ReqData.password;
 
     if (!Email || !Password) return res.status(400).json({message: "Formulaire invalide"});
       
@@ -134,7 +104,6 @@ exports.loginUser = async (req, res) => {
       global.JWTToken,
       { expiresIn: '8h' }
     );
-
 
     res.cookie('token', token, { httpOnly: true, secure: false });
     return res.status(200).json({ message: "Connexion réussie !" });
@@ -164,3 +133,4 @@ exports.nomUser = async (req, res) => {
     return res.status(500).json({ message: error.message })
   }
 }
+
