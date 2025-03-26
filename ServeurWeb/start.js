@@ -7,8 +7,9 @@ const app = express();
 const path = require('path')
 const routes = require('./routes/web/');
 const APIroutes = require('./routes/api/');
-const keyRSA = require('./keyRSA');
 const cookieParser = require('cookie-parser');
+
+const mqttHandler = require('./mqttGestion');
 
 global.JWTToken = process.env.TokenJWT;
 
@@ -27,9 +28,3 @@ app.listen(port, ip, () => {
 
 
 
-if(global.keyRSA.getPublicKey() && global.keyRSA.getPrivateKey()){
-    console.log('\x1b[1m\x1b[32m%s\x1b[0m', 'Clé RSA activé');
-
-}else{
-    console.log('\x1b[1m\x1b[31m%s\x1b[0m', 'Clé RSA non active');
-}

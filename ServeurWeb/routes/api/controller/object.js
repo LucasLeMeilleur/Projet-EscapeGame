@@ -517,7 +517,12 @@ exports.AjouterEquipe = async (req, res) => {
         const nomEquipe = ReqData.nom;
         const nombrejoueur = ReqData.nombre_joueur;
 
+
+
         if (!nomEquipe || !nombrejoueur) return res.status(407).json({ message: "Requete invalide" });
+        
+        if(!(!isNaN(nombrejoueur) && isFinite(nombrejoueur))) return res.status(407).json({message: "Nombre joueur invalide"});
+        
         const now = new Date();
         const mysqlTimestamp = now.toISOString().slice(0, 19).replace('T', ' ');
         reponse = await TableEquipe.create({

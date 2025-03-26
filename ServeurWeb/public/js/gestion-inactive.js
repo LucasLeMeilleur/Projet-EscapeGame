@@ -110,6 +110,7 @@ async function chargerFormulaire() {
             option.textContent = item.nom;
             selectScenario.appendChild(option);
         });
+        
 
         equipes.forEach(item => {
             let option = document.createElement("option");
@@ -185,3 +186,4 @@ SelectionnerPartie();
 document.getElementById("boutton_lancer_partie").addEventListener("click", DemarrerPartie);
 document.getElementById("form_creer_partie").addEventListener("submit", envoyerFormulaire);
 document.getElementById("boutton_skip").addEventListener("click", changerMode);
+
