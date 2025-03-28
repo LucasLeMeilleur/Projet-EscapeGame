@@ -12,12 +12,31 @@ function differenceEnSecondes(heure1, heure2) {
     return Math.abs(secondes2 - secondes1);
 }
 
+function getSecondsDifference(fixedTime) {
+    const now = new Date();
+    const [hours, minutes, seconds] = fixedTime.split(":").map(Number);
+    
+    const fixedDate = new Date();
+    fixedDate.setHours(hours, minutes, seconds, 0);
+
+    let difference = Math.floor((now - fixedDate) / 1000);
+
+    // Si la différence est négative, cela signifie que l'heure fixée est passée la veille
+    if (difference < 0) {
+        difference += 24 * 3600; // Ajouter 24h en secondes
+    }
+
+    return difference;
+}
+
 function sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
 }
 
 function SecondeVersTemps(a) {
-    return Math.trunc(a / 60) + " : " + a % 60;
+
+    if(a%60 < 10) return Math.trunc(a / 60) + " : 0" + a % 60;
+    else return Math.trunc(a / 60) + " : " + a % 60;
 }
 
 function DateToString(a) {
@@ -40,7 +59,6 @@ async function creerSelectParties() {
     if (!reponse.ok) return;
 
     const data = await reponse.json();
-    console.log(data.length);
 
     let selectPartie = document.getElementById("select_partie_lancee");
 
@@ -89,11 +107,12 @@ async function recupererDetailJeu(a) {
     const data1 = await reponse1.json();
     const dateCreation = DateToString(data1.dateCreation);
 
-    dateDepart = "invalide";
-    if (data1.dateDepart != null) dateDepart = DateToString(data1.dateDepart);
-
     console.log(data1);
     
+
+    dateDepart = "invalide";
+    if (data1.dateDepart != null) dateDepart = DateToString(data1.dateDepart);
+   
 
     textInfoPartie = `
                 <ul>
@@ -117,27 +136,28 @@ async function recupererDetailJeu(a) {
     textInfoMissionActu = `
                 <ul>
                 <li><strong>Heure debut:</strong> ${data1.missionEtat.heuredebut}</li> 
-                <li><strong>Mission:</strong> ${data1.missionEtat.missions[0].nom}</li>
-                <li><strong>Temps passé: </strong> </li>
-                <li><strong>Temps requis: </strong> ${SecondeVersTemps(data1.missionEtat.missions[0].tempsRequis)}</li>
+                <li><strong>Mission:</strong> n°${data1.missionEtat.mission.idmission} - ${data1.missionEtat.mission.nom}</li>
+                <li><strong>Temps passé: </strong> <temp id="temp_ecoule_mission">  <temp> </li>
+                <li><strong>Temps requis: </strong> ${SecondeVersTemps(data1.missionEtat.mission.tempsRequis)}</li>
                 </ul>`;
     document.getElementById("para_info_missionactive").innerHTML = textInfoMissionActu;
 
 
-
+    TempEcoule(data1.dateDepart, data1.missionEtat.heuredebut);
 
     const reponse2 = await fetch('/api/game/missionEtat/historique/' + data1.idgame);
     if (!reponse2.ok) {
         console.log("erreur req2");
         return;
     }
-
     const data2 = await reponse2.json();
-
-
+    console.log(data2);
+    
     const NombreEtatEnHistorique = data2.length;
 
-    if (NombreEtatEnHistorique == 0) {
+    console.log(NombreEtatEnHistorique)
+
+    if (NombreEtatEnHistorique <= 1) {
         document.getElementById("para_info_historique").innerHTML = "Aucune mission en historique";
 
         TempEcoule(data1.dateDepart);
@@ -147,51 +167,54 @@ async function recupererDetailJeu(a) {
     textHistorique = ""
 
 
-    for (let i = 0; i < NombreEtatEnHistorique; i++) {
+    for (let i = 0; i < NombreEtatEnHistorique-1; i++) {
         textClasse = ""
 
-        if (i - 1 >= 0) textClasse = "liste_historique_mission_separation";
+        if (i < NombreEtatEnHistorique - 1) textClasse = "liste_historique_mission_separation";
+
+        console.log(data2[i]);
+        
+
 
         textHistorique += `
-                <h3 class="titre_mission_historique"> Mission N<sup>-${i + 1}</sup> </h3>
+                <h3 class="titre_mission_historique"> Mission N<sup>-${i+1}</sup> </h3>
                 <ul class="liste_historique_mission ${textClasse}">
                 <li><strong>Heure de début:</strong> ${data2[i].heuredebut}</li> 
                 <li><strong>Heure de fin:</strong> ${data2[i].heurefin}</li>
-                <li><strong>Mission: </strong> Numéro °${data2[i].missions[0].idmission} - ${data2[i].missions[0].nom} <li>
+                <li><strong>Mission: </strong> Numéro °${data2[i].mission.idmission} - ${data2[i].mission.nom} <li>
                 <li><strong>Temps passé: </strong> ${SecondeVersTemps(differenceEnSecondes(data2[i].heurefin, data2[i].heuredebut))} </li>
                 </ul>`;
+        
     }
 
-    document.getElementById("para_info_historique").innerHTML = textHistorique;
+    document.getElementById("para_info_historique").innerHTML = textHistorique;   
 
 
-
-    TempEcoule(data1.dateDepart);
 }
 
 
-async function TempEcoule(a) {
+async function TempEcoule(a, b) {
     a = DateToString(a);
-
-
+    
     while (true) {
-
-        const maintenant = new Date(); // Date actuelle
+        const maintenant = new Date(); // D ate actuelle
 
         const [jour, mois, annee, heure, minute] = a.split(/[/\s:]/).map(Number);
         const dateAComparer = new Date(annee, mois - 1, jour, heure, minute);
         const diffSeconde = Math.floor((maintenant - dateAComparer) / 1000);
 
+        document.getElementById("temp_ecoule_mission").innerText = getSecondsDifference(b) + " secondes";
+
         if (diffSeconde > 3600) {
-            document.getElementById("para_temps_ecoule").innerText = "+60 min"
+            document.getElementById("para_temps_ecoule").innerText = "+60 min";
             break;
         } else {
             document.getElementById("para_temps_ecoule").innerText = SecondeVersTemps(diffSeconde);
         }
-
         await sleep(500);
     }
 }
+
 
 
 creerSelectParties();

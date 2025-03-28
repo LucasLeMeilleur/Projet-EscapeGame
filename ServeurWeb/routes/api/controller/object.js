@@ -9,7 +9,7 @@ const TableMissionEtat = require('../../../models/missionEtat');
 const TableEquipe = require('../../../models/equipe');
 const TableReservation = require('../../../models/reservation');
 const { logger } = require('sequelize/lib/utils/logger');
-
+const jwt = require('jsonwebtoken');
 
 
 // Fonction utiles
@@ -399,7 +399,6 @@ exports.AjouterPartie = async (req, res) => {
             idscenario: ScenarioId,
             idequipe: EquipeId,
             idsalle: 1,
-            date: getCurrentTime(),
         });
 
         const rep2 = await TableMissionEtat.create({
@@ -520,9 +519,9 @@ exports.AjouterEquipe = async (req, res) => {
 
 
         if (!nomEquipe || !nombrejoueur) return res.status(407).json({ message: "Requete invalide" });
-        
-        if(!(!isNaN(nombrejoueur) && isFinite(nombrejoueur))) return res.status(407).json({message: "Nombre joueur invalide"});
-        
+
+        if (!(!isNaN(nombrejoueur) && isFinite(nombrejoueur))) return res.status(407).json({ message: "Nombre joueur invalide" });
+
         const now = new Date();
         const mysqlTimestamp = now.toISOString().slice(0, 19).replace('T', ' ');
         reponse = await TableEquipe.create({
@@ -572,8 +571,8 @@ exports.FinirPartie = async (req, res) => {
         if (reqprime.terminee == 1) return res.status(400).json({ message: "Partie deja finit" });
 
 
-        const duree = (Date_maintenant - reqprime.date) / 1000;
-        const duree_partie = 3600 - duree;
+
+        const duree_partie = (Date_maintenant - reqprime.dateDepart) / 1000;
 
         if (3600 >= duree <= 0) {
             const updatePrime = await TableGame.update(
@@ -626,6 +625,8 @@ exports.MissionSuivante = async (req, res) => {
 
         const now = new Date();
         const mysqlTimestamp = now.toISOString().slice(0, 19).replace('T', ' ');
+        const mysqlTime = now.toTimeString().split(' ')[0]; // Récupère uniquement HH:mm:ss
+
 
         const reponse = await TableGame.findOne({
             where: { idgame: idpartie },
@@ -637,31 +638,77 @@ exports.MissionSuivante = async (req, res) => {
             }]
         })
 
+        console.log(JSON.stringify(reponse))
+
         const repprime = await TableMissionEtat.update(
-            { datefin: mysqlTimestamp },
-            { where: { idetat: reponse.idmissionEtat.idetat } },
+            { heurefin: mysqlTime },
+            { where: { idetat: reponse.idmissionEtat } },
         );
 
         const ordreMission = (reponse.scenario.ordre).split(',');
         const missionActuel = reponse.missionEtat.idmission;
 
-        console.log(ordreMission);
-        
+        console.log("Ordre :", ordreMission);
+        console.log("Mission en cours :", missionActuel, "Type:", typeof missionActuel);
+        console.log("Index trouvé :", ordreMission.indexOf(String(missionActuel)));
 
-        if (ordreMission.indexOf(missionActuel) >= ordreMission.length) return res.status(200).json({ message: "Derniere mission finit" });
 
-        const missionAMettre = ordreMission[ordreMission.indexOf(missionActuel) + 2];
+
+        console.log(ordreMission.indexOf(String(missionActuel)) +1 >= ordreMission.length);
+        console.log(ordreMission.indexOf(String(missionActuel)));
+        console.log(ordreMission.length);
+
+        if (ordreMission.indexOf(String(missionActuel)) + 1 >= ordreMission.length) {
+
+            bodyData = {
+                partie: idpartie
+            }
+
+            console.log(idpartie);
+
+            url = "http://127.0.0.1:3000/api/game/partie/finir";
+
+            fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Cookie': 'token='+ jwt.sign({ permission: 1}, global.JWTToken, { expiresIn: '8h' })  // Ajoute le token JWT dans l'en-tête Authorization
+                },
+                body: JSON.stringify(bodyData)  // Sérialise les données du corps en JSON
+            })
+                .then(response => response.text())  // <-- Afficher le texte brut avant JSON.parse()
+                .then(text => {
+                    console.log("Réponse brute:", text);
+                    return JSON.parse(text);  // Convertir en JSON après vérification
+                })
+                .then(data => {
+                    console.log("Réponse JSON:", data);
+                })
+                .catch(error => {
+                    console.error("Erreur:", error);
+                });
+
+            return res.status(200).json({ message: "Derniere mission finit" });
+
+        }
+
+        const missionAMettre = ordreMission[ordreMission.indexOf(String(missionActuel)) + 1];
 
         console.log(missionAMettre);
-        
+
         const reponse2 = await TableMissionEtat.create({
             idgame: reponse.idgame,
             heuredebut: mysqlTimestamp,
             idmission: missionAMettre,
         });
 
+        const repFinal = await TableGame.update(
+            { idmissionEtat: reponse2.idetat },
+            { where: { idgame: reponse.idgame } }
+        )
+
         return res.status(200).json(reponse2);
     } catch (error) {
-        return res.status(200).json(error.message);
+        return res.status(200).json({ "Erreur": error.message });
     }
 }

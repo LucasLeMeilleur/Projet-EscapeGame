@@ -1,5 +1,5 @@
-  const { DataTypes } = require('sequelize');
-const sequelize = require('../config/database'); 
+const { DataTypes } = require('sequelize');
+const sequelize = require('../config/database');
 const TableSalle = require('./salle');
 const TableScenario = require('./scenario');
 const TableMissionEtat = require('./missionEtat');
@@ -10,59 +10,59 @@ const TableGame = sequelize.define('game', {
     type: DataTypes.INTEGER,
     primaryKey: true,
     autoIncrement: true,
-    field:"idgame",
+    field: "idgame",
   },
   idmissionEtat: {
     type: DataTypes.INTEGER,
     allowNull: true,
-    field:"idmissionEtat"
-  }, 
+    field: "idmissionEtat"
+  },
   idscenario: {
     type: DataTypes.INTEGER,
     allowNull: false,
-    field:"idscenario"
+    field: "idscenario"
   },
   dateCreation: {
     type: DataTypes.DATE,
     defaultValue: Date.now(),
     allowNull: false,
-    field:"dateCreation"
+    field: "dateCreation"
   },
   dateDepart: {
     type: DataTypes.DATE,
     allowNull: true,
-    field:"dateDepart"
+    field: "dateDepart"
   },
   idequipe: {
     type: DataTypes.INTEGER,
     allowNull: true,
-    field:"idequipe"
+    field: "idequipe"
   },
   actif: {
     type: DataTypes.BOOLEAN,
     allowNull: true,
     defaultValue: 0,
-    field:"actif"
+    field: "actif"
   },
   terminee: {
     type: DataTypes.BOOLEAN,
     allowNull: true,
     defaultValue: 0,
-    field:"terminee"
+    field: "terminee"
   },
   duree: {
     type: DataTypes.TINYINT,
     allowNull: true,
-    field:"duree"
+    field: "duree"
   }
 }, {
-  tableName: 'game',      
-  timestamps: false,       
+  tableName: 'game',
+  timestamps: false,
 });
 
 TableGame.belongsTo(TableSalle, { foreignKey: 'idsalle' });
 TableGame.belongsTo(TableScenario, { foreignKey: 'idscenario' });
-TableGame.belongsTo(TableMissionEtat, { foreignKey: 'idmissionEtat'});
-TableGame.belongsTo(TableEquipe, {foreignKey: 'idequipe'});
+TableGame.belongsTo(TableMissionEtat, { foreignKey: 'idmissionEtat' });
+TableGame.belongsTo(TableEquipe, { foreignKey: 'idequipe' });
 
 module.exports = TableGame;

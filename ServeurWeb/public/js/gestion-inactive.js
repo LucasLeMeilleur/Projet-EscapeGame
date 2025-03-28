@@ -96,7 +96,7 @@ async function chargerFormulaire() {
             responseEquipe.json()
         ]);
 
-
+        
         console.log(scenarios);
 
         let selectScenario = document.getElementById("select_scenario");

@@ -35,6 +35,6 @@ const TableMissionEtat = sequelize.define('missionEtat', {
 });
 
 
-TableMissionEtat.hasMany(TableMission, {foreignKey: 'idmission'});
+TableMissionEtat.belongsTo(TableMission, {foreignKey: 'idmission'});
 
 module.exports = TableMissionEtat;

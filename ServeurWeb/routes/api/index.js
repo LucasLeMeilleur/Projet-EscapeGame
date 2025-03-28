@@ -27,7 +27,7 @@ function generateToken(userId) {
     return jwt.sign(
         { id: userId }, // Payload (infos dans le token)
         secretKey,      // Clé secrète
-        { expiresIn: "1h" } // Expiration (1h)
+        { expiresIn: "8h" } // Expiration (8h)
     );
 }
 
@@ -108,9 +108,9 @@ router.post('/game/missionetat/ajout', checkPermission(1), object.AjouterMission
 router.post('/game/equipe/ajout', checkPermission(1), object.AjouterEquipe);
 
 router.post('/game/partie/demarrer', checkPermission(1), object.DemarrerPartie);
-router.post('/game/partie/finir', checkPermission(1), object.FinirPartie);
+router.post('/game/partie/finir',checkPermission(1), object.FinirPartie);
 
-router.post('/game/missionetat/suivante', checkPermission(1), object.MissionSuivante);
+router.post('/game/missionetat/suivante', object.MissionSuivante);
 
 
 /////////////////////////   Gestion api user   ///////////////////////// 
