@@ -142,6 +142,11 @@ async function recupererDetailJeu(a) {
                 </ul>`;
     document.getElementById("para_info_missionactive").innerHTML = textInfoMissionActu;
 
+    const heureDepart = data1.dateDepart;
+    const heureDebut = data1.missionEtat.heuredebut;
+
+
+    console.log({ heureDepart, heureDebut });
 
     TempEcoule(data1.dateDepart, data1.missionEtat.heuredebut);
 
@@ -160,7 +165,6 @@ async function recupererDetailJeu(a) {
     if (NombreEtatEnHistorique <= 1) {
         document.getElementById("para_info_historique").innerHTML = "Aucune mission en historique";
 
-        TempEcoule(data1.dateDepart);
         return;
     }
 
@@ -189,7 +193,7 @@ async function recupererDetailJeu(a) {
 
     document.getElementById("para_info_historique").innerHTML = textHistorique;   
 
-
+    RefraichissementAutomatique();
 }
 
 
@@ -203,7 +207,8 @@ async function TempEcoule(a, b) {
         const dateAComparer = new Date(annee, mois - 1, jour, heure, minute);
         const diffSeconde = Math.floor((maintenant - dateAComparer) / 1000);
 
-        document.getElementById("temp_ecoule_mission").innerText = getSecondsDifference(b) + " secondes";
+        console.log(b);
+        document.getElementById("temp_ecoule_mission").innerText = SecondeVersTemps(getSecondsDifference(b)) + " secondes";
 
         if (diffSeconde > 3600) {
             document.getElementById("para_temps_ecoule").innerText = "+60 min";
@@ -213,6 +218,12 @@ async function TempEcoule(a, b) {
         }
         await sleep(500);
     }
+}
+
+async function RefraichissementAutomatique(){
+    await sleep(40000);
+    
+    window.location.href = "/admin/gestion-partie"; 
 }
 
 

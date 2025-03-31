@@ -108,9 +108,9 @@ router.post('/game/missionetat/ajout', checkPermission(1), object.AjouterMission
 router.post('/game/equipe/ajout', checkPermission(1), object.AjouterEquipe);
 
 router.post('/game/partie/demarrer', checkPermission(1), object.DemarrerPartie);
-router.post('/game/partie/finir',checkPermission(1), object.FinirPartie);
+router.post('/game/partie/finir', checkPermission(1), object.FinirPartie);
 
-router.post('/game/missionetat/suivante', object.MissionSuivante);
+router.post('/game/missionetat/suivante', checkPermission(1), object.MissionSuivante);
 
 
 /////////////////////////   Gestion api user   ///////////////////////// 

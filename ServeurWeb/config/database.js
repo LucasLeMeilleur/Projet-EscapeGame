@@ -10,4 +10,9 @@ const sequelize = new Sequelize("escapegame", process.env.DB_USER, process.env.D
 },
 });
 
+sequelize.authenticate()
+    .then(() => console.log('✅ Connexion à la base de données réussie !'))
+    .catch(err => console.error('❌  Erreur de connexion :', err));
+
+
 module.exports = sequelize;

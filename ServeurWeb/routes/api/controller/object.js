@@ -530,7 +530,7 @@ exports.AjouterEquipe = async (req, res) => {
             date: mysqlTimestamp
         });
 
-        return res.status(200);
+        return res.status(200).send({ message: "Equipe crée"});
     } catch (error) {
         return res.status(500).json({ message: error.message })
     }
@@ -561,8 +561,6 @@ exports.FinirPartie = async (req, res) => {
         const PartieId = ReqData.partie;
 
         const Date_maintenant = Date.now();
-
-
         if (!PartieId) return res.status(400).json({ message: "Id de partie introuvable" });
 
         reqprime = await TableGame.findOne({ where: { idgame: PartieId } });
@@ -571,15 +569,14 @@ exports.FinirPartie = async (req, res) => {
         if (reqprime.terminee == 1) return res.status(400).json({ message: "Partie deja finit" });
 
 
+        const DteDepart = new Date(reqprime.dateDepart).getTime();
+        const duree_partie = Math.floor((Date_maintenant - DteDepart) / 1000);
 
-        const duree_partie = (Date_maintenant - reqprime.dateDepart) / 1000;
-
-        if (3600 >= duree <= 0) {
+        if (3600 >= duree_partie <= 0) {
             const updatePrime = await TableGame.update(
                 { actif: '0', terminee: '1', duree: '-1' },
                 { where: { idgame: PartieId } }
             );
-
             return res.status(200).json({ message: "Partie a durée incorrect ou dépassé" });
         }
 
@@ -654,7 +651,7 @@ exports.MissionSuivante = async (req, res) => {
 
 
 
-        console.log(ordreMission.indexOf(String(missionActuel)) +1 >= ordreMission.length);
+        console.log(ordreMission.indexOf(String(missionActuel)) + 1 >= ordreMission.length);
         console.log(ordreMission.indexOf(String(missionActuel)));
         console.log(ordreMission.length);
 
@@ -672,7 +669,7 @@ exports.MissionSuivante = async (req, res) => {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'Cookie': 'token='+ jwt.sign({ permission: 1}, global.JWTToken, { expiresIn: '8h' })  // Ajoute le token JWT dans l'en-tête Authorization
+                    'Cookie': 'token=' + jwt.sign({ permission: 1 }, global.JWTToken, { expiresIn: '8h' })  // Ajoute le token JWT dans l'en-tête Authorization
                 },
                 body: JSON.stringify(bodyData)  // Sérialise les données du corps en JSON
             })
