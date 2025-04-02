@@ -88,7 +88,7 @@
 /* Partie non lancée */
 
 .boutton_skip {
-    
+
     font-size: 20px;
 }
 
@@ -136,7 +136,7 @@
     margin-top: 20px;
 }
 
-#select_partie_lancee{
+#select_partie_lancee {
     padding: 8px;
     font-size: 15px;
     border-radius: 10px;
@@ -150,20 +150,21 @@ ul {
     list-style: none;
 }
 
-ul li{
+ul li {
     margin-bottom: 17px;
 }
 
-.element_formulaire{
+.element_formulaire {
     margin-bottom: 12px;
 }
 
-select, button{
+select,
+button {
     padding: 10px;
     border-radius: 10px;
 }
 
-#select_partie_cree{
+#select_partie_cree {
     margin-bottom: 0px !important;
 }
 
@@ -202,12 +203,13 @@ li {
     margin-bottom: 15px;
 }
 
-#boutton_skip{
+#boutton_skip {
     width: auto;
 }
 
 /* Sélecteurs et boutons */
-select, button {
+select,
+button {
     width: 100%;
     padding: 8px;
     border: 1px solid #ccc;
@@ -231,6 +233,61 @@ button:hover {
 }
 
 
-.titre_mission_historique{
+.titre_mission_historique {
     padding-top: 15px;
+}
+
+
+
+.select-container {
+    width: 100%;
+    position: relative;
+    color: black;
+    margin-bottom: 10px;
+    border-radius: 10px;
+    
+    transition: margin-bottom 0.3s ease-in-out; 
+}
+
+.select-display {
+    padding: 10px;
+    background: #f0f0f0;
+    border: 1px solid #ccc;
+    cursor: pointer;
+    border-radius: 8px;
+}
+
+.select-dropdown {
+    position: absolute;
+    width: 100%;
+    background: white;
+    border-top: none;
+    max-height: 0;
+    overflow-y: scroll;
+    transition: max-height 0.3s ease-in-out;
+    border-radius: 8px;
+}
+
+.select-dropdown input {
+    width: 100%;
+    padding: 5px;
+    box-sizing: border-box;
+    border: none;
+    border-bottom: 1px solid #ccc;
+}
+
+.select-dropdown ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.select-dropdown li {
+    cursor: pointer;
+    margin: 0 !important;
+    padding-top: 5px;
+}
+
+.select-dropdown li:hover {
+    background: #f0f0f0;
 }

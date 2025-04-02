@@ -11,7 +11,7 @@ const jwt = require('jsonwebtoken');
 // Middleware d'authentification
 const authMiddleware = (req, res, next) => {
     const token = req.cookies.token;
-    if (!token) return res.status(401).json({ error: 'Accès non autorisé.' });
+    if (!token) return res.status(403).json({ error: 'Accès non autorisé.' });
 
     try {
         const decoded = jwt.verify(token, process.env.TokenJWT);
@@ -71,7 +71,9 @@ router.get('/game/missionEtat/liste', object.listeMissionEtat);
 router.get('/game/equipe/liste', object.listeEquipe);
 router.get('/game/reservation/liste', object.listeReservation);
 router.get('/game/reservation/desc', object.dernieresReservation);
+router.get('/game/reservation/asc', object.reservationAVenir);
 
+router.get('/game/partie/scoreboard', object.scoreBoard);
 
     //Nombre element
 router.get('/game/partie/nombre', object.nombrePartie);
@@ -111,7 +113,7 @@ router.post('/game/partie/demarrer', checkPermission(1), object.DemarrerPartie);
 router.post('/game/partie/finir', checkPermission(1), object.FinirPartie);
 
 router.post('/game/missionetat/suivante', checkPermission(1), object.MissionSuivante);
-
+router.post('/game/reservation/ajout', authMiddleware, object.AjoutReservation);
 
 /////////////////////////   Gestion api user   ///////////////////////// 
 

@@ -162,24 +162,6 @@ router.get('/scoreboard', optionalAuthenticateToken, (req, res) => {
     else return res.status(200).render('scoreboard');
 });
 
-router.get('/contact', optionalAuthenticateToken, (req, res) => {
-    if (req.userId) {
-        axios.get('http://127.0.0.1:3000/api/user', {
-            params: { idUser: req.userId, type: "all" }
-        })
-            .then(response => {
-                rep = response.data;
-
-                if (rep.permission >= 0) return res.status(200).render('contact', { pseudo: rep.username, email: rep.email, permission: rep.permission });
-                else return res.status(200).render('contact');
-            })
-            .catch(error => {
-                return res.status(200).render('contact');
-            })
-    }
-    else return res.status(200).render('contact');
-});
-
 router.get('/compte-gestion', optionalAuthenticateToken, verifyAccess(0), (req, res) => {
     if (req.userId) {
         axios.get('http://127.0.0.1:3000/api/user', {

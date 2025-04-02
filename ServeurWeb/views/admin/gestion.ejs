@@ -109,17 +109,23 @@
                 <form action="" id="form_creer_partie">
                     <ul>
                         <li>
-                            <label for="select_scenario">Choisir un scénario :</label>
-                            <select id="select_scenario">
-                                <option value="">Chargement...</option>
-                            </select> 
+                            <div class="select-container" id="select_scenario_container">
+                                <div class="select-display" onclick="toggleDropdown('select_scenario_container')">Sélectionnez un scénario...</div>
+                                <div class="select-dropdown" id="select_scenario_dropdown" >
+                                    <input type="text" placeholder="Rechercher..." oninput="filterList('select_scenario_container')">
+                                    <ul id="select_scenario_list"></ul>
+                                </div>
+                            </div>
                         </li>
 
-                        <li>
-                            <label for="select_equipe">Choisir une équipe :</label>
-                            <select id="select_equipe">
-                                <option value="">Chargement...</option>
-                            </select>
+                        <li>                        
+                            <div class="select-container" id="select_equipe_container">
+                                <div class="select-display" onclick="toggleDropdown('select_equipe_container')">Sélectionnez une équipe...</div>
+                                <div class="select-dropdown" id="select_scenario_dropdown">
+                                    <input type="text" placeholder="Rechercher..." oninput="filterList('select_equipe_container')">
+                                    <ul id="select_equipe_list"></ul>
+                                </div>
+                            </div>
                         </li>
 
                         <li><button id="boutton_creer_partie">Creer</button></li>

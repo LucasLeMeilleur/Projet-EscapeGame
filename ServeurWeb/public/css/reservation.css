@@ -1,0 +1,59 @@
+h1{
+    font-size: 37px;
+    text-align: center;
+    margin-top: 30px;
+    margin-bottom: 30px;
+}
+
+#div_formulaireReservation{
+    display: flex;
+    justify-content: center;
+    height: auto;
+    margin-bottom: 50px;
+    margin-top: 20px;
+}
+
+#div_insideFormulaireReservation{
+    width: 400px;
+    padding: 30px;
+    border: 2px solid #333;
+    border-radius: 10px;
+    background-color: #343434;
+    box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+/* Sélecteurs et boutons */
+select, button, input {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 16px;
+}
+
+button {
+    background-color: #007BFF;
+    color: white;
+    cursor: pointer;
+    font-weight: bold;
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+}
+
+button:hover {
+    background-color: #0056b3;
+}
+
+
+.titre_mission_historique{
+    padding-top: 15px;
+}
+
+ul {
+    list-style: none;
+}
+
+ul li{
+    margin-bottom: 17px;
+}

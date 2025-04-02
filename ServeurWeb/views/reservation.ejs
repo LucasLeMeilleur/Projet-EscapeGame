@@ -6,11 +6,11 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <title>Escape Game</title>
-    <meta name="description" content="">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="">
-    <script src="https://cdn.jsdelivr.net/npm/jsencrypt/bin/jsencrypt.min.js"></script>
 
+    <script src="/js/reservation.js" defer></script>
+
+    <link rel="stylesheet" href="/css/reservation.css">
 
     <link rel="stylesheet" href="css/partials/forme.css">
     <link rel="stylesheet" href="css/partials/header.css">
@@ -33,7 +33,40 @@
 
         <h1>Réservation</h1>
     
+        <div id="div_formulaireReservation">
+
+            <div id="div_insideFormulaireReservation">
+
+                <form id="reservationForm">
+
+                    <ul>
+                        <li>
+                            <label for="salle">Salle :</label>
+                            <select id="salle" name="salle">
+                                <option disabled>Selectionnez...</optgroup>
+                            </select>
+                        </li>
     
+                        <li>
+                            <label for="date">Date :</label>
+                            <input type="date" id="date" name="date" required>
+                        </li>
+    
+                        <li>
+                            <label for="heure">Heure :</label>
+                            <select id="heure" name="heure">
+                                <option disabled>Selectionnez...</optgroup>
+                            </select>
+                        </li>
+    
+                        <li>
+                            <button type="submit">Réserver</button>
+                        </li>
+                    </ul>
+
+                </form>
+            </div>    
+        </div>    
     </section>
     
     <%- include('partials/footer'); %>

@@ -1,7 +1,3 @@
-function calculTempEcoulé(a) {
-
-}
-
 function differenceEnSecondes(heure1, heure2) {
     const [h1, m1, s1] = heure1.split(":").map(Number);
     const [h2, m2, s2] = heure2.split(":").map(Number);
@@ -25,7 +21,6 @@ function getSecondsDifference(fixedTime) {
     if (difference < 0) {
         difference += 24 * 3600; // Ajouter 24h en secondes
     }
-
     return difference;
 }
 

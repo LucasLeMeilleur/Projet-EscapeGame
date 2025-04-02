@@ -65,20 +65,18 @@ function DemarrerPartie() {
         },
         body: JSON.stringify({ partie: selectedId }) // Supprime `body` si c'est un GET
     })
-    .then(response => response.json())
-    .then(data => {
-        console.log("Réponse du serveur :", data);
-        alert("Partie envoyée avec succès !");
-       
-        window.location.href = "/admin/gestion-partie"; 
-    })
-    .catch(error => {
-        console.error("Erreur lors de l'envoi :", error);
-        alert("Erreur lors de l'envoi de la partie.");
-    });
+        .then(response => response.json())
+        .then(data => {
+            console.log("Réponse du serveur :", data);
+            alert("Partie envoyée avec succès !");
+
+            window.location.href = "/admin/gestion-partie";
+        })
+        .catch(error => {
+            console.error("Erreur lors de l'envoi :", error);
+            alert("Erreur lors de l'envoi de la partie.");
+        });
 }
-
-
 async function chargerFormulaire() {
     try {
         let [responseScenario, responseEquipe] = await Promise.all([
@@ -86,9 +84,7 @@ async function chargerFormulaire() {
             fetch('/api/game/equipe/liste')
         ]);
 
-            
-
-        if (!responseScenario.ok || !responseEquipe.ok) 
+        if (!responseScenario.ok || !responseEquipe.ok)
             throw new Error("Erreur lors du chargement des données");
 
         let [scenarios, equipes] = await Promise.all([
@@ -96,33 +92,76 @@ async function chargerFormulaire() {
             responseEquipe.json()
         ]);
 
-        
-        console.log(scenarios);
+        let selectScenarioList = document.getElementById("select_scenario_list");
+        let selectEquipeList = document.getElementById("select_equipe_list");
 
-        let selectScenario = document.getElementById("select_scenario");
-        let selectEquipe = document.getElementById("select_equipe");
-
-        selectScenario.innerHTML = selectEquipe.innerHTML = '<option value="">Sélectionnez...</option>';
+        selectScenarioList.innerHTML = '';
+        selectEquipeList.innerHTML = '';
 
         scenarios.forEach(item => {
-            let option = document.createElement("option");
-            option.value = item.idscenario;
-            option.textContent = item.nom;
-            selectScenario.appendChild(option);
+            let li = document.createElement("li");
+            li.textContent = item.nom;
+            li.setAttribute("data-value", item.idscenario);
+            li.onclick = () => selectItem('select_scenario_container', item.nom);
+            selectScenarioList.appendChild(li);
         });
-        
 
         equipes.forEach(item => {
-            let option = document.createElement("option");
-            option.value = item.idequipe;
-            option.textContent = item.nom;
-            selectEquipe.appendChild(option);
+            let li = document.createElement("li");
+            li.textContent = item.nom;
+            li.setAttribute("data-value", item.idequipe);
+            li.onclick = () => selectItem('select_equipe_container', item.nom);
+            selectEquipeList.appendChild(li);
         });
-
     } catch (error) {
         console.error("Erreur :", error);
     }
 }
+
+function selectItem(containerId, value) {
+    document.querySelector(`#${containerId} .select-display`).textContent = value;
+    document.querySelector(`#${containerId} .select-dropdown`).style.maxHeight = '0';
+}
+
+function filterList(containerId) {
+    const input = document.querySelector(`#${containerId} .select-dropdown input`);
+    const filter = input.value.toLowerCase();
+    const items = document.querySelectorAll(`#${containerId} .select-dropdown ul li`);
+    items.forEach(item => {
+        item.style.display = item.textContent.toLowerCase().includes(filter) ? '' : 'none';
+    });
+}
+
+function toggleDropdown(containerId) {
+    let dropdown = document.querySelector(`#${containerId} .select-dropdown`);
+    let container = document.getElementById(containerId);
+
+    if (dropdown.style.maxHeight === '150px') {
+        dropdown.style.maxHeight = '0';
+        container.style.marginBottom = '0';
+    } else {
+        dropdown.style.maxHeight = '150px';
+        container.style.marginBottom = '160px'; // Ajuste la marge pour pousser le contenu vers le bas
+    }
+}
+
+document.addEventListener('click', (event) => {
+    document.querySelectorAll('.select-container').forEach(container => {
+        // Si on clique en dehors de la div contenant le dropdown, on ferme ce dropdown
+        if (!container.contains(event.target)) {
+            container.querySelector('.select-dropdown').style.maxHeight = '0';
+            container.style.marginBottom = '0';  // Réinitialiser la marge
+        }
+    });
+});
+
+document.addEventListener('click', (event) => {
+    document.querySelectorAll('.select-container').forEach(container => {
+        if (!container.contains(event.target)) {
+            container.querySelector('.select-dropdown').style.maxHeight = '0';
+        }
+    });
+});
 
 async function envoyerFormulaire(event) {
     event.preventDefault(); // Empêche le rechargement de la page
@@ -160,16 +199,16 @@ async function envoyerFormulaire(event) {
     }
 }
 
-function changerMode(){
+function changerMode() {
 
     compteur += 1;
 
-    if(compteur%2 == 0){
+    if (compteur % 2 == 0) {
         document.getElementById("titre_partie").innerText = "Lancer une partie";
         document.getElementById("div_form_partie_selection").style.display = "block";
         document.getElementById("div_from_creer_partie").style.display = "none";
         SelectionnerPartie();
-    }else{
+    } else {
         document.getElementById("titre_partie").innerText = "Créer une partie";
 
         document.getElementById("div_form_partie_selection").style.display = "none";
@@ -177,8 +216,6 @@ function changerMode(){
     }
 
 }
-
-
 
 chargerFormulaire();
 SelectionnerPartie();

@@ -14,6 +14,12 @@ const jwt = require('jsonwebtoken');
 
 // Fonction utiles
 
+function formatDateTime(dateStr, timeStr) {
+    const date = new Date(`${dateStr}T${timeStr}:00.000Z`);
+    return date.toISOString().replace('T', ' ').replace('.000Z', '');
+}
+
+
 
 function getCurrentTime() {
     const now = new Date();
@@ -522,6 +528,11 @@ exports.AjouterEquipe = async (req, res) => {
 
         if (!(!isNaN(nombrejoueur) && isFinite(nombrejoueur))) return res.status(407).json({ message: "Nombre joueur invalide" });
 
+
+
+        reqprime = await TableEquipe.findOne({ where: { nom: nomEquipe } });
+        if (reqprime) return res.status(407).json({ message: "Equipe déjà existante" })
+
         const now = new Date();
         const mysqlTimestamp = now.toISOString().slice(0, 19).replace('T', ' ');
         reponse = await TableEquipe.create({
@@ -530,7 +541,7 @@ exports.AjouterEquipe = async (req, res) => {
             date: mysqlTimestamp
         });
 
-        return res.status(200).send({ message: "Equipe crée"});
+        return res.status(200).send({ message: "Equipe crée" });
     } catch (error) {
         return res.status(500).json({ message: error.message })
     }
@@ -706,6 +717,87 @@ exports.MissionSuivante = async (req, res) => {
 
         return res.status(200).json(reponse2);
     } catch (error) {
-        return res.status(200).json({ "Erreur": error.message });
+        return res.status(500).json({ erreur: error.message });
+    }
+}
+
+exports.scoreBoard = async (req, res) => {
+    try {
+
+        const reponse = await TableGame.findAll({
+            where: { terminee: 1, duree: { [Op.gt]: 0 } },
+            order: [['duree', 'ASC']],
+            limit: 20,
+            include: [{
+                model: TableScenario, // Modèle de la salle
+                attributes: ['nom'] // On ne récupère que le nom de la salle
+            },
+            {
+                model: TableEquipe,
+                attributes: ['nom', 'nombre_joueur']
+            }]
+        });
+
+        return res.status(200).json(reponse);
+    } catch (error) {
+
+        return res.status(500).json({ erreur: error.message });
+    }
+}
+
+
+exports.AjoutReservation = async (req, res) => {
+    try {
+
+        const idUtilisateur = req.user.id;
+        const date = req.body.date;
+        const heure = req.body.heure;
+        const salle = req.body.salle;
+
+        const DateHeure = formatDateTime(date, heure);
+
+        if (!salle || !date || !heure) res.status(407).json({ message: "Formulaire incomplet" });
+
+        reqprime = await TableSalle.findOne({ where: { idsalle: salle } });
+        if (!reqprime) return res.status(400).json({ message: "Salle introuvable" });
+
+
+        console.log(DateHeure);
+
+        reqprime = await TableReservation.findOne({
+            where: { date: DateHeure, salle: salle }
+        })
+
+        if (reqprime) return res.status(400).json({ message: "Horraire deja reservé" });
+
+        reponse = await TableReservation.create({
+            utilisateur: idUtilisateur,
+            salle: salle,
+            date: DateHeure
+        })
+
+        return res.status(200).json({ message: "Réservation effectué" })
+
+    } catch (error) {
+        return res.status(500).json({ erreur: error.message })
+    }
+}
+
+exports.reservationAVenir = async (req, res) => {
+    try {
+        const derniersEnregistrements = await TableReservation.findAll({
+            where: {
+                date: {
+                    [Op.gt]: new Date() // Prend uniquement les réservations dont la date est après la date actuelle
+                }
+            },
+            order: [['date', 'ASC']],
+            limit: 5
+        });
+
+        return res.status(200).json(derniersEnregistrements);
+
+    } catch (error) {
+        return res.status(500).json({ erreur: error.message })
     }
 }

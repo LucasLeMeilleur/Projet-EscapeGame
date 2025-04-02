@@ -40,6 +40,9 @@ section {
     padding: 15px;
     border: solid white;
     border-radius: 25px;
+
+    margin-top: auto !important;
+    margin-bottom: auto !important;
 }
 
 #inside_admin_panel, #inside_gestion_partie{
@@ -48,7 +51,7 @@ section {
 
     border: solid wheat;
     border-radius: 15px;
-    height: 100%;
+    height: auto;
     
 }
 

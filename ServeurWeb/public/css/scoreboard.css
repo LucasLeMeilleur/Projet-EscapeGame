@@ -1,0 +1,62 @@
+h1{
+    font-size: 37px;
+    margin-top: 30px;
+    text-align: center;
+}
+
+#div_scoreboard{
+    margin-top: 20px;
+    display: flex;
+    justify-content: center; /* Centre horizontalement */
+    margin-bottom: 40px;
+}
+
+table {
+    width: auto;
+    border-collapse: separate;
+    border-spacing: 0;
+    margin-top: 20px;
+    background-color: #1e1e1e; /* Fond sombre du tableau */
+    color: #fff; /* Texte blanc */
+
+    border: 1px solid #333; /* Bordures discrètes */
+    border-radius: 8px;
+    overflow:hidden;
+
+    
+}
+
+th, td {
+    padding: 12px;
+    text-align: left;
+}
+
+th {
+    background-color: #0056b3; /* Vert pour l'en-tête */
+    color: white;
+    font-weight: bold;
+    text-transform: uppercase;
+}
+
+tbody tr:nth-child(even) {
+    background-color: #252525; /* Gris foncé pour les lignes paires */
+}
+
+tbody tr:nth-child(odd) {
+    background-color: #1a1a1a; /* Noir léger pour les lignes impaires */
+}
+
+tbody tr:hover {
+    background-color: #333; /* Effet hover */
+    transition: background 0.3s ease;
+}
+
+
+/* Coins supérieurs */
+table thead tr:first-child th:first-child { border-top-left-radius: 8px; }
+table thead tr:first-child th:last-child { border-top-right-radius: 8px; }
+
+/* Coins inférieurs */
+table tbody tr:last-child td:first-child { border-bottom-left-radius: 8px; }
+table tbody tr:last-child td:last-child { border-bottom-right-radius: 8px; }
+

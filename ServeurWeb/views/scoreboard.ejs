@@ -9,8 +9,9 @@
     <meta name="description" content="">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="">
-    <script src="https://cdn.jsdelivr.net/npm/jsencrypt/bin/jsencrypt.min.js"></script>
+    <script src="/js/scoreboard.js"></script>
 
+    <link rel="stylesheet" href="css/scoreboard.css">
 
     <link rel="stylesheet" href="css/partials/forme.css">
     <link rel="stylesheet" href="css/partials/header.css">
@@ -29,6 +30,22 @@
 
     <section>
         <h1>Tableau des scores</h1>
+
+        <div id="div_scoreboard">
+            <table id="scoreboard">
+                <thead>
+                    <tr>
+                        <th>Classement</th>
+                        <th>Nom du Scénario</th>
+                        <th>Nom de l'Équipe</th>
+                        <th>Durée</th>
+                        <th>Date</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+        
     </section>
     
     <%- include('partials/footer'); %>

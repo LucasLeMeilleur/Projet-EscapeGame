@@ -127,7 +127,7 @@ async function remplirListeReservation() {
     const tableau = document.getElementById("liste_reservation");
 
     try {
-        const response = await fetch('/api/game/reservation/desc', {
+        const response = await fetch('/api/game/reservation/asc', {
             method: 'GET',
             headers: { 'Content-Type': 'application/json' },
         });
@@ -143,7 +143,7 @@ async function remplirListeReservation() {
             }
 
             // Définir les colonnes à afficher (sans idmissionEtat)
-            const colonnesAAfficher = ["idreservation", "date", "utilisateur", "salle", "equipe"];
+            const colonnesAAfficher = ["idreservation", "date", "utilisateur", "salle"];
 
             // Vider le tableau avant d'ajouter du contenu
             tableau.innerHTML = "";
@@ -155,7 +155,6 @@ async function remplirListeReservation() {
             const headersTraduit = {
                 "idreservation": "Reservation",
                 "date": "Date",
-                "equipe": "Équipe",
                 "salle": "Salle",
                 "utilisateur": "Utilisateur"
             };
