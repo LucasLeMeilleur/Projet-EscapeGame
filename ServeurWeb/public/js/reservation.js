@@ -71,11 +71,6 @@ document.getElementById('reservationForm').addEventListener('submit', async (eve
 
 
 document.addEventListener("DOMContentLoaded", function () {
-    const selectFormulaire = document.getElementById("salle");
-    selectFormulaire.selectedIndex = 0
+    document.getElementById("salle").selectedIndex = 0;
+    document.getElementById('date').value = '';
 });
-
-function resetForm(formId) {
-    const form = document.getElementById(formId);
-    form.reset();  // Réinitialise tous les éléments de formulaire à leur valeur initiale
-}

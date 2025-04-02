@@ -1,7 +1,9 @@
-
 function SecondeVersTemps(a) {
-    return Math.trunc(a / 60) + " : " + a % 60; 
+    if(a%60 < 10) return Math.trunc(a / 60) + " : 0" + a % 60;
+    else return Math.trunc(a / 60) + " : " + a % 60;
 }
+
+
 
 function DateToString(a){
     const dateObj = new Date(a);
@@ -216,23 +218,15 @@ async function afficherDernierePartie() {
         if (reponse.ok) {
             const data = (await reponse.json());
 
-            console.log(data);
-
-
             if(data == undefined){
                 document.getElementById("para_Etat_derniere_partie").innerHTML = "Aucunes parties";
                 return;
             }
 
-            
-
             dateDepart = DateToString(data.dateDepart);
             dateCreation = DateToString(data.dateCreation);
 
             valeurDuree = "";
-
-
-            console.log(data.duree);
 
             if( data.duree == null){
                 valeurDuree = "Partie non terminée";
@@ -245,10 +239,6 @@ async function afficherDernierePartie() {
             } else {
                 valeurDuree = SecondeVersTemps(data.duree);
             }
-
-            console.log(valeurDuree)
-
-
 
             text = `
             <ul>
@@ -286,8 +276,6 @@ async function afficherPartieActive(){
 
             data = (await reponse.json())[0];
 
-            console.log(data)
-
             if(data == null || data.length == 0){
                 document.getElementById("para_Etat_partie_active").innerHTML = "Aucune partie active";
                 return;
@@ -318,9 +306,6 @@ async function afficherPartieActive(){
         console.log(error)
     }
 }
-
-
-
 
 // Appel de la fonction
 remplirListeReservation();

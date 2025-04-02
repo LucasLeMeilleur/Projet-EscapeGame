@@ -1,51 +1,68 @@
 const mqtt = require('mqtt');
+const https = require('https');
 const axios = require('axios');
 const cookie = require('cookie');
 
-const MQTT_BROKER = "mqtt://localhost";  // Adresse du broker
-const API_URL = "http://localhost:3000/api"; // Adresse de l'API
+const MQTT_BROKER = "mqtt://127.0.0.1";  // Adresse du broker
+const API_URL = "http://127.0.0.1:3000/api"; // Adresse de l'API
 
 // Connexion au broker MQTT
-const client = mqtt.connect(MQTT_BROKER);
-
-client.on("connect", () => {
-    console.log("✅ Connecté au broker MQTT !");
-    client.subscribe("missionsuivante"); // Écoute du topic
+const client = mqtt.connect(MQTT_BROKER, {
+    rejectUnauthorized: false,
 });
 
-// C'est un client
+
+client.on("connect", () => {
+    console.log("✅ Connecté au broker MQTT(s) !");
+
+    client.subscribe('missionsuivante', function (err) {
+        if (err) {
+            console.log('Erreur de souscription:', err);
+        } else {
+            console.log('Souscription réussie');
+        }
+    });
+});
+
 
 client.on("message", async (topic, message) => {
 
-    // Exemple -- mission-suivant-idgame-1-mission-1
-
     if (topic === "missionsuivante") {
-        console.log("📩 Message reçu : missionsuivante");
+        const messageRecu = JSON.parse(message.toString());
+        const idpartie = messageRecu.idpartie;
+        const idmission = messageRecu.mission;
 
-        try {
-            // 1️⃣ Faire une requête POST à /login
-            const loginResponse = await axios.post(`${API_URL}/user/login`, {
-                username: "ss",
-                password: "aa"
-            }, { withCredentials: true });
+        // 1️⃣ Faire une requête POST à /login
+        const loginResponse = await axios.post(`${API_URL}/user/login`, {
+            email: "ss",
+            password: "aa"
+        }, { withCredentials: true });
 
-            // Récupérer le cookie JWT
-            const setCookie = loginResponse.headers["set-cookie"];
-            if (!setCookie) throw new Error("Aucun cookie JWT reçu");
+        const setCookie = loginResponse.headers["set-cookie"];
+        const tokenMatch = setCookie[0].match(/token=([^;]+)/);
 
-            const jwtCookie = cookie.parse(setCookie[0])['jwt']; // Adapter au nom du cookie JWT
-            console.log("🔑 JWT récupéré :", jwtCookie);
 
-            // 2️⃣ Faire une requête POST à /game/missionsuivante
-            const missionResponse = await axios.post(`${API_URL}/game/missionsuivante`, {}, {
-                headers: { Cookie: `jwt=${jwtCookie}` }
-            });
+        // 2️⃣ Faire une requête POST à /game/missionsuivante
 
-            console.log("🚀 Mission suivante exécutée :", missionResponse.data);
-        } catch (error) {
-            console.error("❌ Erreur MQTT :", error.message);
-        }
+        const missionResponse = await axios.post(`${API_URL}/game/missionetat/suivante`, {
+            idpartie: idpartie,
+            mission: idmission // Corrige la variable 'mission'
+        }, {
+            headers: { Cookie: `token=${tokenMatch[1]}` }
+        });
+
+        console.log("🚀 Mission suivante exécutée");
     }
 });
+
+
+client.publish('missionsuivante', 'Client initialisé', { qos: 2 }, function (err) {
+    if (err) {
+        console.log('Erreur de publication:', err);
+    } else {
+        console.log('Message publié avec succès');
+    }
+});
+
 
 module.exports = client;

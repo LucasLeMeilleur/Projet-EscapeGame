@@ -384,16 +384,22 @@ exports.dernieresReservation = async (req, res) => {
 exports.AjouterPartie = async (req, res) => {
     try {
         const ReqData = req.body;
-        const ScenarioId = ReqData.idscenario;
-        const EquipeId = ReqData.idequipe;
+        const nomScenario = ReqData.scenario;
+        const nomEquipe = ReqData.equipe;
 
-        if (!ScenarioId || !EquipeId) return res.status(407).send({ message: "Requete invalide" });
+        
 
-        reqprime = await TableScenario.findOne({ where: { idscenario: ScenarioId } });
+        if (!nomScenario || !nomEquipe) return res.status(407).send({ message: "Requete invalide" });
+
+        reqprime = await TableScenario.findOne({ where: { nom: nomScenario } });
         if (!reqprime) return res.status(407).json({ message: "Scenario non existant" });
 
-        reqprime = await TableEquipe.findOne({ where: { idequipe: EquipeId } });
+        const ScenarioId = reqprime.idscenario;
+
+        reqprime = await TableEquipe.findOne({ where: { nom: nomEquipe } });
         if (!reqprime) return res.status(407).json({ message: "Equipe non existante" });
+
+        const EquipeId = reqprime.idequipe;
 
         const repScenar = await TableScenario.findOne({
             where: { idscenario: ScenarioId },
@@ -629,7 +635,7 @@ exports.MissionSuivante = async (req, res) => {
     try {
         const ReqData = req.body;
         const idpartie = ReqData.idpartie;
-
+        const mission = ReqData.mission;
 
         const now = new Date();
         const mysqlTimestamp = now.toISOString().slice(0, 19).replace('T', ' ');

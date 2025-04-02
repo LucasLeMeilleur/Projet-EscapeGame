@@ -143,6 +143,7 @@ function toggleDropdown(containerId) {
         dropdown.style.maxHeight = '150px';
         container.style.marginBottom = '160px'; // Ajuste la marge pour pousser le contenu vers le bas
     }
+
 }
 
 document.addEventListener('click', (event) => {
@@ -166,15 +167,15 @@ document.addEventListener('click', (event) => {
 async function envoyerFormulaire(event) {
     event.preventDefault(); // Empêche le rechargement de la page
 
-    let scenarioId = document.getElementById("select_scenario").value;
-    let equipeId = document.getElementById("select_equipe").value;
+    let scenario = document.getElementById("scenario_value_div").innerText;
+    let equipe = document.getElementById("equipe_value_div").innerText;
 
-    if (!scenarioId || !equipeId) {
+    if (!scenario || !equipe) {
         alert("Veuillez sélectionner un scénario et une équipe.");
         return;
     }
 
-    let data = { idscenario: scenarioId, idequipe: equipeId };
+    let data = { scenario: scenario, equipe: equipe };
 
     try {
         let response = await fetch('/api/game/partie/ajout', {
