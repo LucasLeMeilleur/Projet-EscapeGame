@@ -15,7 +15,7 @@ const client = mqtt.connect(MQTT_BROKER, {
 client.on("connect", () => {
     console.log("✅ Connecté au broker MQTT(s) !");
 
-    client.subscribe('missionsuivante', function (err) {
+    client.subscribe('terminer', function (err) {
         if (err) {
             console.log('Erreur de souscription:', err);
         } else {
@@ -27,10 +27,17 @@ client.on("connect", () => {
 
 client.on("message", async (topic, message) => {
 
-    if (topic === "missionsuivante") {
+    if (topic === "terminer") {
+        
+        try {
+            
         const messageRecu = JSON.parse(message.toString());
         const idpartie = messageRecu.idpartie;
         const idmission = messageRecu.mission;
+
+        
+        if(!idpartie || !idmission) return;
+        
 
         // 1️⃣ Faire une requête POST à /login
         const loginResponse = await axios.post(`${API_URL}/user/login`, {
@@ -51,18 +58,52 @@ client.on("message", async (topic, message) => {
             headers: { Cookie: `token=${tokenMatch[1]}` }
         });
 
+
+        const detailPartie = await axios.get(`${API_URL}/game/partie/all/${idpartie}`);
+
+        console.log(detailPartie);
+
+        const numeroMission = detailPartie.data.missionEtat.idmission;
+
+
+        if (!detailPartie.data.terminee) EnvoyerMessage(`{ "mission":${numeroMission}, "idpartie": ${idpartie} }`);
+
         console.log("🚀 Mission suivante exécutée");
+        } catch (error) {
+            console.log(error)
+        }
+        
     }
 });
 
 
-client.publish('missionsuivante', 'Client initialisé', { qos: 2 }, function (err) {
-    if (err) {
-        console.log('Erreur de publication:', err);
-    } else {
-        console.log('Message publié avec succès');
-    }
-});
+
+function EnvoyerMessage(message) {
+
+    client.publish('activer', message, { retain:false, qos: 2 }, function (err) {
+        if (err) {
+            console.log('Erreur de publication:', err);
+        } else {
+            console.log('Message publié avec succès');
+        }
+    });
+}
+
+function demarrerPartie(mission, idpartie) {
+
+    console.log("lancé");
+    
+
+    const message = `{ "mission": ${mission}, "idpartie":${idpartie}  }`;
+
+    client.publish("activer", message, () => {
+        console.log(`Partie demarré, message sur activer: ${message}`);
+    });
+}
 
 
-module.exports = client;
+module.exports = {
+    demarrerPartie
+  };
+
+

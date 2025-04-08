@@ -10,7 +10,7 @@ const TableEquipe = require('../../../models/equipe');
 const TableReservation = require('../../../models/reservation');
 const { logger } = require('sequelize/lib/utils/logger');
 const jwt = require('jsonwebtoken');
-
+const { demarrerPartie } = require('../../../mqttGestion');
 
 // Fonction utiles
 
@@ -554,17 +554,28 @@ exports.AjouterEquipe = async (req, res) => {
 }
 
 exports.DemarrerPartie = async (req, res) => {
+
+    console.log("Demarrer Partie");
+
     try {
         const ReqData = req.body;
         const PartieId = ReqData.partie;
 
-        reqprime = await TableGame.findOne({ where: { idgame: PartieId } });
+        reqprime = await TableGame.findOne({ where: { idgame: PartieId }, include: { model: TableMissionEtat } });
         if (!reqprime) return res.status(400).json({ message: "Partie introuvable" });
+
+        console.log(reqprime)
+
 
         const updatePrime = await TableGame.update(
             { actif: '1', dateDepart: Date.now() },
             { where: { idgame: PartieId } }
         );
+
+        demarrerPartie(reqprime.missionEtat.idmission, PartieId);
+        
+
+
 
         return res.status(200).json({ message: "Partie lancée avec succès" });
     } catch (error) {
@@ -633,6 +644,9 @@ exports.listePartieReserve = async (req, res) => {
 
 exports.MissionSuivante = async (req, res) => {
     try {
+
+        console.log("Mission suivante ");
+        
         const ReqData = req.body;
         const idpartie = ReqData.idpartie;
         const mission = ReqData.mission;
