@@ -10,7 +10,7 @@ const TableEquipe = require('../../../models/equipe');
 const TableReservation = require('../../../models/reservation');
 const { logger } = require('sequelize/lib/utils/logger');
 const jwt = require('jsonwebtoken');
-const { demarrerPartie } = require('../../../mqttGestion');
+const { demarrerPartie, resetCanaux } = require('../../../mqttGestion');
 
 // Fonction utiles
 
@@ -612,6 +612,8 @@ exports.FinirPartie = async (req, res) => {
             { actif: '0', terminee: '1', duree: duree_partie },
             { where: { idgame: PartieId } }
         );
+        
+        resetCanaux();
 
         return res.status(200).json(updatePrime);
     } catch (error) {
