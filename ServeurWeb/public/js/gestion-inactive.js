@@ -121,6 +121,9 @@ async function chargerFormulaire() {
 function selectItem(containerId, value) {
     document.querySelector(`#${containerId} .select-display`).textContent = value;
     document.querySelector(`#${containerId} .select-dropdown`).style.maxHeight = '0';
+
+    let container = document.getElementById(containerId);
+    container.style.marginBottom = '0';
 }
 
 function filterList(containerId) {

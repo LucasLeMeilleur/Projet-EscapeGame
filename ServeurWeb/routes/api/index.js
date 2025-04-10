@@ -95,9 +95,9 @@ router.get('/game/partie/all/:id', object.ObtenirTouteInfoPartie);
 router.get('/game/missionEtat/historique/:id', object.obtenirHistoriqueMission);
     // router.get('/game/missionEtat/actuel', object.obtenirMissionActuelle);
 /// -> a corriger
-router.get('/game/missionEtat/id', object.listeMissionEtatid);
-router.get('/game/missionEtat/gameid', object.listeMissionEtatGameid);
-router.get('/game/equipe/id', object.listeEquipeId)
+router.get('/game/missionEtat/:id', object.listeMissionEtatid);
+router.get('/game/missionEtat/:gameid', object.listeMissionEtatGameid);
+router.get('/game/equipe/:id', object.listeEquipeId)
 
 // POST
 
@@ -120,7 +120,7 @@ router.post('/game/reservation/ajout', authMiddleware, object.AjoutReservation);
 
 // GET 
 
-router.get('/user/liste', user.listeUser);
+router.get('/user/liste', checkPermission(1), user.listeUser);
 router.get('/user', user.nomUser);
 
 // POST

@@ -1,4 +1,4 @@
-section h1{
+section h1 {
     text-align: center;
     margin-top: 40px;
     font-size: 37px;
@@ -7,7 +7,8 @@ section h1{
 #div_fomulaire_insertion {
     display: flex;
     justify-content: center;
-    height: auto; /* Centre verticalement aussi */
+    height: auto;
+    /* Centre verticalement aussi */
     margin-top: 50px;
     margin-bottom: 20px;
 }
@@ -26,7 +27,8 @@ section h1{
 #dynamic_form {
     display: flex;
     flex-direction: column;
-    gap: 20px; /* Espacement entre les éléments */
+    gap: 20px;
+    /* Espacement entre les éléments */
 }
 
 #select_type_formulaire {
@@ -39,7 +41,9 @@ label {
     font-weight: bold;
 }
 
-input, textarea, select {
+input,
+textarea,
+select {
     width: 100%;
     padding: 8px;
     border: 1px solid #ccc;
@@ -65,4 +69,140 @@ button {
 
 button:hover {
     background-color: #0056b3;
+}
+
+
+/* Tableau */
+
+/* Container */
+#admin_panel,
+#tableau_view {
+    max-width: 900px;
+    margin: 0 auto;
+    margin-bottom: 50px;
+    padding: 2rem;
+    background: #333;
+    border-radius: 1rem;
+    box-shadow: 0 0 20px rgba(255, 255, 255, 0.04);
+    color: #f0f0f0;
+    font-family: 'Segoe UI', sans-serif;
+}
+
+#tableau_view {
+    max-height: 600px;
+    /* Ajuste la hauteur du conteneur */
+    overflow-y: auto;
+    /* Active la barre de défilement verticale */
+    overflow-x: hidden;
+    /* Empêche le défilement horizontal */
+}
+
+/* Toggle button */
+#toggle_view {
+    display: block;
+    margin: 2rem auto;
+    padding: 0.7rem 1.5rem;
+    background-color: #677eff;
+    color: white;
+    border: none;
+    border-radius: 0.5rem;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+#toggle_view:hover {
+    background-color: #4e65d8;
+}
+
+/* Select & input */
+#select_entity,
+#search_input {
+    padding: 0.5rem;
+    font-size: 1rem;
+    margin: 1rem 0;
+    width: 100%;
+    max-width: 300px;
+    background-color: #3c3c3c;
+    color: #fff;
+    border: 1px solid #555;
+    border-radius: 0.5rem;
+}
+
+#data_table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 1rem;
+    color: #f0f0f0;
+    table-layout: auto;
+    /* Permet à la table de s'adapter au contenu */
+}
+
+#data_table thead {
+    background-color: #444;
+    display: table-header-group;
+  }
+
+#data_table tbody {
+    display: table-header-group;
+    width: 100%;  /* Ne touche pas à la disposition du tableau, on contrôle juste le défilement via le conteneur */
+  }
+  
+  /* Le corps du tableau sera contenu dans un bloc défilable */
+  #data_table_wrapper {
+    display: block;
+    max-height: 400px;  /* Limite la hauteur du corps du tableau */
+    overflow-y: auto;
+  }
+
+#data_table th,
+#data_table td {
+    padding: 0.8rem;
+    border: 1px solid #555;
+    text-align: left;
+    vertical-align: middle;
+}
+
+/* Input inside table */
+#data_table input {
+    width: 100%;
+    padding: 0.3rem;
+    background-color: #2f2f2f;
+    color: #eee;
+    border: 1px solid #666;
+    border-radius: 0.3rem;
+    font-size: 0.95rem;
+}
+
+/* Save button */
+#data_table button {
+    padding: 0.4rem 0.8rem;
+    background-color: #35b14a;
+    color: white;
+    border: none;
+    border-radius: 0.4rem;
+    cursor: pointer;
+}
+
+#data_table button:hover {
+    background-color: #2a8d3c;
+}
+
+/* Feedback message */
+#save_result {
+    margin-top: 1rem;
+    font-weight: bold;
+    color: #66ffb3;
+}
+
+/* Recherche colonne */
+#data_table thead input.column-filter {
+    width: 100%;
+    padding: 0.3rem;
+    font-size: 0.9rem;
+    border-radius: 0.3rem;
+    background-color: #3a3a3a;
+    color: #fff;
+    border: 1px solid #555;
+    outline: none;
 }

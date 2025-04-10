@@ -300,8 +300,10 @@ exports.listeNomEquipe = async (req, res) => {
 // Get avec body  ->>>> a modifier
 
 exports.listeMissionEtatid = async (req, res) => {
-    const ReqData = req.body;
-    const IdMission = ReqData.missionid;
+
+
+
+    const IdMission = req.params.missionid;
 
     if (!IdMission) {
         return res.status(407).json({ message: "Requete invalide" });
@@ -316,8 +318,9 @@ exports.listeMissionEtatid = async (req, res) => {
 }
 
 exports.listeMissionEtatGameid = async (req, res) => {
-    const ReqData = req.body;
-    const IdGame = ReqData.gameid;
+
+    const IdGame = req.params.gameid
+
     try {
         const rep = await TableMissionEtat.findOne({ where: { idgame: IdGame } });
         return res.status(200).json(rep);
@@ -328,8 +331,7 @@ exports.listeMissionEtatGameid = async (req, res) => {
 
 exports.listeEquipeId = async (req, res) => {
 
-    const ReqData = req.body;
-    const IdEquipe = ReqData.id;
+    const IdEquipe = req.params.id;
 
     try {
         const rep = await TableEquipe.findOne({ where: { idequipe: IdEquipe } });
@@ -387,7 +389,7 @@ exports.AjouterPartie = async (req, res) => {
         const nomScenario = ReqData.scenario;
         const nomEquipe = ReqData.equipe;
 
-        
+
 
         if (!nomScenario || !nomEquipe) return res.status(407).send({ message: "Requete invalide" });
 
@@ -418,6 +420,7 @@ exports.AjouterPartie = async (req, res) => {
             idgame: rep.idgame,
             idmission: mission1
         })
+
 
         const repfinale = await TableGame.update(
             { idmissionEtat: rep2.idetat },
@@ -573,7 +576,7 @@ exports.DemarrerPartie = async (req, res) => {
         );
 
         demarrerPartie(reqprime.missionEtat.idmission, PartieId);
-        
+
 
 
 
@@ -612,7 +615,7 @@ exports.FinirPartie = async (req, res) => {
             { actif: '0', terminee: '1', duree: duree_partie },
             { where: { idgame: PartieId } }
         );
-        
+
         resetCanaux();
 
         return res.status(200).json(updatePrime);
@@ -648,7 +651,7 @@ exports.MissionSuivante = async (req, res) => {
     try {
 
         console.log("Mission suivante ");
-        
+
         const ReqData = req.body;
         const idpartie = ReqData.idpartie;
         const mission = ReqData.mission;
@@ -668,25 +671,28 @@ exports.MissionSuivante = async (req, res) => {
             }]
         })
 
-        console.log(JSON.stringify(reponse))
+
+
+        const ordreMission = (reponse.scenario.ordre).split(',');
+        const missionActuel = reponse.missionEtat.idmission;
+
+
+        if (missionActuel != mission) return res.status(400).json({ message: "Mauvaise mission en cours" })
+
 
         const repprime = await TableMissionEtat.update(
             { heurefin: mysqlTime },
             { where: { idetat: reponse.idmissionEtat } },
         );
 
-        const ordreMission = (reponse.scenario.ordre).split(',');
-        const missionActuel = reponse.missionEtat.idmission;
 
-        console.log("Ordre :", ordreMission);
-        console.log("Mission en cours :", missionActuel, "Type:", typeof missionActuel);
-        console.log("Index trouvé :", ordreMission.indexOf(String(missionActuel)));
+        // console.log("Ordre :", ordreMission);
+        // console.log("Mission en cours :", missionActuel, "Type:", typeof missionActuel);
+        // console.log("Index trouvé :", ordreMission.indexOf(String(missionActuel)));
+        // console.log(ordreMission.indexOf(String(missionActuel)) + 1 >= ordreMission.length);
+        // console.log(ordreMission.indexOf(String(missionActuel)));
+        // console.log(ordreMission.length);
 
-
-
-        console.log(ordreMission.indexOf(String(missionActuel)) + 1 >= ordreMission.length);
-        console.log(ordreMission.indexOf(String(missionActuel)));
-        console.log(ordreMission.length);
 
         if (ordreMission.indexOf(String(missionActuel)) + 1 >= ordreMission.length) {
 
