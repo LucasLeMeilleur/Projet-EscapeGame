@@ -188,6 +188,14 @@ button:hover {
     background-color: #2a8d3c;
 }
 
+.Boutton_suppression{
+    background-color: #e04747 !important;
+}
+
+.Boutton_suppression:hover{
+    background-color: #b13535 !important;
+}
+
 /* Feedback message */
 #save_result {
     margin-top: 1rem;
@@ -205,4 +213,9 @@ button:hover {
     color: #fff;
     border: 1px solid #555;
     outline: none;
+}
+
+.Action-Items{
+    display: flex;
+    gap: 5px;
 }

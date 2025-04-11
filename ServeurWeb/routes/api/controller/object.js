@@ -829,3 +829,172 @@ exports.reservationAVenir = async (req, res) => {
         return res.status(500).json({ erreur: error.message })
     }
 }
+
+exports.MajEquipe = async (req, res) => {
+    try {
+
+        const ReqData = req.body;
+        const IdEquipe = ReqData.idequipe;
+        const Nom = ReqData.nom;
+        const nombrejoueur = ReqData.nombre_joueur;
+        const Date = ReqData.date;
+
+        if (!IdEquipe || !IdNom || !nombrejoueur || !Date) return res.status(400).json({ message: "Formulaire incomplet" });
+
+        const mission = await Mission.findOne({
+            where: {
+                idequipe: idequipe
+            }
+        });
+
+        if (!mission) return res.status(404).json({ message: "Equipe inexistante" });
+
+        const [nbUpdated] = await TableEquipe.update(
+            {
+                nombre_joueur: nombre_joueur,
+                nom: Nom,
+                date: date
+            },
+            {
+                where: {
+                    idequipe: idequipe
+                }
+            }
+        );
+
+        if (nbUpdated === 0) return res.status(418).json({ message: "Aucun changement détecté" });
+
+        return res.status(200).json({ message: "Equipe mise à jour avec succès" });
+    } catch (error) {
+        return res.status(500).json({ message: error.message })
+    }
+}
+
+exports.MajScenario = async (req, res) => {
+    try {
+        const ReqData = req.body;
+        const idscenario = ReqData.idscenario;
+        const nom = ReqData.nom;
+        const ordre = ReqData.ordre;
+        const description = ReqData.description;
+
+        if (!idscenario || !nom || !ordre) {
+            return res.status(400).json({ message: "Formulaire incomplet" });
+        }
+
+        // Vérifier si le scénario existe
+        const scenario = await TableScenario.findOne({
+            where: { idscenario }
+        });
+
+        if (!scenario) {
+            return res.status(404).json({ message: "Scénario inexistant" });
+        }
+
+        // Mettre à jour
+        const [nbUpdated] = await TableScenario.update(
+            {
+                nom,
+                ordre,
+                description
+            },
+            {
+                where: { idscenario }
+            }
+        );
+
+        if (nbUpdated === 0) {
+            return res.status(418).json({ message: "Aucun changement détecté" });
+        }
+
+        return res.status(200).json({ message: "Scénario mis à jour avec succès" });
+
+    } catch (error) {
+        console.error("Erreur :", error);
+        return res.status(500).json({ message: error.message });
+    }
+};
+
+exports.MajMission = async (req, res) => {
+    try {
+        const { idmission, nom, tempsRequis, description } = req.body;
+
+        if (!idmission || !nom || typeof tempsRequis === "undefined") {
+            return res.status(400).json({ message: "Formulaire incomplet" });
+        }
+
+        // Vérification de l'existence de la mission
+        const mission = await TableMission.findOne({
+            where: { idmission }
+        });
+
+        if (!mission) {
+            return res.status(404).json({ message: "Mission inexistante" });
+        }
+
+        // Mise à jour directe
+        const [nbUpdated] = await TableMission.update(
+            {
+                nom,
+                tempsRequis,
+                description
+            },
+            {
+                where: { idmission }
+            }
+        );
+
+        if (nbUpdated === 0) {
+            return res.status(418).json({ message: "Aucun changement détecté" });
+        }
+
+        return res.status(200).json({ message: "Mission mise à jour avec succès" });
+
+    } catch (error) {
+        console.error("Erreur MajMission:", error);
+        return res.status(500).json({ message: error.message });
+    }
+};
+
+
+
+exports.MajSalle = async (req, res) => {
+    try {
+        const { idsalle, nom, ville } = req.body;
+
+        if (!idsalle || !nom || !ville) {
+            return res.status(404).json({ message: "Formulaire incomplet" });
+        }
+
+        // Vérifier si la salle existe
+        const salle = await TableSalle.findOne({
+            where: { idsalle }
+        });
+
+        if (!salle) {
+            return res.status(401).json({ message: "Salle inexistante" });
+        }
+
+        // Mettre à jour la salle
+        const [nbUpdated] = await TableSalle.update(
+            {
+                nom,
+                ville
+            },
+            {
+                where: { idsalle }
+            }
+        );
+
+        if (nbUpdated === 0) {
+            return res.status(418).json({ message: "Aucun changement détecté" });
+        }
+
+        return res.status(200).json({ message: "Salle mise à jour avec succès" });
+
+    } catch (error) {
+        console.error("Erreur MajSalle:", error);
+        return res.status(500).json({ message: error.message });
+    }
+};
+

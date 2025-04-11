@@ -113,7 +113,16 @@ router.post('/game/partie/demarrer', checkPermission(1), object.DemarrerPartie);
 router.post('/game/partie/finir', checkPermission(1), object.FinirPartie);
 
 router.post('/game/missionetat/suivante', checkPermission(1), object.MissionSuivante);
-router.post('/game/reservation/ajout', authMiddleware, object.AjoutReservation);
+router.post('/game/reservation/ajout', checkPermission(1), authMiddleware, object.AjoutReservation);
+
+// Update
+
+router.patch('/game/mission/update', checkPermission(1), object.MajMission);
+router.patch('/game/equipe/update', checkPermission(1), object.MajEquipe);
+router.patch('/game/scenario/update', checkPermission(1), object.MajScenario);
+router.patch('/game/salle/update', checkPermission(1), object.MajSalle);
+
+
 
 /////////////////////////   Gestion api user   ///////////////////////// 
 
@@ -127,6 +136,16 @@ router.get('/user', user.nomUser);
 
 router.post('/user/register', user.regiserUser);
 router.post('/user/login', user.loginUser);
+
+
+
+// Modification 
+
+// Modification coté admin
+
+router.patch('/user/update-admin', checkPermission(1), user.MajUtilisateur);
+router.delete('/user/delete', checkPermission(1), user.SupprimerUtilisateur);
+
 
 ///////////////////////// Gestion api erreur ///////////////////////////
 
