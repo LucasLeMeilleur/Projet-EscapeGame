@@ -114,6 +114,7 @@ toggleBtn.addEventListener("click", () => {
 document.addEventListener("DOMContentLoaded", function () {
   const selectFormulaire = document.getElementById("select_type_formulaire");
   selectFormulaire.selectedIndex = 0
+  document.getElementById("select_entity").selectedIndex = 0;
 });
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -231,7 +232,6 @@ document.addEventListener("DOMContentLoaded", () => {
     const inputs = trElement.querySelectorAll("input");
     const type = selectEntity.value;
     const updatedData = { id };
-    console.log(id)
     inputs.forEach(input => {
       updatedData[input.dataset.key] = input.value;
     });
@@ -250,7 +250,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const resultText = JSON.parse(await res.text()).message;
 
-    console.log(resultText);
     let saveResult = resultText;
 
     document.getElementById("Resultat_requete").innerText = saveResult;
@@ -300,11 +299,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
     url = null
 
-    console.log(id);
-    
-
-    if (type == "utilisateur") url = `/api/user/delete?id=${encodeURIComponent(Object.values(updatedData)[1])}`;
-    else  url = `/api/game/${type}/delete?id=${encodeURIComponent(Object.values(updatedData)[1])}`;
+    if (type == "utilisateur") url = `/api/user/delete/${encodeURIComponent(Object.values(updatedData)[1])}`;
+    else  url = `/api/game/${type}/delete/${encodeURIComponent(Object.values(updatedData)[1])}`;
 
     try {
       const res = await fetch(url, {
@@ -317,7 +313,6 @@ document.addEventListener("DOMContentLoaded", () => {
       // Actualiser la liste après suppression
       selectEntity.dispatchEvent(new Event("change"));
     } catch (err) {
-      console.error("Erreur lors de la suppression :", err);
       document.getElementById("Resultat_requete").innerText = "Erreur lors de la suppression.";
     }
   }

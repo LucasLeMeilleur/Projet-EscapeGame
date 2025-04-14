@@ -124,6 +124,12 @@ router.patch('/game/salle/update', checkPermission(1), object.MajSalle);
 
 
 
+router.delete('/game/mission/delete/:id', checkPermission(1), object.DelMission);
+router.delete('/game/equipe/delete/:id', checkPermission(1), object.DelEquipe);
+router.delete('/game/scenario/delete/:id', checkPermission(1), object.DelScenario);
+router.delete('/game/salle/delete/:id', checkPermission(1), object.DelSalle);
+
+
 /////////////////////////   Gestion api user   ///////////////////////// 
 
 

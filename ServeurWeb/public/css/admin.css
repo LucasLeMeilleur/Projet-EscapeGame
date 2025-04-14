@@ -3,13 +3,13 @@
     padding: 0;
     box-sizing: border-box;
 }
-html, body {
 
+html,
+body {
     height: 100%;
     font-family: Arial, sans-serif;
-    background-color: #444;
-    color: #fff;
-
+    background-color: #2b2b2b;
+    color: #ffffff;
     display: flex;
     flex-direction: column;
 }
@@ -19,125 +19,137 @@ section {
     text-align: center;
 }
 
-#panneaux{
-    display: flex;
-    gap: 70px;
-    justify-content: center; 
-    margin-top: 80px;
-    margin-bottom: 80px;
+#titre_admin {
+    margin-top: 30px;
+    font-size: 38px;
+    font-weight: bold;
+    color: #f1f1f1;
 }
 
-#titre_admin{
-    margin-top: 30px;
-    font-size: 37px;
+#panneaux {
+    display: flex;
+    gap: 70px;
+    justify-content: center;
+    margin: 80px 0;
 }
 
 .pannel {
     display: flex;
-    flex-direction: column;    
-    width: auto;
-    height: auto;
-    padding: 15px;
-    border: solid white;
-    border-radius: 25px;
-
-    margin-top: auto !important;
-    margin-bottom: auto !important;
+    flex-direction: column;
+    padding: 20px;
+    border: 2px solid #ffffff;
+    border-radius: 20px;
+    background-color: #3a3a3a;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
+    transition: transform 0.2s ease;
 }
 
-#inside_admin_panel, #inside_gestion_partie{
-    margin-top: 25px;
-    padding: 10px;
-
-    border: solid wheat;
-    border-radius: 15px;
-    height: auto;
-    
+.pannel:hover {
+    transform: scale(1.02);
 }
 
-#inside_admin_pannel{
+#inside_admin_panel,
+#inside_gestion_partie {
+  margin-top: 25px;
+  padding: 20px;
+  border-radius: 15px;
+  background: rgba(60, 60, 60, 0.6); /* fond sombre semi-transparent */
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  box-shadow: 0 0 12px rgba(0, 0, 0, 0.4);
+  transition: background 0.3s ease;
+}
+
+#inside_admin_panel:hover,
+#inside_gestion_partie:hover {
+  background: rgba(70, 70, 70, 0.7);
+}
+
+
+
+#inside_admin_pannel {
     display: flex;
-    flex-direction: column; /* Empile les éléments */
-    justify-content: center; /* Centre verticalement */
+    flex-direction: column;
+    justify-content: center;
     align-items: center;
     height: fit-content;
 }
 
-#inside_admin_panel h3{
+#inside_admin_panel h3,
+#inside_gestion_partie h3 {
     padding: 15px;
+    font-size: 22px;
+    color: wheat;
 }
 
-td, th{
-    padding-left: 7px;
-    padding-right: 7px;
-
-    border-left: 2px solid white; /* Bordure à gauche */
-    border-right: 2px solid white;
-}
-
-th{
-    border-bottom: 2px dashed white;
-}
-
-#liste_partie th {
-    padding-bottom: 8px;
-}
-
-#inside_admin_panel > div {
-    text-align: center; /* Centre le texte à l'intérieur */
+#inside_admin_panel>div {
+    text-align: center;
     width: 100%;
 }
 
 #inside_admin_panel table {
     margin: auto;
-
+    border-collapse: collapse;
 }
 
-#admin_pannel{
+td,
+th {
+    padding: 10px;
+    border-left: 2px solid #ffffff;
+    border-right: 2px solid #ffffff;
+}
+
+th {
+    border-bottom: 2px dashed #ffffff;
+    color: #ffd700;
+}
+
+#liste_partie th {
+    padding-bottom: 10px;
+}
+
+#admin_pannel {
     display: flex;
-    flex-direction: column; /* Empile les éléments */
-    align-items: center; /* Centre horizontalement */
+    flex-direction: column;
+    align-items: center;
     justify-content: center;
 }
 
-
 .listes_table {
-
-    height: auto;
     display: flex;
     flex-direction: column;
-    align-items: center; 
-    justify-content: center; 
+    align-items: center;
+    justify-content: center;
     text-align: center;
+    gap: 15px;
 }
 
-#inside_gestion_partie h3{
-    padding: 15px;
-}
-
-#para_Etat_derniere_partie{
+#para_Etat_derniere_partie {
     display: flex;
-    flex-direction: column;  
-    gap: 5px;  
+    flex-direction: column;
+    gap: 5px;
+    margin-top: 10px;
 }
 
-ul{
-    list-style: none;
-}
-
-#para_Etat_partie_active{
+#para_Etat_partie_active {
     margin-bottom: 20px;
+}
+
+ul {
+    list-style: none;
 }
 
 button {
     margin-top: 20px;
-    background-color: #007BFF;
+    background-color: #007bff;
     color: white;
     cursor: pointer;
     font-weight: bold;
-    padding: 10px;
+    padding: 10px 16px;
     border: none;
-    border-radius: 5px;
+    border-radius: 8px;
+    transition: background-color 0.2s ease;
 }
 
 button:hover {
