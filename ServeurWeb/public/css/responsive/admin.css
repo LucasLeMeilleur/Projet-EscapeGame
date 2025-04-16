@@ -1,0 +1,58 @@
+/* Responsive Styles */
+@media (max-width: 950px) {
+    #panneaux {
+        gap: 30px;
+    }
+
+    .pannel {
+        width: 100%;
+        margin-bottom: 15px;
+    }
+
+    #titre_admin {
+        font-size: 30px;
+    }
+
+    table{
+        overflow: auto !important;
+        overflow-y: auto;
+    }
+}
+
+@media (max-width: 950px) {
+    #titre_admin {
+        font-size: 24px;
+    }
+
+    #panneaux {
+        flex-direction: column;
+        gap: 20px;
+    }
+
+    .pannel {
+        width: 100%;
+        margin-bottom: 10px;
+    }
+
+    button {
+        padding: 8px 14px;
+    }
+}
+
+@media screen and (max-width: 768px) {
+    #inside_admin_panel > div {
+      overflow-x: auto;
+    }
+  
+    #inside_admin_panel table {
+      width: max-content; /* Permet au tableau de dépasser si besoin */
+    }
+  
+    td,
+    th {
+      font-size: 14px;
+      padding: 8px;
+      white-space: nowrap; /* Empêche le texte de forcer le retour à la ligne */
+    }
+  }
+      

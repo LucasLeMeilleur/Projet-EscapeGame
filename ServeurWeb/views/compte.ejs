@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title></title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <script src="/js/compte.js" defer></script>
+
+        <link rel="stylesheet" href="/css/compte.css">
+
+        <link rel="stylesheet" href="/css/forme.css">
+        <link rel="stylesheet" href="/css/responsive/forme.css">
+    </head>
+    <body>
+        <% if (typeof permission !=='undefined' && permission==1) { %>
+            <%- include('partials/header', {navig: "admin" }); %>
+        <% }else if(typeof permission !=='undefined' && permission==0){%>
+            <%- include('partials/header', {navig: "normal" }); %>
+        <% }else{ %>
+            <%- include('partials/header'); %>
+        <% } %>
+
+        <section>
+
+            <div class="container">
+                <h1>Mon Compte</h1>
+        
+                <div id="user-info">
+                    <p><strong>Email :</strong> <span id="email">...</span></p>
+                    <p><strong>Pseudo :</strong> <span id="pseudo">...</span></p>
+                </div>
+                
+                <p id="lienDeconnexion"><a href="/logout">Se déconnecter</a></p>
+
+                <h2>Changer le mot de passe</h2>
+                <form id="change-password-form">
+                    <label>Mot de passe actuel</label>
+                    <input type="password" id="oldPassword" required>
+        
+                    <label>Nouveau mot de passe</label>
+                    <input type="password" id="newPassword" required>
+
+                    <button type="button" id="submit-password">Changer le mot de passe</button>
+
+                    <div class="message" id="password-message"></div>
+                </form>
+        
+                <h2>Mes Réservations</h2>
+                <div class="reservation-list" id="reservation-list">
+                    Chargement des réservations...
+                </div>
+
+            </div>
+        
+        </section>
+
+        <%- include('partials/footer'); %>
+    </body>
+</html>

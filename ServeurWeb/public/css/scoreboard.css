@@ -1,62 +1,84 @@
-h1{
-    font-size: 37px;
-    margin-top: 30px;
+h1 {
+    font-size: 38px;
+    margin: 30px 0 20px;
     text-align: center;
+    color: #f5f5f5;
+    font-family: 'Inter', sans-serif;
+    font-weight: 600;
+    letter-spacing: 1px;
 }
 
-#div_scoreboard{
-    margin-top: 20px;
+#div_scoreboard {
+    margin: 0 auto 60px;
     display: flex;
-    justify-content: center; /* Centre horizontalement */
-    margin-bottom: 40px;
+    justify-content: center;
+    align-items: center;
+    padding: 0 20px;
 }
 
 table {
-    width: auto;
-    border-collapse: separate;
-    border-spacing: 0;
-    margin-top: 20px;
-    background-color: #1e1e1e; /* Fond sombre du tableau */
-    color: #fff; /* Texte blanc */
-
-    border: 1px solid #333; /* Bordures discrètes */
-    border-radius: 8px;
-    overflow:hidden;
-
-    
+    width: 100%;
+    max-width: 900px;
+    border-collapse: collapse;
+    background-color: #1e1e1e;
+    color: #e0e0e0;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+    border-radius: 12px;
+    overflow: hidden;
+    font-family: 'Inter', sans-serif;
 }
 
 th, td {
-    padding: 12px;
+    padding: 16px 20px;
     text-align: center;
 }
 
 th {
-    background-color: #0056b3; /* Vert pour l'en-tête */
-    color: white;
-    font-weight: bold;
+    background-color: #1a2b3a; /* Bleu foncé désaturé */
+    color: #d8ecff;
+    font-weight: 600;
     text-transform: uppercase;
+    font-size: 0.9em;
+    letter-spacing: 1px;
+    border-bottom: 1px solid #2d3f50;
 }
 
+
 tbody tr:nth-child(even) {
-    background-color: #252525; /* Gris foncé pour les lignes paires */
+    background-color: #232323;
 }
 
 tbody tr:nth-child(odd) {
-    background-color: #1a1a1a; /* Noir léger pour les lignes impaires */
+    background-color: #1a1a1a;
 }
 
 tbody tr:hover {
-    background-color: #333; /* Effet hover */
-    transition: background 0.3s ease;
+    background-color: #2d2d2d;
+    transition: background 0.2s ease-in-out;
 }
 
+table thead tr:first-child th:first-child {
+    border-top-left-radius: 12px;
+}
+table thead tr:first-child th:last-child {
+    border-top-right-radius: 12px;
+}
+table tbody tr:last-child td:first-child {
+    border-bottom-left-radius: 12px;
+}
+table tbody tr:last-child td:last-child {
+    border-bottom-right-radius: 12px;
+}
 
-/* Coins supérieurs */
-table thead tr:first-child th:first-child { border-top-left-radius: 8px; }
-table thead tr:first-child th:last-child { border-top-right-radius: 8px; }
+td {
+    border-top: 1px solid #2c2c2c;
+}
 
-/* Coins inférieurs */
-table tbody tr:last-child td:first-child { border-bottom-left-radius: 8px; }
-table tbody tr:last-child td:last-child { border-bottom-right-radius: 8px; }
-
+/* Arrière-plan général */
+body {
+    background-color: #121212;
+    font-family: 'Inter', sans-serif;
+    color: #e0e0e0;
+    margin: 0;
+    padding: 0;
+}

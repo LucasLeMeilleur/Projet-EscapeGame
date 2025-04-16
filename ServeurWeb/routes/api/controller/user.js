@@ -195,3 +195,55 @@ exports.SupprimerUtilisateur = async (req, res) => {
     res.status(500).json({ message: "Erreur serveur" });
   }
 }
+
+exports.RecupInfoPerso = async (req, res) => {
+  try {
+    const id = req.user.id;
+
+    if (!id) return res.status(400).json({ message: "Non connecté" });
+
+    const rep = await TableUtilisateur.findOne({
+      where: { idUser: id },
+      attributes: [ "email", "username"]
+    })
+
+    return res.status(200).json(rep);
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ message: "Erreur serveur" });
+  }
+}
+
+exports.ChangerPassword = async (req, res) => {
+  try {
+    const id = req.user.id;
+    const ancientMdp = req.body.oldPassword;
+    const nouveauMdp = req.body.newPassword
+
+    console.log(req.body);
+    
+
+    if( !ancientMdp || !nouveauMdp ) return res.status(400).json({message: "Formulaire invalide"});
+
+    if (!id) return res.status(400).json({ message: "Non connecté" });
+
+
+    const user = await TableUtilisateur.findOne({ where: { idUser: id } });
+
+    const isValidPassword = await bcrypt.compare(ancientMdp, user.password);
+    if (!isValidPassword) return res.status(400).json({ message: "Mot de passe incorrect." });
+
+
+    const hashedPassword = await bcrypt.hash(nouveauMdp, 15);
+
+    const rep = await TableUtilisateur.update(
+      { password: hashedPassword },
+      { where: { idUser: id } } 
+    );
+
+    return res.status(200).json(rep);    
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ message: "Erreur serveur" });
+  }
+}

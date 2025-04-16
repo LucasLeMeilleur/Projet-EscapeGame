@@ -9,12 +9,13 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
         <script src="/js/admin.js" defer></script>
+        <link rel="stylesheet" href="/css/admin.css">
+        <link rel="stylesheet" href="/css/responsive/admin.css">
 
-        <link rel="stylesheet" href="css/admin.css">
 
-        <link rel="stylesheet" href="css/partials/forme.css">
-        <link rel="stylesheet" href="css/partials/header.css">
-        <link rel="stylesheet" href="css/partials/footer.css">
+        <link rel="stylesheet" href="/css/forme.css">
+
+        <link rel="stylesheet" href="/css/responsive/forme.css">
     </head>
     <body>
         <% if (typeof permission !=='undefined' && permission==1) { %>
@@ -27,6 +28,8 @@
 
         <section>
             <h1 id="titre_admin">Administration de l'escape game</h1>
+
+            <p id="lienDeconnexion"><a href="/logout">Se déconnecter</a></p> 
             <div id="panneaux">
                 <div id="gestion_pannel" class="pannel">
                     <h2>Gestion de la partie</h2>

@@ -162,14 +162,14 @@ router.get('/scoreboard', optionalAuthenticateToken, (req, res) => {
     else return res.status(200).render('scoreboard');
 });
 
-router.get('/compte-gestion', optionalAuthenticateToken, verifyAccess(0), (req, res) => {
+router.get('/compte', optionalAuthenticateToken, verifyAccess(0), (req, res) => {
     if (req.userId) {
         axios.get('http://127.0.0.1:3000/api/user', {
             params: { idUser: req.userId, type: "all" }
         })
             .then(response => {
                 rep = response.data;
-                if (rep.permission >= 0) return res.status(200).render('gestionCompte', { pseudo: rep.username, email: rep.email, permission: rep.permission });
+                if (rep.permission >= 0) return res.status(200).render('compte', { pseudo: rep.username, email: rep.email, permission: rep.permission });
                 else return res.status(403).render("error/403", { message: "Vous êtes déconnecté" });
             })
             .catch(error => {

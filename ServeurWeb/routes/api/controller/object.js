@@ -803,8 +803,8 @@ exports.AjoutReservation = async (req, res) => {
 
         console.log(DateHeure);
 
-        if(!estDateHeurePile(DateHeure)) return res.status(400).json({message: "Heure incorrecte"});
-        if(!estDateFuture(DateHeure)) return res.status(400).json({message: "Heure déjà passée"});
+        if (!estDateHeurePile(DateHeure)) return res.status(400).json({ message: "Heure incorrecte" });
+        if (!estDateFuture(DateHeure)) return res.status(400).json({ message: "Heure déjà passée" });
 
         if (!salle || !date || !heure) res.status(407).json({ message: "Formulaire incomplet" });
 
@@ -1023,53 +1023,74 @@ exports.MajSalle = async (req, res) => {
 
 exports.DelMission = async (req, res) => {
     try {
-      const { id } = req.params;
-      const deleted = await TableMission.destroy({ where: { idmission: id } });
-  
-      if (!deleted) return res.status(404).json({ message: 'Mission non trouvée' });
-      res.json({ success: true, message: 'Mission supprimée avec succès.' });
-    } catch (error) {
-      console.error('Erreur suppression mission :', error);
-      res.status(500).json({ message: 'Erreur serveur.' });
-    }
-  };
-  
+        const { id } = req.params;
+        const deleted = await TableMission.destroy({ where: { idmission: id } });
 
-  exports.DelEquipe = async (req, res) => {
-    try {
-      const { id } = req.params;
-      const deleted = await TableEquipe.destroy({ where: { idequipe: id } });
-  
-      if (!deleted) return res.status(404).json({ message: 'Équipe non trouvée' });
-      res.json({ success: true, message: 'Équipe supprimée avec succès.' });
+        if (!deleted) return res.status(404).json({ message: 'Mission non trouvée' });
+        res.json({ success: true, message: 'Mission supprimée avec succès.' });
     } catch (error) {
-      console.error('Erreur suppression équipe :', error);
-      res.status(500).json({ message: 'Erreur serveur.' });
+        console.error('Erreur suppression mission :', error);
+        res.status(500).json({ message: 'Erreur serveur.' });
     }
-  };
-  
-  exports.DelScenario = async (req, res) => {
+};
+
+
+exports.DelEquipe = async (req, res) => {
     try {
-      const { id } = req.params;
-      const deleted = await TableScenario.destroy({ where: { idscenario: id } });
-  
-      if (!deleted) return res.status(404).json({ message: 'Scénario non trouvé' });
-      res.json({ success: true, message: 'Scénario supprimé avec succès.' });
+        const { id } = req.params;
+        const deleted = await TableEquipe.destroy({ where: { idequipe: id } });
+
+        if (!deleted) return res.status(404).json({ message: 'Équipe non trouvée' });
+        res.json({ success: true, message: 'Équipe supprimée avec succès.' });
     } catch (error) {
-      console.error('Erreur suppression scénario :', error);
-      res.status(500).json({ message: 'Erreur serveur.' });
+        console.error('Erreur suppression équipe :', error);
+        res.status(500).json({ message: 'Erreur serveur.' });
     }
-  };
-  
-  exports.DelSalle = async (req, res) => {
+};
+
+exports.DelScenario = async (req, res) => {
     try {
-      const { id } = req.params;
-      const deleted = await TableSalle.destroy({ where: { idsalle: id } });
-  
-      if (!deleted) return res.status(404).json({ message: 'Salle non trouvée' });
-      res.json({ success: true, message: 'Salle supprimée avec succès.' });
+        const { id } = req.params;
+        const deleted = await TableScenario.destroy({ where: { idscenario: id } });
+
+        if (!deleted) return res.status(404).json({ message: 'Scénario non trouvé' });
+        res.json({ success: true, message: 'Scénario supprimé avec succès.' });
     } catch (error) {
-      console.error('Erreur suppression salle :', error);
-      res.status(500).json({ message: 'Erreur serveur.' });
+        console.error('Erreur suppression scénario :', error);
+        res.status(500).json({ message: 'Erreur serveur.' });
     }
-  };
+};
+
+exports.DelSalle = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const deleted = await TableSalle.destroy({ where: { idsalle: id } });
+
+        if (!deleted) return res.status(404).json({ message: 'Salle non trouvée' });
+        res.json({ success: true, message: 'Salle supprimée avec succès.' });
+    } catch (error) {
+        console.error('Erreur suppression salle :', error);
+        res.status(500).json({ message: 'Erreur serveur.' });
+    }
+};
+
+exports.RecupReservPerso = async (req, res) => {
+    try {
+        const id = req.user.id;
+
+        if (!id) res.status(400).json({ message: "Session invalide" })
+
+        const rep = await TableReservation.findAll({
+
+            order: [['date', 'DESC']],
+            where: { utilisateur: id }
+        })
+
+        return res.status(200).json(rep);
+
+    } catch (error) {
+
+        console.error('Erreur recuperation reservation perso :', error);
+        res.status(500).json({ message: 'Erreur serveur.' });
+    }
+}

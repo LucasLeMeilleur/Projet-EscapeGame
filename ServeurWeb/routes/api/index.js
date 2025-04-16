@@ -86,7 +86,7 @@ router.get('/game/partie/listeReserv', object.listePartieReserve);
 
 router.get('/game/partie/nonlancee', object.obtenirPartieNonlancee);
 router.get('/game/partie/all/:id', object.ObtenirTouteInfoPartie);
-
+router.get('/game/reservation/perso', authMiddleware, object.RecupReservPerso);
 
 
 // GET avec requeteUrl
@@ -138,11 +138,13 @@ router.delete('/game/salle/delete/:id', checkPermission(1), object.DelSalle);
 router.get('/user/liste', checkPermission(1), user.listeUser);
 router.get('/user', user.nomUser);
 
+router.get('/user/perso', authMiddleware, user.RecupInfoPerso);
+
 // POST
 
 router.post('/user/register', user.regiserUser);
 router.post('/user/login', user.loginUser);
-
+router.post('/user/change-password', authMiddleware, user.ChangerPassword)
 
 
 // Modification 
