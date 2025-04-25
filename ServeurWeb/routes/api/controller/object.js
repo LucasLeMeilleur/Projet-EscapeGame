@@ -75,11 +75,9 @@ exports.listePartie = async (req, res) => {
     try {
         const rep = await TableGame.findAll();
 
-        res.status(200).json(rep);
-        return;
+        return res.status(200).json(rep);
     } catch (error) {
-        res.status(500).json({ message: error.message });
-        return;
+        return res.status(500).json({ message: error.message });
     }
 }
 
@@ -183,8 +181,7 @@ exports.obtenirPartieNonlancee = async (req, res) => {
 exports.obtenirHistoriqueMission = async (req, res) => {
     try {
 
-        const id = req.params.id; // Récupération de l'ID depuis l'URL
-        console.log("ID récupéré :", id);
+        const id = req.params.id;
 
         const reponse = await TableMissionEtat.findAll({
             where: { idgame: id },
@@ -317,15 +314,11 @@ exports.listeNomEquipe = async (req, res) => {
 // Get avec body  ->>>> a modifier
 
 exports.listeMissionEtatid = async (req, res) => {
-
-
-
-    const IdMission = req.params.missionid;
-
-    if (!IdMission) {
-        return res.status(407).json({ message: "Requete invalide" });
-    }
     try {
+        const IdMission = req.params.missionid;
+
+        if (!IdMission) return res.status(407).json({ message: "Requete invalide" });
+
         const rep = await TableMissionEtat.findOne({ where: { idetat: IdMission } });
 
         return res.status(200).json(rep);
@@ -335,16 +328,24 @@ exports.listeMissionEtatid = async (req, res) => {
 }
 
 exports.listeMissionEtatGameid = async (req, res) => {
-
-    const IdGame = req.params.gameid
-
     try {
-        const rep = await TableMissionEtat.findOne({ where: { idgame: IdGame } });
+        const { gameid } = req.params;
+
+        if (!gameid) return res.status(400).json({ message: "L'ID de la partie est requis" });
+
+
+        const rep = await TableMissionEtat.findOne({
+            where: { idgame: gameid }
+        });
+
+        if (!rep) return res.status(404).json({ message: "Aucun état de mission trouvé pour cette partie" });
+
         return res.status(200).json(rep);
     } catch (error) {
-        return res.status(500).json({ message: error.message });
+        return res.status(500).json({ message: 'Erreur serveur.' });
     }
-}
+};
+
 
 exports.listeEquipeId = async (req, res) => {
 
@@ -402,11 +403,7 @@ exports.dernieresReservation = async (req, res) => {
 
 exports.AjouterPartie = async (req, res) => {
     try {
-        const ReqData = req.body;
-        const nomScenario = ReqData.scenario;
-        const nomEquipe = ReqData.equipe;
-
-
+        const { scenario: nomScenario, equipe: nomEquipe } = req.body;
 
         if (!nomScenario || !nomEquipe) return res.status(407).send({ message: "Requete invalide" });
 
@@ -451,9 +448,7 @@ exports.AjouterPartie = async (req, res) => {
 
 exports.AjouterSalle = async (req, res) => {
     try {
-        const ReqData = req.body;
-        const nom = ReqData.nom;
-        const ville = ReqData.ville;
+        const { nom, ville } = req.body;
 
         const rep = await TableSalle.create({
             nom: nom,
@@ -468,20 +463,17 @@ exports.AjouterSalle = async (req, res) => {
 
 exports.AjouterScenar = async (req, res) => {
     try {
-        const ReqData = req.body;
-        const scenarioName = ReqData.nomScenario;
-        const ordre = ReqData.ordre;
-        const description = ReqData.description;
 
-        if (!scenarioName || !ordre || !description) return res.status(407).json({ message: "Requete invalide" });
+        const { nomScenario, ordre, description } = req.body;
 
+        if (!nomScenario || !ordre || !description) return res.status(407).json({ message: "Requete invalide" });
         if (!verifierChaineNumerique(ordre)) return res.status(407).json({ message: "Ordre invalide" });
 
-        reqprime = await TableScenario.findOne({ where: { nom: scenarioName } });
+        reqprime = await TableScenario.findOne({ where: { nom: nomScenario } });
         if (reqprime) return res.status(407).json({ message: "Nom de scenario deja existant" });
 
         const rep = await TableScenario.create({
-            nom: scenarioName,
+            nom: nomScenario,
             ordre: ordre,
             description: description
         });
@@ -494,10 +486,8 @@ exports.AjouterScenar = async (req, res) => {
 
 exports.AjouterMission = async (req, res) => {
     try {
-        const ReqData = req.body;
-        const missionName = ReqData.nom;
-        const tempsRequis = ReqData.tempsRequis;
-        const description = ReqData.description;
+
+        const { nom: missionName, tempsRequis, description } = req.body;
 
         if (!missionName || !description) return res.status(407).send("Aucun nom de mission donnée");
 
@@ -518,9 +508,8 @@ exports.AjouterMission = async (req, res) => {
 
 exports.AjouterMissionEtat = async (req, res) => {
     try {
-        const ReqData = req.body;
-        const idgame = ReqData.game;
-        const idmission = ReqData.mission;
+
+        const { game: idgame, mission: idmission } = req.body;
 
         if (!idgame || !idmission) return res.status(400).json({ message: "Erreur requete" });
 
@@ -544,17 +533,11 @@ exports.AjouterMissionEtat = async (req, res) => {
 
 exports.AjouterEquipe = async (req, res) => {
     try {
-        const ReqData = req.body;
-        const nomEquipe = ReqData.nom;
-        const nombrejoueur = ReqData.nombre_joueur;
-
-
+        const { nom: nomEquipe, nombre_joueur: nombrejoueur } = req.body;
 
         if (!nomEquipe || !nombrejoueur) return res.status(407).json({ message: "Requete invalide" });
 
         if (!(!isNaN(nombrejoueur) && isFinite(nombrejoueur))) return res.status(407).json({ message: "Nombre joueur invalide" });
-
-
 
         reqprime = await TableEquipe.findOne({ where: { nom: nomEquipe } });
         if (reqprime) return res.status(407).json({ message: "Equipe déjà existante" })
@@ -574,12 +557,8 @@ exports.AjouterEquipe = async (req, res) => {
 }
 
 exports.DemarrerPartie = async (req, res) => {
-
-    console.log("Demarrer Partie");
-
     try {
-        const ReqData = req.body;
-        const PartieId = ReqData.partie;
+        const PartieId = req.body.partie;
 
         reqprime = await TableGame.findOne({ where: { idgame: PartieId }, include: { model: TableMissionEtat } });
         if (!reqprime) return res.status(400).json({ message: "Partie introuvable" });
@@ -594,9 +573,6 @@ exports.DemarrerPartie = async (req, res) => {
 
         demarrerPartie(reqprime.missionEtat.idmission, PartieId);
 
-
-
-
         return res.status(200).json({ message: "Partie lancée avec succès" });
     } catch (error) {
         return res.status(500).json(error.message);
@@ -605,8 +581,7 @@ exports.DemarrerPartie = async (req, res) => {
 
 exports.FinirPartie = async (req, res) => {
     try {
-        const ReqData = req.body;
-        const PartieId = ReqData.partie;
+        const PartieId = req.body.partie;
 
         const Date_maintenant = Date.now();
         if (!PartieId) return res.status(400).json({ message: "Id de partie introuvable" });
@@ -644,20 +619,24 @@ exports.FinirPartie = async (req, res) => {
 
 exports.listePartieReserve = async (req, res) => {
     try {
-        const rep = await TableReservation.findAll({
-            attributes: ['date'],
-            where: {
-                date: { [Op.gte]: new Date().setHours(0, 0, 0, 0) }
-            }
-        });
+        const todayStart = new Date();
+        todayStart.setHours(0, 0, 0, 0);
 
-        const rep2 = await TableReservation.count({
-            where: {
-                date: { [Op.gte]: new Date().setHours(0, 0, 0, 0) }
-            }
-        });
+        const [reservation, nombre] = await Promise.all([
+            TableReservation.findAll({
+                attributes: ['date'],
+                where: {
+                    date: { [Op.gte]: todayStart }
+                }
+            }),
+            TableReservation.count({
+                where: {
+                    date: { [Op.gte]: todayStart }
+                }
+            })
+        ]);
 
-        return res.status(200).json({ reservation: rep, nombre: rep2 });
+        return res.status(200).json({ reservation, nombre });
     } catch (error) {
         return res.status(500).json(error.message);
     }
@@ -666,109 +645,77 @@ exports.listePartieReserve = async (req, res) => {
 
 exports.MissionSuivante = async (req, res) => {
     try {
-
-        console.log("Mission suivante ");
-
-        const ReqData = req.body;
-        const idpartie = ReqData.idpartie;
-        const mission = ReqData.mission;
+        const { mission, idpartie } = req.body;
 
         const now = new Date();
         const mysqlTimestamp = now.toISOString().slice(0, 19).replace('T', ' ');
-        const mysqlTime = now.toTimeString().split(' ')[0]; // Récupère uniquement HH:mm:ss
+        const mysqlTime = now.toTimeString().split(' ')[0];
 
-
-        const reponse = await TableGame.findOne({
+        const game = await TableGame.findOne({
             where: { idgame: idpartie },
-            include: [{
-                model: TableMissionEtat,
-            },
-            {
-                model: TableScenario
-            }]
-        })
+            include: [
+                { model: TableMissionEtat },
+                { model: TableScenario }
+            ]
+        });
 
+        if (!game) {
+            return res.status(404).json({ message: "Partie non trouvée" });
+        }
 
+        const ordreMission = game.scenario.ordre.split(',');
+        const missionActuelle = game.missionEtat.idmission;
 
-        const ordreMission = (reponse.scenario.ordre).split(',');
-        const missionActuel = reponse.missionEtat.idmission;
+        if (missionActuelle != mission) {
+            return res.status(400).json({ message: "Mauvaise mission en cours" });
+        }
 
-
-        if (missionActuel != mission) return res.status(400).json({ message: "Mauvaise mission en cours" })
-
-
-        const repprime = await TableMissionEtat.update(
+        await TableMissionEtat.update(
             { heurefin: mysqlTime },
-            { where: { idetat: reponse.idmissionEtat } },
+            { where: { idetat: game.idmissionEtat } }
         );
 
+        const indexActuel = ordreMission.indexOf(String(missionActuelle));
+        const missionSuivante = ordreMission[indexActuel + 1];
 
-        // console.log("Ordre :", ordreMission);
-        // console.log("Mission en cours :", missionActuel, "Type:", typeof missionActuel);
-        // console.log("Index trouvé :", ordreMission.indexOf(String(missionActuel)));
-        // console.log(ordreMission.indexOf(String(missionActuel)) + 1 >= ordreMission.length);
-        // console.log(ordreMission.indexOf(String(missionActuel)));
-        // console.log(ordreMission.length);
+        if (!missionSuivante) {
+            const token = jwt.sign({ permission: 1 }, global.JWTToken, { expiresIn: '8h' });
 
-
-        if (ordreMission.indexOf(String(missionActuel)) + 1 >= ordreMission.length) {
-
-            bodyData = {
-                partie: idpartie
-            }
-
-            console.log(idpartie);
-
-            url = "http://127.0.0.1:3000/api/game/partie/finir";
-
-            fetch(url, {
+            await fetch("http://127.0.0.1:3000/api/game/partie/finir", {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'Cookie': 'token=' + jwt.sign({ permission: 1 }, global.JWTToken, { expiresIn: '8h' })  // Ajoute le token JWT dans l'en-tête Authorization
+                    'Cookie': `token=${token}`
                 },
-                body: JSON.stringify(bodyData)  // Sérialise les données du corps en JSON
-            })
-                .then(response => response.text())  // <-- Afficher le texte brut avant JSON.parse()
-                .then(text => {
-                    console.log("Réponse brute:", text);
-                    return JSON.parse(text);  // Convertir en JSON après vérification
-                })
-                .then(data => {
-                    console.log("Réponse JSON:", data);
-                })
-                .catch(error => {
-                    console.error("Erreur:", error);
-                });
+                body: JSON.stringify({ partie: idpartie })
+            }).then(res => res.text())
+                .then(text => console.log("Réponse brute:", text))
+                .catch(error => console.error("Erreur:", error));
 
-            return res.status(200).json({ message: "Derniere mission finit" });
-
+            return res.status(200).json({ message: "Dernière mission finie" });
         }
 
-        const missionAMettre = ordreMission[ordreMission.indexOf(String(missionActuel)) + 1];
-
-        console.log(missionAMettre);
-
-        const reponse2 = await TableMissionEtat.create({
-            idgame: reponse.idgame,
+        const nouvelleMission = await TableMissionEtat.create({
+            idgame: game.idgame,
             heuredebut: mysqlTimestamp,
-            idmission: missionAMettre,
+            idmission: missionSuivante,
         });
 
-        const repFinal = await TableGame.update(
-            { idmissionEtat: reponse2.idetat },
-            { where: { idgame: reponse.idgame } }
-        )
+        await TableGame.update(
+            { idmissionEtat: nouvelleMission.idetat },
+            { where: { idgame: game.idgame } }
+        );
 
-        return res.status(200).json(reponse2);
+        return res.status(200).json(nouvelleMission);
+
     } catch (error) {
         return res.status(500).json({ message: error.message });
     }
-}
+};
+
 
 exports.scoreBoard = async (req, res) => {
     try {
-
         const reponse = await TableGame.findAll({
             where: { terminee: 1, duree: { [Op.gt]: 0 } },
             order: [['duree', 'ASC']],
@@ -785,7 +732,6 @@ exports.scoreBoard = async (req, res) => {
 
         return res.status(200).json(reponse);
     } catch (error) {
-
         return res.status(500).json({ message: error.message });
     }
 }
@@ -793,45 +739,49 @@ exports.scoreBoard = async (req, res) => {
 
 exports.AjoutReservation = async (req, res) => {
     try {
-
         const idUtilisateur = req.user.id;
-        const date = req.body.date;
-        const heure = req.body.heure;
-        const salle = req.body.salle;
+        const { heure, date, salle } = req.body;
 
-        const DateHeure = formatDateTime(date, heure);
+        if (!salle || !date || !heure) {
+            return res.status(400).json({ message: "Formulaire incomplet" });
+        }
 
-        console.log(DateHeure);
+        const dateHeure = formatDateTime(date, heure);
 
-        if (!estDateHeurePile(DateHeure)) return res.status(400).json({ message: "Heure incorrecte" });
-        if (!estDateFuture(DateHeure)) return res.status(400).json({ message: "Heure déjà passée" });
+        if (!estDateHeurePile(dateHeure)) {
+            return res.status(400).json({ message: "Heure incorrecte (doit être pile)." });
+        }
 
-        if (!salle || !date || !heure) res.status(407).json({ message: "Formulaire incomplet" });
+        if (!estDateFuture(dateHeure)) {
+            return res.status(400).json({ message: "Heure déjà passée." });
+        }
 
-        reqprime = await TableSalle.findOne({ where: { idsalle: salle } });
-        if (!reqprime) return res.status(400).json({ message: "Salle introuvable" });
+        const salleExistante = await TableSalle.findOne({ where: { idsalle: salle } });
+        if (!salleExistante) {
+            return res.status(404).json({ message: "Salle introuvable." });
+        }
 
+        const dejaReservee = await TableReservation.findOne({
+            where: { date: dateHeure, salle: salle }
+        });
 
-        console.log(DateHeure);
+        if (dejaReservee) {
+            return res.status(409).json({ message: "Horaire déjà réservé." });
+        }
 
-        reqprime = await TableReservation.findOne({
-            where: { date: DateHeure, salle: salle }
-        })
-
-        if (reqprime) return res.status(400).json({ message: "Horraire deja reservé" });
-
-        reponse = await TableReservation.create({
+        await TableReservation.create({
             utilisateur: idUtilisateur,
             salle: salle,
-            date: DateHeure
-        })
+            date: dateHeure
+        });
 
-        return res.status(200).json({ message: "Réservation effectué" })
+        return res.status(201).json({ message: "Réservation effectuée avec succès." });
 
     } catch (error) {
-        return res.status(500).json({ message: error.message })
+        return res.status(500).json({ message: error.message });
     }
-}
+};
+
 
 exports.reservationAVenir = async (req, res) => {
     try {
@@ -854,66 +804,61 @@ exports.reservationAVenir = async (req, res) => {
 
 exports.MajEquipe = async (req, res) => {
     try {
+        const { idequipe: IdEquipe, nom: Nom, nombre_joueur: nombreJoueur, date: Date } = req.body;
 
-        const ReqData = req.body;
-        const IdEquipe = ReqData.idequipe;
-        const Nom = ReqData.nom;
-        const nombrejoueur = ReqData.nombre_joueur;
-        const Date = ReqData.date;
+        // Vérification des champs obligatoires
+        if (!IdEquipe || !Nom || !nombreJoueur || !Date) {
+            return res.status(400).json({ message: "Formulaire incomplet" });
+        }
 
-        if (!IdEquipe || !IdNom || !nombrejoueur || !Date) return res.status(400).json({ message: "Formulaire incomplet" });
-
-        const mission = await Mission.findOne({
-            where: {
-                idequipe: idequipe
-            }
+        // Vérification de l'existence de l'équipe
+        const equipe = await TableEquipe.findOne({
+            where: { idequipe: IdEquipe }
         });
 
-        if (!mission) return res.status(404).json({ message: "Equipe inexistante" });
+        if (!equipe) {
+            return res.status(404).json({ message: "Equipe inexistante" });
+        }
 
+        // Mise à jour de l'équipe
         const [nbUpdated] = await TableEquipe.update(
             {
-                nombre_joueur: nombre_joueur,
+                nombre_joueur: nombreJoueur,
                 nom: Nom,
-                date: date
+                date: Date
             },
             {
-                where: {
-                    idequipe: idequipe
-                }
+                where: { idequipe: IdEquipe }
             }
         );
 
-        if (nbUpdated === 0) return res.status(418).json({ message: "Aucun changement détecté" });
+        // Vérification si des modifications ont été effectuées
+        if (nbUpdated === 0) {
+            return res.status(418).json({ message: "Aucun changement détecté" });
+        }
 
         return res.status(200).json({ message: "Equipe mise à jour avec succès" });
+
     } catch (error) {
-        return res.status(500).json({ message: error.message })
+        return res.status(500).json({ message: error.message });
     }
-}
+};
+
 
 exports.MajScenario = async (req, res) => {
     try {
-        const ReqData = req.body;
-        const idscenario = ReqData.idscenario;
-        const nom = ReqData.nom;
-        const ordre = ReqData.ordre;
-        const description = ReqData.description;
+        const { idscenario, nom, ordre, description } = req.body;
 
         if (!idscenario || !nom || !ordre) {
             return res.status(400).json({ message: "Formulaire incomplet" });
         }
 
-        // Vérifier si le scénario existe
         const scenario = await TableScenario.findOne({
             where: { idscenario }
         });
 
-        if (!scenario) {
-            return res.status(404).json({ message: "Scénario inexistant" });
-        }
+        if (!scenario) return res.status(404).json({ message: "Scénario inexistant" });
 
-        // Mettre à jour
         const [nbUpdated] = await TableScenario.update(
             {
                 nom,
@@ -925,9 +870,7 @@ exports.MajScenario = async (req, res) => {
             }
         );
 
-        if (nbUpdated === 0) {
-            return res.status(418).json({ message: "Aucun changement détecté" });
-        }
+        if (nbUpdated === 0) return res.status(418).json({ message: "Aucun changement détecté" });
 
         return res.status(200).json({ message: "Scénario mis à jour avec succès" });
 
@@ -941,37 +884,22 @@ exports.MajMission = async (req, res) => {
     try {
         const { idmission, nom, tempsRequis, description } = req.body;
 
-        if (!idmission || !nom || typeof tempsRequis === "undefined") {
-            return res.status(400).json({ message: "Formulaire incomplet" });
-        }
+        if (!idmission || !nom || typeof tempsRequis === "undefined") return res.status(401).json({ message: "Formulaire incomplet" });
 
-        // Vérification de l'existence de la mission
         const mission = await TableMission.findOne({
             where: { idmission }
         });
 
-        if (!mission) {
-            return res.status(404).json({ message: "Mission inexistante" });
-        }
+        if (!mission) return res.status(404).json({ message: "Mission inexistante" });
 
-        // Mise à jour directe
         const [nbUpdated] = await TableMission.update(
-            {
-                nom,
-                tempsRequis,
-                description
-            },
-            {
-                where: { idmission }
-            }
+            { nom, tempsRequis, description },
+            { where: { idmission } }
         );
 
-        if (nbUpdated === 0) {
-            return res.status(418).json({ message: "Aucun changement détecté" });
-        }
+        if (nbUpdated === 0) return res.status(418).json({ message: "Aucun changement détecté" });
 
         return res.status(200).json({ message: "Mission mise à jour avec succès" });
-
     } catch (error) {
         console.error("Erreur MajMission:", error);
         return res.status(500).json({ message: error.message });
@@ -984,36 +912,22 @@ exports.MajSalle = async (req, res) => {
     try {
         const { idsalle, nom, ville } = req.body;
 
-        if (!idsalle || !nom || !ville) {
-            return res.status(404).json({ message: "Formulaire incomplet" });
-        }
+        if (!idsalle || !nom || !ville) return res.status(401).json({ message: "Formulaire incomplet" });
 
-        // Vérifier si la salle existe
         const salle = await TableSalle.findOne({
             where: { idsalle }
         });
 
-        if (!salle) {
-            return res.status(401).json({ message: "Salle inexistante" });
-        }
+        if (!salle) return res.status(401).json({ message: "Salle inexistante" });
 
-        // Mettre à jour la salle
         const [nbUpdated] = await TableSalle.update(
-            {
-                nom,
-                ville
-            },
-            {
-                where: { idsalle }
-            }
+            { nom, ville },
+            { where: { idsalle } }
         );
 
-        if (nbUpdated === 0) {
-            return res.status(418).json({ message: "Aucun changement détecté" });
-        }
+        if (nbUpdated === 0) return res.status(418).json({ message: "Aucun changement détecté" });
 
         return res.status(200).json({ message: "Salle mise à jour avec succès" });
-
     } catch (error) {
         console.error("Erreur MajSalle:", error);
         return res.status(500).json({ message: error.message });
@@ -1078,19 +992,50 @@ exports.RecupReservPerso = async (req, res) => {
     try {
         const id = req.user.id;
 
-        if (!id) res.status(400).json({ message: "Session invalide" })
+        if (!id) {
+            return res.status(400).json({ message: "Session invalide" });
+        }
 
-        const rep = await TableReservation.findAll({
-
+        const reservations = await TableReservation.findAll({
             order: [['date', 'DESC']],
             where: { utilisateur: id }
-        })
+        });
 
-        return res.status(200).json(rep);
+        if (reservations.length === 0) {
+            return res.status(404).json({ message: "Aucune réservation trouvée" });
+        }
 
+        return res.status(200).json(reservations);
     } catch (error) {
-
-        console.error('Erreur recuperation reservation perso :', error);
-        res.status(500).json({ message: 'Erreur serveur.' });
+        console.error('Erreur récupération réservation perso :', error);
+        return res.status(500).json({ message: 'Erreur serveur.' });
     }
-}
+};
+
+exports.obtenirScenario = async (req, res) => {
+    try {
+        const { id } = req.params;  // Récupère l'ID du scénario dans les paramètres de l'URL
+
+        // Validation de l'ID
+        if (!id || isNaN(id)) {
+            return res.status(400).json({ message: "ID de scénario invalide" });
+        }
+
+        // Recherche du scénario dans la base de données
+        const scenario = await TableScenario.findOne({
+            where: { idscenario: id }
+        });
+
+        // Si aucun scénario n'est trouvé, retourne une erreur 404
+        if (!scenario) {
+            return res.status(404).json({ message: "Scénario non trouvé" });
+        }
+
+        // Retourne les détails du scénario trouvé
+        return res.status(200).json(scenario);
+    } catch (error) {
+        // Gestion des erreurs générales
+        console.error('Erreur récupération scénario :', error);
+        return res.status(500).json({ message: 'Erreur serveur.' });
+    }
+};

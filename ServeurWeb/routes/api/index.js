@@ -63,7 +63,6 @@ router.get('/game/partie/liste', object.listePartie);
 router.get('/game/partie/finie', object.dernierePartieFinie);
 router.get('/game/partie/active', object.partieActive);
 router.get('/game/partie/desc', object.derniereParties);
-
 router.get('/game/salle/liste', object.listeSalle);
 router.get('/game/scenario/liste', object.listeScenario);
 router.get('/game/mission/liste', object.listeMission);
@@ -72,7 +71,6 @@ router.get('/game/equipe/liste', object.listeEquipe);
 router.get('/game/reservation/liste', object.listeReservation);
 router.get('/game/reservation/desc', object.dernieresReservation);
 router.get('/game/reservation/asc', object.reservationAVenir);
-
 router.get('/game/partie/scoreboard', object.scoreBoard);
 
     //Nombre element
@@ -83,21 +81,19 @@ router.get('/game/mission/nombre', object.nombreMission);
 router.get('/game/missionEtat/nombre', object.nombreMissionEtat);
 router.get('/game/equipe/listeNom', object.listeNomEquipe);
 router.get('/game/partie/listeReserv', object.listePartieReserve);
-
 router.get('/game/partie/nonlancee', object.obtenirPartieNonlancee);
-router.get('/game/partie/all/:id', object.ObtenirTouteInfoPartie);
 router.get('/game/reservation/perso', authMiddleware, object.RecupReservPerso);
 
 
 // GET avec requeteUrl
 
-    // router.get('/game/scenario/numero/:id', object.obtenirScenario);
+router.get('/game/scenario/numero/:id', object.obtenirScenario);
 router.get('/game/missionEtat/historique/:id', object.obtenirHistoriqueMission);
-    // router.get('/game/missionEtat/actuel', object.obtenirMissionActuelle);
-/// -> a corriger
 router.get('/game/missionEtat/:id', object.listeMissionEtatid);
 router.get('/game/missionEtat/:gameid', object.listeMissionEtatGameid);
-router.get('/game/equipe/:id', object.listeEquipeId)
+router.get('/game/equipe/:id', object.listeEquipeId);
+router.get('/game/partie/all/:id', object.ObtenirTouteInfoPartie);
+
 
 // POST
 
@@ -108,10 +104,8 @@ router.post('/game/scenario/ajout', checkPermission(1), object.AjouterScenar);
 router.post('/game/mission/ajout', checkPermission(1), object.AjouterMission);
 router.post('/game/missionetat/ajout', checkPermission(1), object.AjouterMissionEtat);
 router.post('/game/equipe/ajout', checkPermission(1), object.AjouterEquipe);
-
 router.post('/game/partie/demarrer', checkPermission(1), object.DemarrerPartie);
 router.post('/game/partie/finir', checkPermission(1), object.FinirPartie);
-
 router.post('/game/missionetat/suivante', checkPermission(1), object.MissionSuivante);
 router.post('/game/reservation/ajout', checkPermission(1), authMiddleware, object.AjoutReservation);
 
@@ -122,7 +116,7 @@ router.patch('/game/equipe/update', checkPermission(1), object.MajEquipe);
 router.patch('/game/scenario/update', checkPermission(1), object.MajScenario);
 router.patch('/game/salle/update', checkPermission(1), object.MajSalle);
 
-
+// Delete
 
 router.delete('/game/mission/delete/:id', checkPermission(1), object.DelMission);
 router.delete('/game/equipe/delete/:id', checkPermission(1), object.DelEquipe);

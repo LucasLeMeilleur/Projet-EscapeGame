@@ -21,7 +21,6 @@ function isValidEmail(email) {
 // GET
 
 exports.listeUser = async (req, res) => {
-
   try {
     const rep = await TableUtilisateur.findAll({
       attributes: ['idUser', 'username', 'email', 'permission']
@@ -37,43 +36,32 @@ exports.listeUser = async (req, res) => {
 
 exports.regiserUser = async (req, res) => {
   try {
-    const ReqData = req.body;
+    const { username, password, email } = req.body;
 
-    const Username = ReqData.username;
-    const Password = ReqData.password;
-    const Email = ReqData.email;
+    if (!password || !username || !email) return res.status(400).json({ message: "Formulaire incomplet" });
 
-    if (!Password || !Username || !Email) return res.status(400).json({ message: "Formulaire incomplet" });
-
-    if (!isValidEmail(Email)) return res.status(400).json({ message: "Mail invalide" });
+    if (!isValidEmail(email)) return res.status(400).json({ message: "Mail invalide" });
 
     const repDejaPresent = await TableUtilisateur.findOne({
-      where: {
-        email: Email,
-      }
+      where: { email }
     })
-
 
     if (repDejaPresent) return res.status(400).json({ message: "Un compte est deja associé a cette adresse mail" });
 
-    const hashedPassword = await bcrypt.hash(Password, 15);
+    const hashedPassword = await bcrypt.hash(password, 15);
 
-    const rep = await TableUtilisateur.create({
-      username: Username,
+    const nouveauUtilisateur = await TableUtilisateur.create({
+      username,
       password: hashedPassword,
-      email: Email,
+      email,
       permission: 0
     })
 
-    const user = await TableUtilisateur.findOne({ where: { email: Email } });
-    if (!user) return res.status(400).json({ message: "Identifiants introuvable" });
-
     const token = jwt.sign(
-      { id: user.idUser, permission: user.permission },
+      { id: nouveauUtilisateur.idUser, permission: nouveauUtilisateur.permission },
       global.JWTToken,
       { expiresIn: '8h' }
     );
-
 
     res.cookie('token', token, { httpOnly: true, secure: false });
     return res.status(200).json(rep);
@@ -85,18 +73,14 @@ exports.regiserUser = async (req, res) => {
 
 exports.loginUser = async (req, res) => {
   try {
-    const ReqData = req.body;
+    const { email, password } = req.body;
 
-
-    const Email = ReqData.email;
-    const Password = ReqData.password;
-
-    if (!Email || !Password) return res.status(400).json({ message: "Formulaire invalide" });
+    if (!email || !password) return res.status(400).json({ message: "Formulaire invalide" });
 
     const user = await TableUtilisateur.findOne({ where: { email: Email } });
     if (!user) return res.status(400).json({ message: "Identifiants introuvable" });
 
-    const isValidPassword = await bcrypt.compare(Password, user.password);
+    const isValidPassword = await bcrypt.compare(password, user.password);
     if (!isValidPassword) return res.status(400).json({ message: "Mot de passe incorrect." });
 
     const token = jwt.sign(
@@ -108,7 +92,7 @@ exports.loginUser = async (req, res) => {
     res.cookie('token', token, { httpOnly: true, secure: false });
     return res.status(200).json({ message: "Connexion réussie !" });
   } catch (error) {
-    return res.status(500).json({ message: error })
+    return res.status(500).json({ message: error.message })
   }
 }
 
@@ -138,20 +122,14 @@ exports.MajUtilisateur = async (req, res) => {
   try {
     const { idUser, username, email, permission } = req.body;
 
-    if (!idUser || !username || !email || typeof permission === "undefined") {
-      return res.status(400).json({ message: "Formulaire incomplet" });
-    }
-
-    // Vérifie si l'utilisateur existe
+    if (!idUser || !username || !email || typeof permission === "undefined") return res.status(401).json({ message: "Formulaire incomplet" });
+    
     const utilisateur = await TableUtilisateur.findOne({
       where: { idUser }
     });
 
-    if (!utilisateur) {
-      return res.status(404).json({ message: "Utilisateur inexistant" });
-    }
-
-    // Mise à jour (sans le mot de passe)
+    if (!utilisateur) return res.status(404).json({ message: "Utilisateur inexistant" });
+    
     const [nbUpdated] = await TableUtilisateur.update(
       {
         username,
@@ -163,12 +141,9 @@ exports.MajUtilisateur = async (req, res) => {
       }
     );
 
-    if (nbUpdated === 0) {
-      return res.status(418).json({ message: "Aucune modification détectée ou utilisateur inexistant" });
-    }
-
+    if (nbUpdated === 0) return res.status(418).json({ message: "Aucune modification détectée ou utilisateur inexistant" });
+    
     return res.status(200).json({ message: "Utilisateur mis à jour avec succès" });
-
   } catch (error) {
     console.error("Erreur MajUtilisateur:", error);
     return res.status(500).json({ message: error.message });
@@ -177,22 +152,20 @@ exports.MajUtilisateur = async (req, res) => {
 
 
 exports.SupprimerUtilisateur = async (req, res) => {
-  const id = req.query.id;
-
-  if (!id) return res.status(400).json({ message: "ID manquant" });
-
   try {
+    const id = req.query.id;
+  
+    if (!id) return res.status(400).json({ message: "ID manquant" });
+    
     const utilisateur = await TableUtilisateur.findByPk(id);
-    if (!utilisateur) {
-      return res.status(404).json({ message: "Utilisateur non trouvée" });
-    }
+    if (!utilisateur) return res.status(404).json({ message: "Utilisateur non trouvée" });
 
     await utilisateur.destroy();
 
-    res.json({ message: "Utilisateur supprimée avec succès" });
+    return res.json({ message: "Utilisateur supprimée avec succès" });
   } catch (err) {
     console.error(err);
-    res.status(500).json({ message: "Erreur serveur" });
+    return res.status(500).json({ message: "Erreur serveur" });
   }
 }
 
@@ -204,44 +177,37 @@ exports.RecupInfoPerso = async (req, res) => {
 
     const rep = await TableUtilisateur.findOne({
       where: { idUser: id },
-      attributes: [ "email", "username"]
+      attributes: ["email", "username"]
     })
 
     return res.status(200).json(rep);
   } catch (error) {
     console.log(error);
-    res.status(500).json({ message: "Erreur serveur" });
+    return res.status(500).json({ message: "Erreur serveur" });
   }
 }
 
 exports.ChangerPassword = async (req, res) => {
   try {
     const id = req.user.id;
-    const ancientMdp = req.body.oldPassword;
-    const nouveauMdp = req.body.newPassword
+    const { oldPassword: nouveauMdp, newPassword: ancientMdp } = req.body;
 
-    console.log(req.body);
-    
-
-    if( !ancientMdp || !nouveauMdp ) return res.status(400).json({message: "Formulaire invalide"});
-
+    if (!ancientMdp || !nouveauMdp) return res.status(400).json({ message: "Formulaire invalide" });
     if (!id) return res.status(400).json({ message: "Non connecté" });
-
 
     const user = await TableUtilisateur.findOne({ where: { idUser: id } });
 
     const isValidPassword = await bcrypt.compare(ancientMdp, user.password);
     if (!isValidPassword) return res.status(400).json({ message: "Mot de passe incorrect." });
 
-
     const hashedPassword = await bcrypt.hash(nouveauMdp, 15);
 
     const rep = await TableUtilisateur.update(
       { password: hashedPassword },
-      { where: { idUser: id } } 
+      { where: { idUser: id } }
     );
 
-    return res.status(200).json(rep);    
+    return res.status(200).json(rep);
   } catch (error) {
     console.log(error);
     res.status(500).json({ message: "Erreur serveur" });
