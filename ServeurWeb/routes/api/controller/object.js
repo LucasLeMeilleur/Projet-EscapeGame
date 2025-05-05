@@ -1039,3 +1039,14 @@ exports.obtenirScenario = async (req, res) => {
         return res.status(500).json({ message: 'Erreur serveur.' });
     }
 };
+
+exports.DemarrerMission = async (req, res) => {
+    try {
+        const idmission = req.body.mission;
+        if (!idmission) return res.status(400).json({ message: "Id de la partie manquant" });
+        demarrerPartie(idmission, "-1");
+    } catch (error) {
+        console.error('Erreur récupération scénario :', error);
+        return res.status(500).json({ message: 'Erreur serveur.' });
+    }
+}

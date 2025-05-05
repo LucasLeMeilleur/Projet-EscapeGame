@@ -85,9 +85,6 @@ function EnvoyerMessage(message) {
 
 function demarrerPartie(mission, idpartie) {
 
-    console.log("lancé");
-
-
     const message = `{ "mission": ${mission}, "idpartie":${idpartie}  }`;
 
     client.publish("activer", message, () => {
@@ -96,8 +93,6 @@ function demarrerPartie(mission, idpartie) {
 }
 
 function resetCanaux() {
-
-    console.log("Reset")
     const message = `0`;
 
     client.publish("activer", message, { retain: true }, () => {

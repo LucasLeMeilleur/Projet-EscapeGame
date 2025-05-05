@@ -77,14 +77,16 @@ exports.loginUser = async (req, res) => {
 
     if (!email || !password) return res.status(400).json({ message: "Formulaire invalide" });
 
-    const user = await TableUtilisateur.findOne({ where: { email: Email } });
+    const user = await TableUtilisateur.findOne({ where: { email } });
     if (!user) return res.status(400).json({ message: "Identifiants introuvable" });
 
     const isValidPassword = await bcrypt.compare(password, user.password);
     if (!isValidPassword) return res.status(400).json({ message: "Mot de passe incorrect." });
 
+    console.log(user)
+
     const token = jwt.sign(
-      { id: user.idUser, permission: user.permission },
+      { id: user.idUser, permission: user.permission, pseudo: user.username, email: user.email },
       global.JWTToken,
       { expiresIn: '8h' }
     );
@@ -123,13 +125,13 @@ exports.MajUtilisateur = async (req, res) => {
     const { idUser, username, email, permission } = req.body;
 
     if (!idUser || !username || !email || typeof permission === "undefined") return res.status(401).json({ message: "Formulaire incomplet" });
-    
+
     const utilisateur = await TableUtilisateur.findOne({
       where: { idUser }
     });
 
     if (!utilisateur) return res.status(404).json({ message: "Utilisateur inexistant" });
-    
+
     const [nbUpdated] = await TableUtilisateur.update(
       {
         username,
@@ -142,7 +144,7 @@ exports.MajUtilisateur = async (req, res) => {
     );
 
     if (nbUpdated === 0) return res.status(418).json({ message: "Aucune modification détectée ou utilisateur inexistant" });
-    
+
     return res.status(200).json({ message: "Utilisateur mis à jour avec succès" });
   } catch (error) {
     console.error("Erreur MajUtilisateur:", error);
@@ -154,9 +156,9 @@ exports.MajUtilisateur = async (req, res) => {
 exports.SupprimerUtilisateur = async (req, res) => {
   try {
     const id = req.query.id;
-  
+
     if (!id) return res.status(400).json({ message: "ID manquant" });
-    
+
     const utilisateur = await TableUtilisateur.findByPk(id);
     if (!utilisateur) return res.status(404).json({ message: "Utilisateur non trouvée" });
 
