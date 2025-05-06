@@ -8,14 +8,10 @@ async function loadScoreboard() {
     try {
         const response = await fetch('/api/game/partie/scoreboard');
         const data = await response.json();
-
         const tbody = document.querySelector("#scoreboard tbody");
-        tbody.innerHTML = ""; // Vide le tableau avant d'ajouter les nouvelles données
-
+        tbody.innerHTML = ""; 
         data.forEach((game,index) => {
             const row = document.createElement("tr");
-
-            // Extraire et formater la date (YYYY-MM-DD)
             const dateDepart = game.dateDepart ? game.dateDepart.split("T")[0] : "N/A";
 
             row.innerHTML = `
@@ -33,5 +29,4 @@ async function loadScoreboard() {
     }
 }
 
-// Charger les données au chargement de la page
 document.addEventListener("DOMContentLoaded", loadScoreboard);

@@ -4,20 +4,16 @@ function SelectionnerPartie() {
     let selectPartie = document.getElementById("select_partie_cree");
     let infoPartie = document.getElementById("info_partie_selectionnee");
 
-    // Effectuer la requête Fetch
     fetch("/api/game/partie/nonlancee")
-        .then(response => response.json())  // Convertir la réponse en JSON
+        .then(response => response.json())  
         .then(data => {
-            // Vider le select avant d'ajouter les nouvelles options
             selectPartie.innerHTML = '<option value="">Sélectionnez une partie</option>';
 
-            // Vérifier si des données ont été reçues
             if (data.length === 0) {
                 infoPartie.textContent = "Aucune partie disponible.";
                 return;
             }
 
-            // Ajouter les options au select
             data.forEach(partie => {
                 let option = document.createElement("option");
                 option.value = partie.idgame;
@@ -25,7 +21,6 @@ function SelectionnerPartie() {
                 selectPartie.appendChild(option);
             });
 
-            // Gérer l'affichage des détails lors de la sélection
             selectPartie.addEventListener("change", function () {
                 let selectedId = this.value;
                 let selectedPartie = data.find(p => p.idgame == selectedId);
@@ -59,22 +54,19 @@ function DemarrerPartie() {
     }
 
     fetch(`/api/game/partie/demarrer`, {
-        method: "POST",  // Change en "GET" si l'API attend une requête GET
+        method: "POST",  
         headers: {
             "Content-Type": "application/json"
         },
-        body: JSON.stringify({ partie: selectedId }) // Supprime `body` si c'est un GET
+        body: JSON.stringify({ partie: selectedId }) 
     })
         .then(response => response.json())
         .then(data => {
-            console.log("Réponse du serveur :", data);
-            alert("Partie envoyée avec succès !");
-
+            alert("Partie demarrée avec succès !");
             window.location.href = "/admin/gestion-partie";
         })
         .catch(error => {
-            console.error("Erreur lors de l'envoi :", error);
-            alert("Erreur lors de l'envoi de la partie.");
+            alert("Erreur lors du démarrage de la partie.");
         });
 }
 async function chargerFormulaire() {
@@ -144,17 +136,16 @@ function toggleDropdown(containerId) {
         container.style.marginBottom = '0';
     } else {
         dropdown.style.maxHeight = '150px';
-        container.style.marginBottom = '160px'; // Ajuste la marge pour pousser le contenu vers le bas
+        container.style.marginBottom = '160px'; 
     }
 
 }
 
 document.addEventListener('click', (event) => {
     document.querySelectorAll('.select-container').forEach(container => {
-        // Si on clique en dehors de la div contenant le dropdown, on ferme ce dropdown
         if (!container.contains(event.target)) {
             container.querySelector('.select-dropdown').style.maxHeight = '0';
-            container.style.marginBottom = '0';  // Réinitialiser la marge
+            container.style.marginBottom = '0';  
         }
     });
 });
@@ -168,15 +159,11 @@ document.addEventListener('click', (event) => {
 });
 
 async function envoyerFormulaire(event) {
-    event.preventDefault(); // Empêche le rechargement de la page
-
+    event.preventDefault(); 
     let scenario = document.getElementById("scenario_value_div").innerText;
     let equipe = document.getElementById("equipe_value_div").innerText;
 
-    if (!scenario || !equipe) {
-        alert("Veuillez sélectionner un scénario et une équipe.");
-        return;
-    }
+    if (!scenario || !equipe) return alert("Veuillez sélectionner un scénario et une équipe.");
 
     let data = { scenario: scenario, equipe: equipe };
 
@@ -193,7 +180,6 @@ async function envoyerFormulaire(event) {
 
         if (response.ok) {
             alert("Partie ajoutée avec succès !");
-            console.log("Réponse serveur :", result);
         } else {
             alert("Erreur : " + result.message);
         }

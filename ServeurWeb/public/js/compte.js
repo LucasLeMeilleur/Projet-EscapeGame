@@ -15,7 +15,6 @@ function formatDateFr(isoString) {
 }
 
 
-// Récupération des données utilisateur
 fetch('/api/user/perso')
     .then(res => res.json())
     .then(data => {
@@ -26,7 +25,6 @@ fetch('/api/user/perso')
         document.getElementById('user-info').innerHTML = "<p>Impossible de charger les infos utilisateur.</p>";
     });
 
-// Récupération des réservations
 fetch('/api/game/reservation/perso')
     .then(res => res.json())
     .then(data => {
@@ -52,7 +50,6 @@ fetch('/api/game/reservation/perso')
         document.getElementById('reservation-list').textContent = "Erreur lors du chargement des réservations.";
     });
 
-// Gestion du changement de mot de passe
 document.getElementById('submit-password').addEventListener('click', function () {
     const oldPassword = document.getElementById('oldPassword').value;
     const newPassword = document.getElementById('newPassword').value;

@@ -22,16 +22,6 @@ const authMiddleware = (req, res, next) => {
     }
 };
 
-// 🏗️ Fonction pour générer un token JWT
-function generateToken(userId) {
-    return jwt.sign(
-        { id: userId }, // Payload (infos dans le token)
-        secretKey,      // Clé secrète
-        { expiresIn: "8h" } // Expiration (8h)
-    );
-}
-
-
 function checkPermission(levelRequired) {
     return (req, res, next) => {
         const token = req.cookies.token;
@@ -47,11 +37,6 @@ function checkPermission(levelRequired) {
 }
 
 
-// Clé Publique RSA
-router.get('/key/publickey', (req, res) => {
-    return res.send({ key: global.keyRSA.getPublicKey() });
-});
-    
 
 /////////////////////////   Gestion api game   ///////////////////////// 
 

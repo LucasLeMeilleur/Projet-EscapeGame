@@ -1,6 +1,4 @@
-const sequelize = require('../../../config/database');
 const { Op, where } = require('sequelize');
-
 const TableGame = require('../../../models/game');
 const TableSalle = require('../../../models/salle');
 const TableScenario = require('../../../models/scenario');
@@ -8,7 +6,6 @@ const TableMission = require('../../../models/mission');
 const TableMissionEtat = require('../../../models/missionEtat');
 const TableEquipe = require('../../../models/equipe');
 const TableReservation = require('../../../models/reservation');
-const { logger } = require('sequelize/lib/utils/logger');
 const jwt = require('jsonwebtoken');
 const { demarrerPartie, resetCanaux } = require('../../../mqttGestion');
 
@@ -53,16 +50,9 @@ function DecortiquerMission(a) {
 }
 
 function verifierChaineNumerique(str) {
-    // Vérifier si la chaîne est vide
     if (!str.trim()) return false;
-
-    // Vérifier que la chaîne ne contient que des chiffres et des virgules (sans espace)
     if (!/^\d+(,\d+)*$/.test(str)) return false;
-
-    // Convertir la chaîne en tableau de nombres
     const nombres = str.split(",").map(Number);
-
-    // Vérifier les doublons en comparant la taille du Set avec le tableau
     return new Set(nombres).size === nombres.length;
 }
 
@@ -436,10 +426,11 @@ exports.AjouterPartie = async (req, res) => {
         })
 
 
-        const repfinale = await TableGame.update(
+        await TableGame.update(
             { idmissionEtat: rep2.idetat },
             { where: { idgame: rep.idgame } },
         );
+
         return res.status(200).json({ message: "Partie crée avec succès" })
     } catch (error) {
         return res.status(500).json({ message: error.message });
@@ -563,10 +554,7 @@ exports.DemarrerPartie = async (req, res) => {
         reqprime = await TableGame.findOne({ where: { idgame: PartieId }, include: { model: TableMissionEtat } });
         if (!reqprime) return res.status(400).json({ message: "Partie introuvable" });
 
-        console.log(reqprime)
-
-
-        const updatePrime = await TableGame.update(
+        await TableGame.update(
             { actif: '1', dateDepart: Date.now() },
             { where: { idgame: PartieId } }
         );
@@ -596,7 +584,7 @@ exports.FinirPartie = async (req, res) => {
         const duree_partie = Math.floor((Date_maintenant - DteDepart) / 1000);
 
         if (3600 >= duree_partie <= 0) {
-            const updatePrime = await TableGame.update(
+            await TableGame.update(
                 { actif: '0', terminee: '1', duree: '-1' },
                 { where: { idgame: PartieId } }
             );
@@ -609,7 +597,6 @@ exports.FinirPartie = async (req, res) => {
         );
 
         resetCanaux();
-
         return res.status(200).json(updatePrime);
     } catch (error) {
         return res.status(500).json(error.message);
@@ -679,7 +666,7 @@ exports.MissionSuivante = async (req, res) => {
         const missionSuivante = ordreMission[indexActuel + 1];
 
         if (!missionSuivante) {
-            const token = jwt.sign({ permission: 1 }, global.JWTToken, { expiresIn: '8h' });
+            const token = jwt.sign({ permission: 1 }, global.JWTToken, { expiresIn: '2m' });
 
             await fetch("http://127.0.0.1:3000/api/game/partie/finir", {
                 method: 'POST',
@@ -806,12 +793,10 @@ exports.MajEquipe = async (req, res) => {
     try {
         const { idequipe: IdEquipe, nom: Nom, nombre_joueur: nombreJoueur, date: Date } = req.body;
 
-        // Vérification des champs obligatoires
         if (!IdEquipe || !Nom || !nombreJoueur || !Date) {
             return res.status(400).json({ message: "Formulaire incomplet" });
         }
 
-        // Vérification de l'existence de l'équipe
         const equipe = await TableEquipe.findOne({
             where: { idequipe: IdEquipe }
         });
@@ -820,7 +805,6 @@ exports.MajEquipe = async (req, res) => {
             return res.status(404).json({ message: "Equipe inexistante" });
         }
 
-        // Mise à jour de l'équipe
         const [nbUpdated] = await TableEquipe.update(
             {
                 nombre_joueur: nombreJoueur,
@@ -832,13 +816,9 @@ exports.MajEquipe = async (req, res) => {
             }
         );
 
-        // Vérification si des modifications ont été effectuées
-        if (nbUpdated === 0) {
-            return res.status(418).json({ message: "Aucun changement détecté" });
-        }
-
+        if (nbUpdated === 0) return res.status(418).json({ message: "Aucun changement détecté" });
+        
         return res.status(200).json({ message: "Equipe mise à jour avec succès" });
-
     } catch (error) {
         return res.status(500).json({ message: error.message });
     }
@@ -873,7 +853,6 @@ exports.MajScenario = async (req, res) => {
         if (nbUpdated === 0) return res.status(418).json({ message: "Aucun changement détecté" });
 
         return res.status(200).json({ message: "Scénario mis à jour avec succès" });
-
     } catch (error) {
         console.error("Erreur :", error);
         return res.status(500).json({ message: error.message });
@@ -978,6 +957,8 @@ exports.DelScenario = async (req, res) => {
 exports.DelSalle = async (req, res) => {
     try {
         const { id } = req.params;
+        if (!id) return res.status(400).json({ message: "Id manquant" });
+        
         const deleted = await TableSalle.destroy({ where: { idsalle: id } });
 
         if (!deleted) return res.status(404).json({ message: 'Salle non trouvée' });
@@ -992,19 +973,16 @@ exports.RecupReservPerso = async (req, res) => {
     try {
         const id = req.user.id;
 
-        if (!id) {
-            return res.status(400).json({ message: "Session invalide" });
-        }
+        if (!id) return res.status(400).json({ message: "Id manquant" });
+        
 
         const reservations = await TableReservation.findAll({
             order: [['date', 'DESC']],
             where: { utilisateur: id }
         });
 
-        if (reservations.length === 0) {
-            return res.status(404).json({ message: "Aucune réservation trouvée" });
-        }
-
+        if (reservations.length === 0) return res.status(404).json({ message: "Aucune réservation trouvée" });
+        
         return res.status(200).json(reservations);
     } catch (error) {
         console.error('Erreur récupération réservation perso :', error);
@@ -1014,24 +992,16 @@ exports.RecupReservPerso = async (req, res) => {
 
 exports.obtenirScenario = async (req, res) => {
     try {
-        const { id } = req.params;  // Récupère l'ID du scénario dans les paramètres de l'URL
-
-        // Validation de l'ID
-        if (!id || isNaN(id)) {
-            return res.status(400).json({ message: "ID de scénario invalide" });
-        }
-
-        // Recherche du scénario dans la base de données
+        const { id } = req.params;  
+        
+        if (!id) return res.status(400).json({ message: "ID manquant" });
+        
         const scenario = await TableScenario.findOne({
             where: { idscenario: id }
         });
 
-        // Si aucun scénario n'est trouvé, retourne une erreur 404
-        if (!scenario) {
-            return res.status(404).json({ message: "Scénario non trouvé" });
-        }
-
-        // Retourne les détails du scénario trouvé
+        if (!scenario) return res.status(404).json({ message: "Scénario non trouvé" });
+        
         return res.status(200).json(scenario);
     } catch (error) {
         // Gestion des erreurs générales
@@ -1045,6 +1015,7 @@ exports.DemarrerMission = async (req, res) => {
         const idmission = req.body.mission;
         if (!idmission) return res.status(400).json({ message: "Id de la partie manquant" });
         demarrerPartie(idmission, "-1");
+        return res.status(500).json({ message: 'Erreur serveur.' });
     } catch (error) {
         console.error('Erreur récupération scénario :', error);
         return res.status(500).json({ message: 'Erreur serveur.' });

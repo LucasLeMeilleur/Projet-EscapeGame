@@ -17,9 +17,8 @@ function getSecondsDifference(fixedTime) {
 
     let difference = Math.floor((now - fixedDate) / 1000);
 
-    // Si la différence est négative, cela signifie que l'heure fixée est passée la veille
     if (difference < 0) {
-        difference += 24 * 3600; // Ajouter 24h en secondes
+        difference += 24 * 3600; 
     }
     return difference;
 }
@@ -48,27 +47,18 @@ function DateToString(a) {
 }
 
 async function creerSelectParties() {
-
     const reponse = await fetch(`/api/game/partie/active`);
-
     if (!reponse.ok) return;
-
     const data = await reponse.json();
-
     let selectPartie = document.getElementById("select_partie_lancee");
-
-    // Vérifier si data est bien un tableau d'objets
     if (!Array.isArray(data) || data.length === 1 || typeof data[0] !== "object") {
         recupererDetailJeu(data[0].idgame);
         return;
     }
-
     selectPartie.style.display = "block";
 
-    // Vider le select et ajouter une option par défaut
     selectPartie.innerHTML = '<option value="">Sélectionnez une partie</option>';
 
-    // Ajouter les parties au select
     data.forEach(partie => {
         let option = document.createElement("option");
         option.value = partie.idgame;
@@ -76,7 +66,6 @@ async function creerSelectParties() {
         selectPartie.appendChild(option);
     });
 
-    // Gérer le changement et appeler recupererDetailJeu(a)
     selectPartie.addEventListener("change", function () {
         let selectedId = this.value;
         if (selectedId) {
@@ -89,26 +78,17 @@ async function recupererDetailJeu(a) {
 
     const reponse1 = await fetch(`/api/game/partie/all/${a}`);
 
-    if (!reponse1.ok) {
-        console.log("erreur req1");
-        return;
-    }
+    if (!reponse1.ok) return;
 
 
-    if (reponse1.headers.get("content-length") <= 25) {
-        return;
-    }
-
+    if (reponse1.headers.get("content-length") <= 25) return;
+    
     const data1 = await reponse1.json();
     const dateCreation = DateToString(data1.dateCreation);
-
-    console.log(data1);
-    
 
     dateDepart = "invalide";
     if (data1.dateDepart != null) dateDepart = DateToString(data1.dateDepart);
    
-
     textInfoPartie = `
                 <ul>
                 <li><strong>Salle:</strong> ${data1.salle.nom} - ${data1.salle.ville}</li>
@@ -137,44 +117,22 @@ async function recupererDetailJeu(a) {
                 </ul>`;
     document.getElementById("para_info_missionactive").innerHTML = textInfoMissionActu;
 
-    const heureDepart = data1.dateDepart;
-    const heureDebut = data1.missionEtat.heuredebut;
-
-
-    console.log({ heureDepart, heureDebut });
-
     TempEcoule(data1.dateDepart, data1.missionEtat.heuredebut);
 
     const reponse2 = await fetch('/api/game/missionEtat/historique/' + data1.idgame);
-    if (!reponse2.ok) {
-        console.log("erreur req2");
-        return;
-    }
+    if (!reponse2.ok) return;
+
     const data2 = await reponse2.json();
-    console.log(data2);
     
     const NombreEtatEnHistorique = data2.length;
 
-    console.log(NombreEtatEnHistorique)
-
-    if (NombreEtatEnHistorique <= 1) {
-        document.getElementById("para_info_historique").innerHTML = "Aucune mission en historique";
-
-        return;
-    }
-
+    if (NombreEtatEnHistorique <= 1) return document.getElementById("para_info_historique").innerHTML = "Aucune mission en historique";
+        
     textHistorique = ""
 
-
     for (let i = 0; i < NombreEtatEnHistorique-1; i++) {
-        textClasse = ""
-
+        textClasse = "";
         if (i < NombreEtatEnHistorique - 1) textClasse = "liste_historique_mission_separation";
-
-        console.log(data2[i]);
-        
-
-
         textHistorique += `
                 <h3 class="titre_mission_historique"> Mission N<sup>-${i+1}</sup> </h3>
                 <ul class="liste_historique_mission ${textClasse}">
@@ -183,11 +141,9 @@ async function recupererDetailJeu(a) {
                 <li><strong>Mission: </strong> Numéro °${data2[i].mission.idmission} - ${data2[i].mission.nom} <li>
                 <li><strong>Temps passé: </strong> ${SecondeVersTemps(differenceEnSecondes(data2[i].heurefin, data2[i].heuredebut))} </li>
                 </ul>`;
-        
     }
 
     document.getElementById("para_info_historique").innerHTML = textHistorique;   
-
     RefraichissementAutomatique();
 }
 
@@ -196,15 +152,13 @@ async function TempEcoule(a, b) {
     a = DateToString(a);
     
     while (true) {
-        const maintenant = new Date(); // D ate actuelle
+        const maintenant = new Date(); 
 
         const [jour, mois, annee, heure, minute] = a.split(/[/\s:]/).map(Number);
         const dateAComparer = new Date(annee, mois - 1, jour, heure, minute);
         const diffSeconde = Math.floor((maintenant - dateAComparer) / 1000);
 
-        console.log(b);
-        document.getElementById("temp_ecoule_mission").innerText = SecondeVersTemps(getSecondsDifference(b)) + " secondes";
-
+        document.getElementById("temp_ecoule_mission").innerText = SecondeVersTemps(getSecondsDifference(b)) + " secondes"
         if (diffSeconde > 3600) {
             document.getElementById("para_temps_ecoule").innerText = "+60 min";
             break;
@@ -215,12 +169,8 @@ async function TempEcoule(a, b) {
     }
 }
 
-async function RefraichissementAutomatique(){
-    await sleep(40000);
-    
+setInterval(()=>{
     window.location.href = "/admin/gestion-partie"; 
-}
-
-
+},40000)
 
 creerSelectParties();

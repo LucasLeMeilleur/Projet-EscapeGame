@@ -3,8 +3,6 @@ function SecondeVersTemps(a) {
     else return Math.trunc(a / 60) + " : " + a % 60;
 }
 
-
-
 function DateToString(a){
     const dateObj = new Date(a);
     value = dateObj.toLocaleString("fr-FR", {
@@ -39,20 +37,16 @@ async function remplirListePartie() {
         if (response.ok) {
             const data = await response.json();
 
-            // Vérifier si data est un tableau
             if (!Array.isArray(data) || data.length === 0) {
                 console.warn("Aucune partie trouvée !");
                 tableau.innerText = "Aucune parties";
                 return;
             }
 
-            // Définir les colonnes à afficher (sans idmissionEtat)
             const colonnesAAfficher = ["idgame", "idscenario", "dateCreation", "idequipe", "duree"];
 
-            // Vider le tableau avant d'ajouter du contenu
             tableau.innerHTML = "";
 
-            // Créer l'en-tête du tableau (TH)
             const thead = document.createElement("thead");
             const headerRow = document.createElement("tr");
 
@@ -75,7 +69,6 @@ async function remplirListePartie() {
             thead.appendChild(headerRow);
             tableau.appendChild(thead);
 
-            // Ajouter les données (TD)
             const tbody = document.createElement("tbody");
 
             data.forEach(partie => {
@@ -86,9 +79,8 @@ async function remplirListePartie() {
 
                     let value = partie[key];
 
-                    // Convertir la date au format JJ/MM/YYYY HH:MM
                     if (key === "dateCreation") {
-                        value = DateToString(value)  // Supprime la virgule
+                        value = DateToString(value)  
                     }
 
                     if (key == "duree" && value == null) {
@@ -103,7 +95,6 @@ async function remplirListePartie() {
                         value = SecondeVersTemps(value);
                     }
 
-                    // Convertir booléens en Oui / Non
                     if (typeof value === "boolean") {
                         value = value ? "Oui" : "Non";
                     }
@@ -137,20 +128,16 @@ async function remplirListeReservation() {
         if (response.ok) {
             const data = await response.json();
 
-            // Vérifier si data est un tableau
             if (!Array.isArray(data) || data.length === 0) {
                 console.warn("Aucune partie trouvée !");
                 tableau.innerText = "Aucune Réservations";
                 return;
             }
 
-            // Définir les colonnes à afficher (sans idmissionEtat)
             const colonnesAAfficher = ["idreservation", "date", "utilisateur", "salle"];
 
-            // Vider le tableau avant d'ajouter du contenu
             tableau.innerHTML = "";
 
-            // Créer l'en-tête du tableau (TH)
             const thead = document.createElement("thead");
             const headerRow = document.createElement("tr");
 
@@ -181,12 +168,10 @@ async function remplirListeReservation() {
 
                     let value = partie[key];
 
-                    // Convertir la date au format JJ/MM/YYYY HH:MM
                     if (key === "date") {
-                        value = DateToString(value); // Supprime la virgule
+                        value = DateToString(value);
                     }
 
-                    // Convertir booléens en Oui / Non
                     if (typeof value === "boolean") {
                         value = value ? "Oui" : "Non";
                     }

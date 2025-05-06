@@ -4,7 +4,6 @@ const tableScenario = { "Nom du scénario": "nomScenario", "Ordre": "ordre", "De
 const tableSalle = { "Nom de la salle": "nom", "Ville": "ville" };
 const tableEquipe = { "Nom de l'équipe": "nom", "Nombre de joueurs": "nombre_joueur" };
 
-// Associer les types aux objets correspondants
 const tableChamps = {
   mission: tableMission,
   scenario: tableScenario,
@@ -12,7 +11,6 @@ const tableChamps = {
   equipe: tableEquipe
 };
 
-// Définition des endpoints API
 const apiEndpoints = {
   mission: "/api/game/mission/ajout",
   scenario: "/api/game/scenario/ajout",
@@ -20,17 +18,13 @@ const apiEndpoints = {
   equipe: "/api/game/equipe/ajout"
 };
 
-// Récupération des éléments HTML
 const selectTypeFormulaire = document.getElementById("select_type_formulaire");
 const formFields = document.getElementById("form_fields");
 const form = document.getElementById("dynamic_form");
 
-// Fonction pour générer les champs du formulaire
 function genererFormulaire(type) {
-  formFields.innerHTML = ""; // Effacer les champs actuels
-
-  if (!tableChamps[type]) return; // Si le type est invalide, on ne fait rien
-
+  formFields.innerHTML = "";
+  if (!tableChamps[type]) return;
   Object.entries(tableChamps[type]).forEach(([labelText, champ]) => {
     const div = document.createElement("div");
     div.style.marginBottom = "10px";
@@ -57,12 +51,10 @@ function genererFormulaire(type) {
   });
 }
 
-// Écouteur pour détecter un changement de sélection
 selectTypeFormulaire.addEventListener("change", function () {
   genererFormulaire(this.value);
 });
 
-// Gestion de l'envoi du formulaire
 form.addEventListener("submit", async function (event) {
   event.preventDefault();
 
@@ -72,14 +64,13 @@ form.addEventListener("submit", async function (event) {
     return;
   }
 
-  // Récupérer les données du formulaire
   const formData = {};
   Object.values(tableChamps[typeSelectionne]).forEach(champ => {
     formData[champ] = document.getElementById(champ).value;
   });
 
   try {
-    const response = await fetch(apiEndpoints[typeSelectionne], { // <-- Utilisation de l'URL dynamique
+    const response = await fetch(apiEndpoints[typeSelectionne], {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(formData)
@@ -89,7 +80,6 @@ form.addEventListener("submit", async function (event) {
     if (response.ok) {
       document.getElementById("resultat_envoie").innerText = "Données envoyées avec succès !";
     } else {
-
       document.getElementById("resultat_envoie").innerText = result.message;
     }
   } catch (error) {
@@ -97,7 +87,6 @@ form.addEventListener("submit", async function (event) {
   }
 });
 
-// TABLEAU
 
 const toggleBtn = document.getElementById("toggle_view");
 const tableauView = document.getElementById("tableau_view");
@@ -121,18 +110,13 @@ document.addEventListener("DOMContentLoaded", () => {
   const selectEntity = document.getElementById("select_entity");
   const table = document.getElementById("data_table");
   const searchInput = document.getElementById("search_input");
-  const saveResult = document.getElementById("save_result");
   let fullData = [];
 
   selectEntity.addEventListener("change", async () => {
     const type = selectEntity.value;
-
     res = null;
-
-
     if (type == "utilisateur") res = await fetch(`/api/user/liste`);
     else res = await fetch(`/api/game/${type}/liste`);
-
     fullData = await res.json();
     renderTable(fullData);
   });
@@ -152,12 +136,8 @@ document.addEventListener("DOMContentLoaded", () => {
     const tbody = table.querySelector("tbody");
     thead.innerHTML = "";
     tbody.innerHTML = "";
-
     if (data.length === 0) return;
-
     const headers = Object.keys(data[0]);
-
-    // En-tête des colonnes
     const trHead = document.createElement("tr");
     headers.forEach(h => {
       const th = document.createElement("th");
@@ -169,13 +149,11 @@ document.addEventListener("DOMContentLoaded", () => {
     trHead.appendChild(saveTh);
     thead.appendChild(trHead);
 
-
-    // Ligne de recherche
     const trSearch = document.createElement("tr");
     headers.forEach(h => {
       const th = document.createElement("th");
       if (h === "id") {
-        th.textContent = ""; // pas de recherche sur l'id
+        th.textContent = "";
       } else {
         const input = document.createElement("input");
         input.classList.add("column-filter");
@@ -186,13 +164,12 @@ document.addEventListener("DOMContentLoaded", () => {
       }
       trSearch.appendChild(th);
     });
-    trSearch.appendChild(document.createElement("th")); // pour la colonne Action
+    trSearch.appendChild(document.createElement("th"));
     thead.appendChild(trSearch);
 
-    // Corps du tableau
     data.forEach(row => {
       const tr = document.createElement("tr");
-      tr.dataset.original = JSON.stringify(row); // pour garder les données originales
+      tr.dataset.original = JSON.stringify(row);
 
       headers.forEach(key => {
         const td = document.createElement("td");
@@ -235,27 +212,18 @@ document.addEventListener("DOMContentLoaded", () => {
     inputs.forEach(input => {
       updatedData[input.dataset.key] = input.value;
     });
-
     url = "";
-
     if (type == "utilisateur") url = `/api/user/update-admin`
     else url = `/api/game/${type}/update`;
-
-
     const res = await fetch(url, {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(updatedData)
     });
-
     const resultText = JSON.parse(await res.text()).message;
-
     let saveResult = resultText;
-
     document.getElementById("Resultat_requete").innerText = saveResult;
-
     setTimeout(() => saveResult = "", 3000);
-
     document.getElementById("Resultat_requete").innerText = "";
   }
 
@@ -277,40 +245,31 @@ document.addEventListener("DOMContentLoaded", () => {
           visible = false;
         }
       });
-
       row.style.display = visible ? "" : "none";
     });
   }
 
-
   async function deleteRow(id, trElement) {
-
-
     const inputs = trElement.querySelectorAll("input");
     updatedData = { id };
     inputs.forEach(input => {
       updatedData[input.dataset.key] = input.value;
     });
-
-
     const type = selectEntity.value;
     const confirmation = confirm("Êtes-vous sûr de vouloir supprimer cet élément ?");
     if (!confirmation) return;
-
     url = null
 
     if (type == "utilisateur") url = `/api/user/delete/${encodeURIComponent(Object.values(updatedData)[1])}`;
-    else  url = `/api/game/${type}/delete/${encodeURIComponent(Object.values(updatedData)[1])}`;
+    else url = `/api/game/${type}/delete/${encodeURIComponent(Object.values(updatedData)[1])}`;
 
     try {
       const res = await fetch(url, {
         method: "DELETE"
       });
-
       const result = await res.json();
       document.getElementById("Resultat_requete").innerText = result.message;
 
-      // Actualiser la liste après suppression
       selectEntity.dispatchEvent(new Event("change"));
     } catch (err) {
       document.getElementById("Resultat_requete").innerText = "Erreur lors de la suppression.";
