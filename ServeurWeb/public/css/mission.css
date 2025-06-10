@@ -1,0 +1,67 @@
+/* Style global de la section */
+#mission-section {
+    max-width: 500px;
+    margin: 40px auto;
+    height: fit-content;
+    padding: 20px;
+    border-radius: 8px;
+    background-color: #3a3a3a;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  }
+  
+  /* Titre */
+  #mission-section h2 {
+    text-align: center;
+    margin-bottom: 20px;
+    color: white;
+  }
+  
+  /* Label */
+  #mission-section label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: bold;
+    color: white;
+  }
+  
+  /* Select */
+  #missionSelect {
+    width: 100%;
+    padding: 10px;
+    font-size: 1rem;
+    border-radius: 4px;
+    border: 1px solid #ced4da;
+    margin-bottom: 20px;
+    box-sizing: border-box;
+  }
+  
+  /* Bouton */
+  #startMissionBtn {
+    width: 100%;
+    padding: 12px;
+    background-color: #007bff;
+    color: white;
+    font-size: 1rem;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.25s ease-in-out;
+  }
+  
+  #startMissionBtn:hover {
+    background-color: #0056b3;
+  }
+  
+  /* Responsive (petits écrans) */
+  @media (max-width: 600px) {
+    #mission-section {
+      padding: 15px;
+      margin: 20px;
+    }
+  
+    #startMissionBtn {
+      font-size: 0.95rem;
+    }
+  }
+  

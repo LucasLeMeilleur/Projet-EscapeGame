@@ -26,6 +26,7 @@ function optionalAuthenticateToken(req, res, next) {
     if (!token) return next();
     jwt.verify(token, global.JWTToken, (err, decoded) => {
         if (!err){
+            // User contient le pseudo, l'email et la permission du user
             req.User = decoded;
             req.userId = decoded.id;
         } 
@@ -128,6 +129,20 @@ router.get('/admin', optionalAuthenticateToken, verifyAccess(1), (req, res) => {
         try{
             rep = req.User;
             if (rep.permission >= 1) return res.status(200).render('admin', { pseudo: rep.username, email: rep.email, permission: rep.permission });
+            else return res.status(403).render("error/403", { permission: rep.permission });
+        }
+        catch(error){
+            res.status(200).render('error/500');
+        }
+    } 
+    else return res.redirect("error/403");
+});
+
+router.get('/admin/mission', optionalAuthenticateToken, verifyAccess(1), (req, res) => {
+    if (req.User) {
+        try{
+            rep = req.User;
+            if (rep.permission >= 1) return res.status(200).render('mission', { pseudo: rep.username, email: rep.email, permission: rep.permission });
             else return res.status(403).render("error/403", { permission: rep.permission });
         }
         catch(error){

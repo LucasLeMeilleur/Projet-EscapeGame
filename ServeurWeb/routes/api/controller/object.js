@@ -18,19 +18,14 @@ function formatDateTime(dateStr, timeStr) {
 
 function estDateHeurePile(str) {
     const regex = /^\d{4}-\d{2}-\d{2} \d{2}:00:00$/;
-
     if (!regex.test(str)) return false;
-
     const date = new Date(str.replace(" ", "T"));
-
-    // Vérifie que la date est valide et bien "à l'heure pile"
     return !isNaN(date.getTime()) && date.getMinutes() === 0 && date.getSeconds() === 0;
 }
 
 function estDateFuture(str) {
     const date = new Date(str.replace(" ", "T"));
     if (isNaN(date.getTime())) return false;
-
     const maintenant = new Date();
     return date > maintenant;
 }
@@ -67,7 +62,7 @@ exports.listePartie = async (req, res) => {
 
         return res.status(200).json(rep);
     } catch (error) {
-        return res.status(500).json({ message: error.message });
+        return res.status(500).json({ message: "Erreur serveur" });
     }
 }
 
@@ -77,7 +72,7 @@ exports.nombrePartie = async (req, res) => {
 
         return res.status(200).json(rep);
     } catch (error) {
-        return res.status(500).json({ message: error.message });
+        return res.status(500).json({ message: "Erreur serveur" });
     }
 }
 
@@ -87,7 +82,7 @@ exports.partieActive = async (req, res) => {
 
         return res.status(200).json(rep);
     } catch (error) {
-        return res.status(500).json({ message: error.message });
+        return res.status(500).json({ message: "Erreur serveur" });
     }
 
 }
@@ -100,7 +95,7 @@ exports.derniereParties = async (req, res) => {
         });
         return res.status(200).json(rep);
     } catch (error) {
-        return res.status(500).json({ message: error.message });
+        return res.status(500).json({ message: "Erreur serveur" });
     }
 }
 
@@ -111,7 +106,7 @@ exports.dernierePartieFinie = async (req, res) => {
 
         return res.status(200).json(rep);
     } catch (error) {
-        return res.status(500).json({ message: error.message });
+        return res.status(500).json({ message: "Erreur serveur" });
     }
 }
 
@@ -148,7 +143,7 @@ exports.ObtenirTouteInfoPartie = async (req, res) => {
 
         return res.status(200).json(reponse);
     } catch (error) {
-        return res.status(500).json({ message: error.message });
+        return res.status(500).json({ message: "Erreur serveur" });
     }
 }
 
@@ -164,7 +159,7 @@ exports.obtenirPartieNonlancee = async (req, res) => {
 
         return res.status(200).json(reponse);
     } catch (error) {
-        return res.status(500).json({ message: error.message })
+        return res.status(500).json({ message: "Erreur serveur" });
     }
 }
 
@@ -183,11 +178,9 @@ exports.obtenirHistoriqueMission = async (req, res) => {
             }]
         })
 
-        console.log(reponse)
-
         return res.status(200).json(reponse);
     } catch (error) {
-        return res.status(500).json({ message: error.message });
+        return res.status(500).json({ message: "Erreur serveur" });
     }
 }
 
@@ -198,7 +191,7 @@ exports.listeSalle = async (req, res) => {
 
         return res.status(200).json(rep);
     } catch (error) {
-        return res.status(500).json({ message: error.message });
+        return res.status(500).json({ message: "Erreur serveur" });
     }
 }
 
@@ -208,7 +201,7 @@ exports.nombreSalle = async (req, res) => {
 
         return res.status(200).json(rep);
     } catch (error) {
-        return res.status(500).json({ message: error.message });
+        return res.status(500).json({ message: "Erreur serveur" });
     }
 }
 
@@ -219,7 +212,7 @@ exports.listeScenario = async (req, res) => {
 
         return res.status(200).json(rep);
     } catch (error) {
-        return res.status(500).json({ message: error.message });
+        return res.status(500).json({ message: "Erreur serveur" });
     }
 }
 
@@ -229,7 +222,7 @@ exports.nombreScenario = async (req, res) => {
 
         return res.status(200).json(rep);
     } catch (error) {
-        return res.status(500).json({ message: error.message });
+        return res.status(500).json({ message: "Erreur serveur" });
     }
 }
 
@@ -240,7 +233,7 @@ exports.listeMission = async (req, res) => {
 
         return res.status(200).json(rep);
     } catch (error) {
-        return res.status(500).json({ message: error.message });
+        return res.status(500).json({ message: "Erreur serveur" });
     }
 }
 
@@ -250,7 +243,7 @@ exports.nombreMission = async (req, res) => {
 
         return res.status(200).json(rep);
     } catch (error) {
-        return res.status(500).json({ message: error.message });
+        return res.status(500).json({ message: "Erreur serveur" });
     }
 }
 
@@ -261,7 +254,7 @@ exports.listeMissionEtat = async (req, res) => {
 
         return res.status(200).json(rep);
     } catch (error) {
-        return res.status(500).json({ message: error.message });
+        return res.status(500).json({ message: "Erreur serveur" });
     }
 }
 
@@ -271,7 +264,7 @@ exports.nombreMissionEtat = async (req, res) => {
 
         return res.status(200).json(rep);
     } catch (error) {
-        return res.status(500).json({ message: error.message });
+        return res.status(500).json({ message: "Erreur serveur" });
     }
 }
 
@@ -282,7 +275,7 @@ exports.listeEquipe = async (req, res) => {
         const rep = await TableEquipe.findAll();
         return res.status(200).json(rep);
     } catch (error) {
-        return res.status(500).json({ message: error.message });
+        return res.status(500).json({ message: "Erreur serveur" });
     }
 }
 
@@ -296,7 +289,7 @@ exports.listeNomEquipe = async (req, res) => {
 
         return res.status(200).json(rep);
     } catch (error) {
-        return res.status(500).json({ message: error.message });
+        return res.status(500).json({ message: "Erreur serveur" });
     }
 }
 
@@ -313,7 +306,7 @@ exports.listeMissionEtatid = async (req, res) => {
 
         return res.status(200).json(rep);
     } catch (error) {
-        return res.status(500).json({ message: error.message });
+        return res.status(500).json({ message: "Erreur serveur" });
     }
 }
 
@@ -332,7 +325,7 @@ exports.listeMissionEtatGameid = async (req, res) => {
 
         return res.status(200).json(rep);
     } catch (error) {
-        return res.status(500).json({ message: 'Erreur serveur.' });
+        return res.status(500).json({ message: 'Erreur serveur' });
     }
 };
 
@@ -359,7 +352,7 @@ exports.dernieresPartiesFinies = async (req, res) => {
 
         return res.status(200).json(derniersEnregistrements);
     } catch (error) {
-        return res.status(500).json(error.message)
+        return res.status(500).json({ message: "Erreur serveur" });
     }
 }
 
@@ -369,7 +362,7 @@ exports.listeReservation = async (req, res) => {
 
         return res.status(200).json(reservations);
     } catch (error) {
-        return res.status(500).json(error.message)
+        return res.status(500).json({ message: "Erreur serveur" });
     }
 }
 
@@ -382,7 +375,7 @@ exports.dernieresReservation = async (req, res) => {
 
         return res.status(200).json(derniersEnregistrements);
     } catch (error) {
-        return res.status(500).json(error.message)
+        return res.status(500).json({ message: "Erreur serveur" });
     }
 }
 
@@ -433,7 +426,7 @@ exports.AjouterPartie = async (req, res) => {
 
         return res.status(200).json({ message: "Partie crée avec succès" })
     } catch (error) {
-        return res.status(500).json({ message: error.message });
+        return res.status(500).json({ message: "Erreur serveur" });
     }
 }
 
@@ -448,7 +441,7 @@ exports.AjouterSalle = async (req, res) => {
 
         return res.status(200).json(rep);
     } catch (error) {
-        return res.status(500).json({ message: error.message });
+        return res.status(500).json({ message: "Erreur serveur" });
     }
 }
 
@@ -471,7 +464,7 @@ exports.AjouterScenar = async (req, res) => {
 
         return res.status(200).json(rep);
     } catch (error) {
-        return res.status(500).json({ message: error.message });
+        return res.status(500).json({ message: "Erreur serveur" });
     }
 }
 
@@ -493,7 +486,7 @@ exports.AjouterMission = async (req, res) => {
 
         return res.status(200).json(rep);
     } catch (error) {
-        return res.status(500).json({ message: error.message });
+        return res.status(500).json({ message: "Erreur serveur" });
     }
 }
 
@@ -518,7 +511,7 @@ exports.AjouterMissionEtat = async (req, res) => {
 
         return res.status(200).json(rep);
     } catch (error) {
-        return res.status(500).json({ message: error.message });
+        return res.status(500).json({ message: "Erreur serveur" });
     }
 }
 
@@ -543,7 +536,7 @@ exports.AjouterEquipe = async (req, res) => {
 
         return res.status(200).send({ message: "Equipe crée" });
     } catch (error) {
-        return res.status(500).json({ message: error.message })
+        return res.status(500).json({ message: "Erreur serveur" });
     }
 }
 
@@ -563,44 +556,58 @@ exports.DemarrerPartie = async (req, res) => {
 
         return res.status(200).json({ message: "Partie lancée avec succès" });
     } catch (error) {
-        return res.status(500).json(error.message);
+        return res.status(500).json({ message: "Erreur serveur" });
     }
 }
 
-exports.FinirPartie = async (req, res) => {
+async function FinirPartie(req, res) {
     try {
         const PartieId = req.body.partie;
-
-        const Date_maintenant = Date.now();
-        if (!PartieId) return res.status(400).json({ message: "Id de partie introuvable" });
-
-        reqprime = await TableGame.findOne({ where: { idgame: PartieId } });
-        if (!reqprime) return res.status(400).json({ message: "Partie introuvable" });
-        if (reqprime.actif == 0) return res.status(400).json({ message: "Partie non lancée" });
-        if (reqprime.terminee == 1) return res.status(400).json({ message: "Partie deja finit" });
-
-
-        const DteDepart = new Date(reqprime.dateDepart).getTime();
-        const duree_partie = Math.floor((Date_maintenant - DteDepart) / 1000);
-
-        if (3600 >= duree_partie <= 0) {
-            await TableGame.update(
-                { actif: '0', terminee: '1', duree: '-1' },
-                { where: { idgame: PartieId } }
-            );
-            return res.status(200).json({ message: "Partie a durée incorrect ou dépassé" });
+        if (!PartieId) {
+            return res.status(400).json({ message: "Id de partie introuvable" });
         }
 
-        const updatePrime = await TableGame.update(
-            { actif: '0', terminee: '1', duree: duree_partie },
+        const partie = await TableGame.findOne({ where: { idgame: PartieId } });
+        if (!partie) {
+            return res.status(404).json({ message: "Partie introuvable" });
+        }
+        if (partie.actif === 0) {
+            return res.status(400).json({ message: "Partie non lancée" });
+        }
+        if (partie.terminee === 1) {
+            return res.status(400).json({ message: "Partie déjà finie" });
+        }
+
+        const dateDepartMs = new Date(partie.dateDepart).getTime();
+        const nowMs = Date.now();
+        const duree_partie = Math.floor((nowMs - dateDepartMs) / 1000);
+
+        if (duree_partie <= 0 || duree_partie >= 3600) {
+            await TableGame.update(
+                { actif: 0, terminee: 1, duree: -1 },
+                { where: { idgame: PartieId } }
+            );
+            return res.status(400).json({ message: "Durée de partie incorrecte ou dépassée" });
+        }
+
+        await TableGame.update(
+            { actif: 0, terminee: 1, duree: duree_partie },
             { where: { idgame: PartieId } }
         );
 
+        console.log("partie terminée");
+        
         resetCanaux();
-        return res.status(200).json(updatePrime);
+        return res.status(200).json({ message: "Partie terminée", duree: duree_partie });
     } catch (error) {
-        return res.status(500).json(error.message);
+        console.error("Erreur FinirPartie:", error);
+        return res.status(500).json({ message: "Erreur serveur" });
     }
+}
+
+
+exports.FinirPartie = async (req, res) => {
+    await FinirPartie(req, res);
 }
 
 
@@ -625,7 +632,7 @@ exports.listePartieReserve = async (req, res) => {
 
         return res.status(200).json({ reservation, nombre });
     } catch (error) {
-        return res.status(500).json(error.message);
+        return res.status(500).json({ message: "Erreur serveur" });
     }
 }
 
@@ -633,6 +640,10 @@ exports.listePartieReserve = async (req, res) => {
 exports.MissionSuivante = async (req, res) => {
     try {
         const { mission, idpartie } = req.body;
+
+        if (!mission || !idpartie) {
+            return res.status(400).json({ message: "Paramètres manquants" });
+        }
 
         const now = new Date();
         const mysqlTimestamp = now.toISOString().slice(0, 19).replace('T', ' ');
@@ -653,7 +664,7 @@ exports.MissionSuivante = async (req, res) => {
         const ordreMission = game.scenario.ordre.split(',');
         const missionActuelle = game.missionEtat.idmission;
 
-        if (missionActuelle != mission) {
+        if (String(missionActuelle) !== String(mission)) {
             return res.status(400).json({ message: "Mauvaise mission en cours" });
         }
 
@@ -666,20 +677,8 @@ exports.MissionSuivante = async (req, res) => {
         const missionSuivante = ordreMission[indexActuel + 1];
 
         if (!missionSuivante) {
-            const token = jwt.sign({ permission: 1 }, global.JWTToken, { expiresIn: '2m' });
-
-            await fetch("http://127.0.0.1:3000/api/game/partie/finir", {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Cookie': `token=${token}`
-                },
-                body: JSON.stringify({ partie: idpartie })
-            }).then(res => res.text())
-                .then(text => console.log("Réponse brute:", text))
-                .catch(error => console.error("Erreur:", error));
-
-            return res.status(200).json({ message: "Dernière mission finie" });
+            await FinirPartie({ body: { partie: idpartie } }, res);
+            return;  
         }
 
         const nouvelleMission = await TableMissionEtat.create({
@@ -696,10 +695,10 @@ exports.MissionSuivante = async (req, res) => {
         return res.status(200).json(nouvelleMission);
 
     } catch (error) {
-        return res.status(500).json({ message: error.message });
+        console.error("Erreur MissionSuivante:", error);
+        return res.status(500).json({ message: "Erreur serveur" });
     }
 };
-
 
 exports.scoreBoard = async (req, res) => {
     try {
@@ -719,7 +718,7 @@ exports.scoreBoard = async (req, res) => {
 
         return res.status(200).json(reponse);
     } catch (error) {
-        return res.status(500).json({ message: error.message });
+        return res.status(500).json({ message: "Erreur serveur" });
     }
 }
 
@@ -765,7 +764,7 @@ exports.AjoutReservation = async (req, res) => {
         return res.status(201).json({ message: "Réservation effectuée avec succès." });
 
     } catch (error) {
-        return res.status(500).json({ message: error.message });
+        return res.status(500).json({ message: "Erreur serveur" });
     }
 };
 
@@ -785,7 +784,7 @@ exports.reservationAVenir = async (req, res) => {
         return res.status(200).json(derniersEnregistrements);
 
     } catch (error) {
-        return res.status(500).json({ message: error.message })
+        return res.status(500).json({ message: "Erreur serveur" });
     }
 }
 
@@ -817,10 +816,10 @@ exports.MajEquipe = async (req, res) => {
         );
 
         if (nbUpdated === 0) return res.status(418).json({ message: "Aucun changement détecté" });
-        
+
         return res.status(200).json({ message: "Equipe mise à jour avec succès" });
     } catch (error) {
-        return res.status(500).json({ message: error.message });
+        return res.status(500).json({ message: "Erreur serveur" });
     }
 };
 
@@ -851,11 +850,10 @@ exports.MajScenario = async (req, res) => {
         );
 
         if (nbUpdated === 0) return res.status(418).json({ message: "Aucun changement détecté" });
-
         return res.status(200).json({ message: "Scénario mis à jour avec succès" });
+
     } catch (error) {
-        console.error("Erreur :", error);
-        return res.status(500).json({ message: error.message });
+        return res.status(500).json({ message: "Erreur serveur" });
     }
 };
 
@@ -880,8 +878,7 @@ exports.MajMission = async (req, res) => {
 
         return res.status(200).json({ message: "Mission mise à jour avec succès" });
     } catch (error) {
-        console.error("Erreur MajMission:", error);
-        return res.status(500).json({ message: error.message });
+        return res.status(500).json({ message: "Erreur serveur" });
     }
 };
 
@@ -908,8 +905,7 @@ exports.MajSalle = async (req, res) => {
 
         return res.status(200).json({ message: "Salle mise à jour avec succès" });
     } catch (error) {
-        console.error("Erreur MajSalle:", error);
-        return res.status(500).json({ message: error.message });
+        return res.status(500).json({ message: "Erreur serveur" });
     }
 };
 
@@ -922,8 +918,8 @@ exports.DelMission = async (req, res) => {
         if (!deleted) return res.status(404).json({ message: 'Mission non trouvée' });
         res.json({ success: true, message: 'Mission supprimée avec succès.' });
     } catch (error) {
-        console.error('Erreur suppression mission :', error);
-        res.status(500).json({ message: 'Erreur serveur.' });
+        console.log(error)
+        return res.status(500).json({ message: "Erreur serveur" });
     }
 };
 
@@ -936,8 +932,7 @@ exports.DelEquipe = async (req, res) => {
         if (!deleted) return res.status(404).json({ message: 'Équipe non trouvée' });
         res.json({ success: true, message: 'Équipe supprimée avec succès.' });
     } catch (error) {
-        console.error('Erreur suppression équipe :', error);
-        res.status(500).json({ message: 'Erreur serveur.' });
+        return res.status(500).json({ message: "Erreur serveur" });
     }
 };
 
@@ -958,14 +953,13 @@ exports.DelSalle = async (req, res) => {
     try {
         const { id } = req.params;
         if (!id) return res.status(400).json({ message: "Id manquant" });
-        
+
         const deleted = await TableSalle.destroy({ where: { idsalle: id } });
 
         if (!deleted) return res.status(404).json({ message: 'Salle non trouvée' });
         res.json({ success: true, message: 'Salle supprimée avec succès.' });
     } catch (error) {
-        console.error('Erreur suppression salle :', error);
-        res.status(500).json({ message: 'Erreur serveur.' });
+        return res.status(500).json({ message: "Erreur serveur" });
     }
 };
 
@@ -974,7 +968,7 @@ exports.RecupReservPerso = async (req, res) => {
         const id = req.user.id;
 
         if (!id) return res.status(400).json({ message: "Id manquant" });
-        
+
 
         const reservations = await TableReservation.findAll({
             order: [['date', 'DESC']],
@@ -982,31 +976,28 @@ exports.RecupReservPerso = async (req, res) => {
         });
 
         if (reservations.length === 0) return res.status(404).json({ message: "Aucune réservation trouvée" });
-        
+
         return res.status(200).json(reservations);
     } catch (error) {
-        console.error('Erreur récupération réservation perso :', error);
-        return res.status(500).json({ message: 'Erreur serveur.' });
+        return res.status(500).json({ message: "Erreur serveur" });
     }
 };
 
 exports.obtenirScenario = async (req, res) => {
     try {
-        const { id } = req.params;  
-        
+        const { id } = req.params;
+
         if (!id) return res.status(400).json({ message: "ID manquant" });
-        
+
         const scenario = await TableScenario.findOne({
             where: { idscenario: id }
         });
 
         if (!scenario) return res.status(404).json({ message: "Scénario non trouvé" });
-        
+
         return res.status(200).json(scenario);
     } catch (error) {
-        // Gestion des erreurs générales
-        console.error('Erreur récupération scénario :', error);
-        return res.status(500).json({ message: 'Erreur serveur.' });
+        return res.status(500).json({ message: "Erreur serveur" });
     }
 };
 
@@ -1015,9 +1006,8 @@ exports.DemarrerMission = async (req, res) => {
         const idmission = req.body.mission;
         if (!idmission) return res.status(400).json({ message: "Id de la partie manquant" });
         demarrerPartie(idmission, "-1");
-        return res.status(500).json({ message: 'Erreur serveur.' });
+        return res.status(200).json({ message: 'Mission demarré avec succès' });
     } catch (error) {
-        console.error('Erreur récupération scénario :', error);
-        return res.status(500).json({ message: 'Erreur serveur.' });
+        return res.status(500).json({ message: "Erreur serveur" });
     }
 }

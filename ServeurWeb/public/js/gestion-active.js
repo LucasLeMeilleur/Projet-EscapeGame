@@ -1,3 +1,5 @@
+let idPartie;
+
 function differenceEnSecondes(heure1, heure2) {
     const [h1, m1, s1] = heure1.split(":").map(Number);
     const [h2, m2, s2] = heure2.split(":").map(Number);
@@ -11,14 +13,14 @@ function differenceEnSecondes(heure1, heure2) {
 function getSecondsDifference(fixedTime) {
     const now = new Date();
     const [hours, minutes, seconds] = fixedTime.split(":").map(Number);
-    
+
     const fixedDate = new Date();
     fixedDate.setHours(hours, minutes, seconds, 0);
 
     let difference = Math.floor((now - fixedDate) / 1000);
 
     if (difference < 0) {
-        difference += 24 * 3600; 
+        difference += 24 * 3600;
     }
     return difference;
 }
@@ -29,7 +31,7 @@ function sleep(ms) {
 
 function SecondeVersTemps(a) {
 
-    if(a%60 < 10) return Math.trunc(a / 60) + " : 0" + a % 60;
+    if (a % 60 < 10) return Math.trunc(a / 60) + " : 0" + a % 60;
     else return Math.trunc(a / 60) + " : " + a % 60;
 }
 
@@ -82,13 +84,15 @@ async function recupererDetailJeu(a) {
 
 
     if (reponse1.headers.get("content-length") <= 25) return;
-    
+
     const data1 = await reponse1.json();
     const dateCreation = DateToString(data1.dateCreation);
+    idPartie = data1.idgame;
+
 
     dateDepart = "invalide";
     if (data1.dateDepart != null) dateDepart = DateToString(data1.dateDepart);
-   
+
     textInfoPartie = `
                 <ul>
                 <li><strong>Salle:</strong> ${data1.salle.nom} - ${data1.salle.ville}</li>
@@ -123,18 +127,18 @@ async function recupererDetailJeu(a) {
     if (!reponse2.ok) return;
 
     const data2 = await reponse2.json();
-    
+
     const NombreEtatEnHistorique = data2.length;
 
     if (NombreEtatEnHistorique <= 1) return document.getElementById("para_info_historique").innerHTML = "Aucune mission en historique";
-        
+
     textHistorique = ""
 
-    for (let i = 0; i < NombreEtatEnHistorique-1; i++) {
+    for (let i = 0; i < NombreEtatEnHistorique - 1; i++) {
         textClasse = "";
         if (i < NombreEtatEnHistorique - 1) textClasse = "liste_historique_mission_separation";
         textHistorique += `
-                <h3 class="titre_mission_historique"> Mission N<sup>-${i+1}</sup> </h3>
+                <h3 class="titre_mission_historique"> Mission N<sup>-${i + 1}</sup> </h3>
                 <ul class="liste_historique_mission ${textClasse}">
                 <li><strong>Heure de début:</strong> ${data2[i].heuredebut}</li> 
                 <li><strong>Heure de fin:</strong> ${data2[i].heurefin}</li>
@@ -143,16 +147,15 @@ async function recupererDetailJeu(a) {
                 </ul>`;
     }
 
-    document.getElementById("para_info_historique").innerHTML = textHistorique;   
-    RefraichissementAutomatique();
+    document.getElementById("para_info_historique").innerHTML = textHistorique;
 }
 
 
 async function TempEcoule(a, b) {
     a = DateToString(a);
-    
+
     while (true) {
-        const maintenant = new Date(); 
+        const maintenant = new Date();
 
         const [jour, mois, annee, heure, minute] = a.split(/[/\s:]/).map(Number);
         const dateAComparer = new Date(annee, mois - 1, jour, heure, minute);
@@ -169,8 +172,29 @@ async function TempEcoule(a, b) {
     }
 }
 
-setInterval(()=>{
-    window.location.href = "/admin/gestion-partie"; 
-},40000)
+setInterval(() => {
+    window.location.href = "/admin/gestion-partie";
+}, 20000)
 
 creerSelectParties();
+
+document.getElementById("BouttonFinirPartie").addEventListener('click', () => {
+    fetch('/api/game/partie/finir', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            partie: idPartie
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        console.log('Succès:', data);
+        window.location.href = "/admin/gestion-partie";
+    })
+    .catch((error) => {
+        console.error('Erreur:', error);
+    });
+    
+})

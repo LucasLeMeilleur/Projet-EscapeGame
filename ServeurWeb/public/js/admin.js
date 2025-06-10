@@ -24,6 +24,10 @@ document.getElementById("boutton_pannel_admin").addEventListener("click", () => 
     window.location.href = "/admin/pannel"
 })
 
+document.getElementById("bouttonMissionLancer").addEventListener('click', () => {
+    window.location.href = "/admin/mission";
+});
+
 
 async function remplirListePartie() {
     const tableau = document.getElementById("liste_partie");
@@ -292,8 +296,11 @@ async function afficherPartieActive(){
     }
 }
 
+
 // Appel de la fonction
 remplirListeReservation();
 remplirListePartie();
 afficherDernierePartie();
 afficherPartieActive();
+
+

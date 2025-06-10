@@ -155,7 +155,7 @@ exports.MajUtilisateur = async (req, res) => {
 
 exports.SupprimerUtilisateur = async (req, res) => {
   try {
-    const id = req.query.id;
+    const id = req.params.id;
 
     if (!id) return res.status(400).json({ message: "ID manquant" });
 

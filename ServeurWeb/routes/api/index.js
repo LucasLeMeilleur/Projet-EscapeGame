@@ -57,7 +57,6 @@ router.get('/game/reservation/liste', object.listeReservation);
 router.get('/game/reservation/desc', object.dernieresReservation);
 router.get('/game/reservation/asc', object.reservationAVenir);
 router.get('/game/partie/scoreboard', object.scoreBoard);
-
     //Nombre element
 router.get('/game/partie/nombre', object.nombrePartie);
 router.get('/game/salle/nombre', object.nombreSalle);
@@ -93,7 +92,7 @@ router.post('/game/partie/demarrer', checkPermission(1), object.DemarrerPartie);
 router.post('/game/partie/finir', checkPermission(1), object.FinirPartie);
 router.post('/game/missionetat/suivante', checkPermission(1), object.MissionSuivante);
 router.post('/game/reservation/ajout', checkPermission(1), authMiddleware, object.AjoutReservation);
-
+router.post('/game/mission/demarrer', checkPermission(1), object.DemarrerMission);
 // Update
 
 router.patch('/game/mission/update', checkPermission(1), object.MajMission);
@@ -128,27 +127,24 @@ router.post('/user/change-password', authMiddleware, user.ChangerPassword)
 
 // Modification 
 
-// Modification coté admin
+// Modification cote admin
 
 router.patch('/user/update-admin', checkPermission(1), user.MajUtilisateur);
-router.delete('/user/delete', checkPermission(1), user.SupprimerUtilisateur);
+router.delete('/user/delete/:id', checkPermission(1), user.SupprimerUtilisateur);
 
 
 ///////////////////////// Gestion api erreur ///////////////////////////
 
 router.use((req, res) => {
-    return res.status(404).json({erreur: "Requete introuvable"});
+    return res.status(404).json({message: "Requete introuvable"});
 });
 
 router.use((req, res) => {
-    return res.status(401).json({erreur: "Requete mauvaise"});
+    return res.status(401).json({message: "Requete mauvaise"});
 });
 
 router.use((req, res) => {
-    return res.status(500).json({erreur: "Erreur serveur"});
+    return res.status(500).json({message: "Erreur serveur"});
 });
-
-
-
 
 module.exports = router;

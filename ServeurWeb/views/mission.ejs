@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Escape Game</title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="">
+
+    <link rel="stylesheet" href="/css/forme.css">
+    <link rel="stylesheet" href="/css/mission.css">
+
+    <link rel="stylesheet" href="/css/responsive/forme.css">
+</head>
+
+<body>
+
+    <% if (typeof permission !=='undefined' && permission==1) { %>
+        <%- include('partials/header', {navig: "admin" }); %>
+    <% }else if(typeof permission !=='undefined' && permission==0){%>
+        <%- include('partials/header', {navig: "normal" }); %>
+    <% }else{ %>
+        <%- include('partials/header'); %>
+    <% } %>
+
+
+    <section id="mission-section">
+        <h2>Démarrer une mission</h2>
+      
+        <label for="missionSelect">Choisissez une mission :</label>
+        <select id="missionSelect">
+          <option disabled selected>Chargement des missions...</option>
+        </select>
+      
+        <button id="startMissionBtn">Démarrer la mission</button>
+      </section>
+      
+      <script>
+        // Charger les missions dans le select
+        async function chargerMissions() {
+          try {
+            const response = await fetch('/api/game/mission/liste');
+            const missions = await response.json();
+      
+            const select = document.getElementById('missionSelect');
+            select.innerHTML = ''; // Nettoyer le contenu initial
+      
+            missions.forEach(mission => {
+              const option = document.createElement('option');
+              option.value = mission.idmission;
+              option.textContent = mission.nom || `Mission ${mission.id}`;
+              select.appendChild(option);
+            });
+          } catch (error) {
+            console.error('Erreur de chargement des missions :', error);
+            const select = document.getElementById('missionSelect');
+            select.innerHTML = '<option disabled>Erreur lors du chargement</option>';
+          }
+        }
+      
+        // Envoyer la mission sélectionnée
+        document.getElementById('startMissionBtn').addEventListener('click', async () => {
+          const select = document.getElementById('missionSelect');
+          const missionId = select.value;
+      
+          if (!missionId) {
+            alert('Veuillez sélectionner une mission.');
+            return;
+          }
+      
+          try {
+            const response = await fetch('/api/game/mission/demarrer', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify({ mission: missionId })
+            });
+      
+            const result = await response.json();
+            if (response.ok) {
+              alert('Mission démarrée avec succès !');
+            } else {
+              alert('Erreur : ' + result.message);
+            }
+          } catch (error) {
+            console.error('Erreur lors du démarrage de la mission :', error);
+            alert('Une erreur est survenue lors du démarrage.');
+          }
+        });
+      
+        // Charger les missions au chargement de la page
+        document.addEventListener('DOMContentLoaded', chargerMissions);
+      </script>
+      
+
+    <%- include('partials/footer'); %>
+
+
+
+
+</body>
+
+</html>
