@@ -22,6 +22,14 @@ client.on("connect", () => {
             console.log('Souscription réussie');
         }
     });
+
+    client.subscribe("activite/reponse", (err) => {
+    if (err) {
+        console.error("Erreur lors de l'abonnement :", err);
+    } else {
+        console.log("📡 Abonné à activite/reponse");
+    }
+});
 });
 
 
@@ -68,6 +76,7 @@ client.on("message", async (topic, message) => {
         }
 
     }
+    
 });
 
 
@@ -90,11 +99,56 @@ function demarrerPartie(mission, idpartie) {
     client.publish("activer", message, () => {
         console.log(`Partie demarré, message sur activer: ${message}`);
     });
+
+    
 }
+
+
+function voirActivite() {
+    return new Promise((resolve, reject) => {
+        const responses = [];
+        const TIMEOUT_MS = 2000;
+
+        const handleMessage = (topic, message) => {
+            if (topic === "activite/reponse") {
+                try {
+                    const data = JSON.parse(message.toString());
+                    responses.push(data);
+                    console.log(`📩 Réponse ${responses.length}/3 reçue:`, data);
+                } catch (err) {
+                    console.error("Erreur de parsing:", err);
+                }
+            }
+        };
+
+        const cleanup = () => {
+            clearTimeout(timeout);
+            client.removeListener("message", handleMessage);
+        };
+
+        const timeout = setTimeout(() => {
+            console.warn("⏱️ Timeout après 5 secondes");
+            cleanup();
+            resolve(responses); 
+        }, TIMEOUT_MS);
+
+        client.subscribe("activite/reponse", (err) => {
+            if (err) {
+                return reject("Erreur d'abonnement à activite/reponse");
+            }
+
+            client.on("message", handleMessage);
+
+            client.publish("activite/demande", JSON.stringify({ activite: true }), () => {
+                console.log("📤 Demande d'activité envoyée");
+            });
+        });
+    });
+}
+
 
 function resetCanaux() {
     const message = `0`;
-
     client.publish("activer", message, { retain: true }, () => {
         console.log(`Partie demarré, message sur activer: ${message}`);
     });
@@ -109,7 +163,8 @@ function resetCanaux() {
 
 module.exports = {
     demarrerPartie,
-    resetCanaux
+    resetCanaux,
+    voirActivite
 };
 
 

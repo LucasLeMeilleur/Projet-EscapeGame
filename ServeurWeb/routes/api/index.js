@@ -68,6 +68,8 @@ router.get('/game/partie/listeReserv', object.listePartieReserve);
 router.get('/game/partie/nonlancee', object.obtenirPartieNonlancee);
 router.get('/game/reservation/perso', authMiddleware, object.RecupReservPerso);
 
+router.get('/game/mission/activite', object.ObtenirActiviteMission);
+
 
 // GET avec requeteUrl
 

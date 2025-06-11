@@ -36,7 +36,10 @@
         </select>
       
         <button id="startMissionBtn">Démarrer la mission</button>
-      </section>
+        
+        <p>Mission connecté</p>
+        <div id="missions-container"></div>
+    </section>
       
       <script>
         // Charger les missions dans le select
@@ -92,7 +95,59 @@
           }
         });
       
-        // Charger les missions au chargement de la page
+        async function fetchAndDisplayMissions() {
+          try {
+            const response = await fetch('/api/game/mission/activite');
+            const data = await response.json();
+
+            const container = document.getElementById('missions-container');
+
+            data.message.forEach(item => {
+              const missionDiv = document.createElement('div');
+
+              // Texte de la mission
+              const missionText = document.createElement('span');
+              missionText.textContent = `Mission: ${item.mission} `;
+
+              // Bouton redémarrer
+              const restartButton = document.createElement('button');
+              restartButton.textContent = '🔄';
+              restartButton.title = 'Redémarrer la mission';
+              restartButton.style.marginLeft = '10px';
+
+              // Click = requête fetch vers l'API sans rediriger
+              restartButton.addEventListener('click', () => {
+                fetch(`/api/game/mission/redemarrer/${item.mission}`, {
+                  method: 'POST', // ou 'GET' selon ton API
+                })
+                .then(response => {
+                  if (!response.ok) throw new Error("Échec du redémarrage");
+                  return response.json(); // si tu attends une réponse JSON
+                })
+                .then(data => {
+                  console.log(`Mission ${item.mission} redémarrée !`, data);
+                  // éventuellement une notification visuelle ici
+                })
+                .catch(error => {
+                  console.error("Erreur:", error);
+                });
+              });
+
+              // Ajouter le texte et le bouton au div
+              missionDiv.appendChild(missionText);
+              missionDiv.appendChild(restartButton);
+
+              // Ajouter le div au conteneur
+              container.appendChild(missionDiv);
+            });
+
+          } catch (error) {
+            console.error('Erreur lors du fetch:', error);
+          }
+        }
+
+        // Appel de la fonction au chargement de la page
+        document.addEventListener('DOMContentLoaded', fetchAndDisplayMissions);
         document.addEventListener('DOMContentLoaded', chargerMissions);
       </script>
       
