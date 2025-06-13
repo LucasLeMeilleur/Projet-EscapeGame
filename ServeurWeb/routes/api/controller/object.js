@@ -7,7 +7,7 @@ const TableMissionEtat = require('../../../models/missionEtat');
 const TableEquipe = require('../../../models/equipe');
 const TableReservation = require('../../../models/reservation');
 const jwt = require('jsonwebtoken');
-const { demarrerPartie, resetCanaux, voirActivite } = require('../../../mqttGestion');
+const { demarrerPartie, resetCanaux, voirActivite, redemarrerMission } = require('../../../mqttGestion');
 
 // Fonction utiles
 
@@ -1022,3 +1022,12 @@ exports.ObtenirActiviteMission = async (req, res) => {
     }
 }
 
+exports.RedemarrerMission = async (req, res) => {
+    try {
+        const reponse = await redemarrerMission(req.params.id); 
+        res.status(200).json({ message: reponse });
+    } catch (err) {
+        console.error("❌ Erreur dans /api/activite:", err);
+        res.status(500).json({ success: false, error: "Erreur interne" });
+    }
+}
